@@ -68,3 +68,27 @@
 - Final merge SHA: `021a8aaf646c955feb93aca9a6a34227b7dd5c7a`.
 - Production deploy: `NO`.
 - Phase 2: `NOT STARTED`.
+
+## 2026-09-04 — Phase 1 chemistry foundation hardening
+
+- Phase: `Phase 1 hardening — DEV PASS; review pending`.
+- Done: làm rõ contract M/L/K; giới hạn 298.15 K; tolerance mol/thể tích
+  theo tỷ lệ; curve tăng dần, không rỗng/gần trùng và có checkpoint bắt buộc;
+  preview path guard đa nền tảng; đồng bộ câu chữ UI tĩnh.
+- Files: `src/chemistry/`, `src/data/standardCases.js`, `scripts/serve.mjs`,
+  `scripts/path-security.mjs`, `tests/`, `index.html`, `src/app.js`,
+  `docs/CHEMISTRY_MODEL.md`, `docs/TEST_CASES.md`.
+- Tests: local developer run PASS — lint 17 JavaScript files; format baseline
+  18 files; 14/14 tests PASS gồm CHEM-01/02/05, temperature invalid, mol rất
+  nhỏ, curve checkpoints/dedup/order và preview path guard; `git diff --check`
+  PASS; browser smoke `/` + `/simulate` PASS, CSS load và không console error.
+- Preview-URL: `http://localhost:4173/` và `http://localhost:4173/simulate`
+  (local only); production deploy: `NO`.
+- Risk: public field names `Va`/`Vb`/`temperature` được giữ để không phá contract,
+  nhưng đơn vị M/L/K nay được ghi rõ; downstream Phase 2 phải chuyển đổi ở boundary.
+- Next: mở PR vào `main`; yêu cầu thành viên thứ hai chạy lại test và PO/GVHD
+  nghiệm thu trước mọi quyết định merge hoặc chuyển Phase 2.
+- Branch-SHA: `fix/phase1-chemistry-foundation` /
+  `9162d0c22f28f2d7bd4ea1c78408e03f17e7920a`.
+- Peer run: `PENDING`.
+- PO PASS: `PENDING`.
