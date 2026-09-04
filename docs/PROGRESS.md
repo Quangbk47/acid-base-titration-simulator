@@ -64,6 +64,7 @@
 
 - PO acceptance: `PASS`.
 - Phase 1: `CLOSED / DONE`.
-- Merge: feature branch được merge vào `main`; merge SHA ghi sau thao tác merge.
+- Merge: feature branch được merge vào `main` bằng `--no-ff`.
+- Final merge SHA: `021a8aaf646c955feb93aca9a6a34227b7dd5c7a`.
 - Production deploy: `NO`.
 - Phase 2: `NOT STARTED`.

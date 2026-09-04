@@ -12,7 +12,7 @@
 - Numerical safety: không NaN/Infinity/chia 0 trong solver/curve và invalid input path
 - Scope: chỉ units, strong-strong solver, milestones, curve, standard cases và tests/docs
 - SHA implementation: `4bc9f0c6849b3c407b13a703cbd98bf728669b5f`
-- Merge SHA: ghi sau thao tác merge vào `main`
+- Merge SHA: `021a8aaf646c955feb93aca9a6a34227b7dd5c7a`
 
 ## PO checklist — completed
 

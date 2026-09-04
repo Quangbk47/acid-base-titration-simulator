@@ -21,7 +21,7 @@
 - Reference: `tests/fixtures/phase1Reference.js`; các mốc ban đầu, 25%, 50%, 99%, 100%, 101% và dư lớn.
 - Preview/deploy: không có preview UI mới; production `NO`.
 - SHA implementation: `4bc9f0c6849b3c407b13a703cbd98bf728669b5f`.
-- Merge SHA: ghi sau thao tác merge vào `main`.
+- Merge SHA: `021a8aaf646c955feb93aca9a6a34227b7dd5c7a`.
 
 ## Việc được phép tiếp theo
 
