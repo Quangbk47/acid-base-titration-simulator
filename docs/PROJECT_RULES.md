@@ -1,0 +1,37 @@
+# PROJECT RULES — HƯỚNG DẪN LÀM VIỆC CHO SV
+
+## Đọc trước khi code
+
+Đọc `ROADMAP.md`, `CHEMISTRY_MODEL.md`, `UI_UX_SPEC.md`, `TEST_CASES.md` và phase đang làm. Không dán code AI chưa đối chiếu các file này.
+
+## Quyền và trách nhiệm
+
+- GVHD/PO nghiệm thu kết quả thực, quyết định phạm vi; không là nút chờ kỹ thuật hàng ngày.
+- Trưởng nhóm điều phối, không độc quyền merge/deploy.
+- Thành viên được branch/push/merge/deploy nhưng phải tự test và ghi bằng chứng.
+
+## Quy trình một task
+
+1. Chọn task trong Roadmap/TODO, ghi người phụ trách trong PROGRESS.
+2. Fetch/pull, kiểm tra branch/working tree.
+3. Task lớn/chemistry/Firebase/UI chung: branch `feature/<phase>-<mo-ta>` → PR → test/review chéo.
+4. Chạy ca test liên quan; UI kiểm tra desktop/mobile; Firebase chạy emulator test.
+5. Tạo preview cho task lớn; ghi URL/SHA/test/rủi ro.
+6. Sau review nội bộ, bất kỳ thành viên nào merge/deploy; smoke đúng URL rồi cập nhật checkpoint.
+
+Việc nhỏ/khẩn cấp có thể vào main sau tự test/ghi lý do, nhưng không được đổi Rules/data Firebase.
+
+## Quy ước
+
+- Branch: `feature/`, `fix/`, `docs/`, `test/`, `chore/`.
+- Commit: `feat:`, `fix:`, `docs:`, `test:`, `chore:` + mô tả rõ.
+- PR: mục tiêu, module, ảnh hưởng chemistry/UI/Firebase, test, preview, rollback/rủi ro.
+- Không force-push main/rewrite history chung; không commit build output, password, private key, service account, token quản trị hay dữ liệu cá nhân.
+
+## Khoa học, Firebase, báo cáo
+
+- UI chỉ hiển thị dữ liệu chemistry engine; tốc độ ≠ động học; equivalence ≠ endpoint; màu tạm ≠ pH cân bằng.
+- Công thức mới phải có tính tay/reference + test; cập nhật Chemistry/Test khi đổi logic.
+- Luôn xác nhận Project ID riêng nhóm Tuấn. Chỉ sửa web dùng `firebase deploy --only hosting`; Rules là task/review/deploy riêng.
+- Firebase web config có thể nằm phía client; quyền do Auth + Rules. Private key/token không vào repo.
+- Báo cáo mẫu: **Done / Files / Tests / Preview-URL / Risk / Next / Branch-SHA**. `DEV PASS` không thay `PO PASS`.

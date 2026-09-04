@@ -1,0 +1,3 @@
+# Prompt phiên thực hiện Phase 0
+
+> Tiếp tục repo public `acid-base-titration-simulator`. Tôi là PO/GVHD; sinh viên/Codex triển khai. Đọc lần lượt `README.md`, `docs/ROADMAP.md`, `docs/PROJECT_RULES.md`, `docs/UI_UX_SPEC.md`, `docs/TEST_CASES.md`, `docs/HANDOVER.md`. Xác nhận chính xác repo và Firebase Project ID riêng trước mọi thao tác Firebase. Thực hiện **chỉ P0-01…P0-05**: scaffold HTML/CSS/JS thuần, placeholder responsive, lint/test, preview. Không làm logic pH giả, Auth/Firestore/Rules/Admin hoặc production deploy. Trước khi kết thúc cập nhật TODO/PROGRESS/HANDOVER. Báo cáo: Done, Files, Tests, Preview URL, SHA, phạm vi không đổi, rủi ro, Next.
