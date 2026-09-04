@@ -27,17 +27,23 @@ Evidence: `feature/phase-1-hcl-naoh-chemistry`; `npm run check`,
 `git diff --check`; fixture `tests/fixtures/phase1Reference.js`.
 PO acceptance: PASS. Phase 1 đã đóng; Phase 2 vẫn `NOT STARTED`.
 
-## Phase 1 hardening / Review pending
+## Phase 1 hardening / MERGED / CLOSED by GVHD direction
 
 - [x] DEV review lại contract M/L/K, temperature/Kw, tolerance, curve và preview tooling.
 - [x] DEV test 16/16 + lint/format/diff check + local browser smoke.
 - [x] GVHD trực tiếp cho phép merge PR #1 (`APPROVED FOR MERGE`).
 - [ ] Thành viên thứ hai chạy lại test và ghi bằng chứng (`Peer run: PENDING`).
 - [ ] PO nghiệm thu độc lập đợt hardening (`PO PASS: PENDING`).
-- [ ] Merge PR #1 và ghi post-merge closeout theo chỉ đạo GVHD.
+- [x] Merge PR #1 và ghi post-merge closeout theo chỉ đạo GVHD.
 
 Evidence: branch `fix/phase1-chemistry-foundation`, PR #1 và `docs/PROGRESS.md`.
-Không tick ba mục review/PO/merge nếu chưa có bằng chứng thật.
+Không tick peer run hoặc PO PASS nếu chưa có bằng chứng thật; mục merge chỉ
+được tick theo PR #1 và merge SHA đã xác minh.
+
+Closeout: PR #1 merged tại
+`87ba1d17b30e3d383d4bc87046c8d79f57ee70f0`; post-merge local tests và CI PASS.
+Peer run và PO PASS vẫn để `PENDING`; production deploy `NO`; Phase 2
+`NOT STARTED`.
 
 ## Later
 

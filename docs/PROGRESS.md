@@ -98,3 +98,27 @@
   chứng peer run độc lập; trạng thái peer vẫn được giữ nguyên, không suy diễn PASS.
 - Peer run: `PENDING`.
 - PO PASS: `PENDING`.
+
+## 2026-09-04 — Phase 1 hardening merged / closed by GVHD direction
+
+- Phase: `Phase 1 hardening — MERGED / CLOSED`.
+- Done: PR #1 được merge vào `main` bằng merge commit theo chỉ đạo trực tiếp
+  của GVHD; local `main` đã đồng bộ với `origin/main`.
+- Files: toàn bộ code/test/docs của PR #1; không có Phase 2 hoặc Firebase.
+- Tests after merge: lint 17 JavaScript files PASS; format baseline 18 files
+  PASS; full suite 16/16 PASS; `git diff --check` PASS; local browser smoke `/`
+  và `/simulate` PASS, CSS/JS load, controls disabled, không chemistry output giả,
+  không console error.
+- CI: GitHub Actions push check cho merge SHA PASS.
+- Preview-URL: `http://localhost:4173/` và `http://localhost:4173/simulate`
+  (local smoke only; server đã dừng).
+- PR: `https://github.com/Quangbk47/acid-base-titration-simulator/pull/1`.
+- Merge SHA: `87ba1d17b30e3d383d4bc87046c8d79f57ee70f0`.
+- GVHD approval: `APPROVED` — cho phép merge và đóng đợt hardening.
+- Peer run: `PENDING` — chưa có bằng chứng chạy độc lập; không ghi PASS.
+- PO PASS: `PENDING` — không tự suy diễn từ DEV test hoặc GVHD merge direction.
+- Production deploy: `NO`.
+- Risk: peer run/PO evidence vẫn thiếu nhưng không chặn closeout theo chỉ đạo
+  trực tiếp của GVHD; boundary Phase 2 sau này phải giữ contract M/L/K.
+- Next: Phase 2 vẫn `NOT STARTED`; trước khi code phải đọc lại ROADMAP,
+  PROJECT_RULES, CHEMISTRY_MODEL, UI_UX_SPEC và TEST_CASES.
