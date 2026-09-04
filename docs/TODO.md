@@ -48,7 +48,9 @@ deploy `NO`; Phase 2 `NOT STARTED`.
 
 ## Later
 
-- [ ] P2 simulation/UI/PP; P3 weak acid/Guided/report; P4 Firebase learner; P5 Admin; P6 release.
+- [x] P2 input form + validation + Phase 1 engine boundary (DEV PASS; peer review pending).
+- [ ] P2 simulation state/drop/runner, chart, experiment view và PP.
+- [ ] P3 weak acid/Guided/report; P4 Firebase learner; P5 Admin; P6 release.
 
 ## Quy tắc cập nhật
 

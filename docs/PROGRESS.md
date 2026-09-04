@@ -124,3 +124,23 @@
   được GVHD/PO phê duyệt; boundary Phase 2 sau này phải giữ contract M/L/K.
 - Next: Phase 2 vẫn `NOT STARTED`; trước khi code phải đọc lại ROADMAP,
   PROJECT_RULES, CHEMISTRY_MODEL, UI_UX_SPEC và TEST_CASES.
+
+## 2026-09-04 — Phase 2 input and validation slice
+
+- Phase: `Phase 2 — IN PROGRESS / DEV PASS`.
+- Branch: `feature/phase-2-input-validation`.
+- Done: form HCl–NaOH, validation lỗi tại trường nhập, khôi phục ca Phase 1,
+  chuyển đổi mL → L và 25 °C → 298.15 K tại UI boundary, gọi duy nhất
+  `solveStrongStrong`, hiển thị pH/tổng thể tích/chất dư/stage/phản ứng cơ bản.
+- Scope giữ lại: không animation, addDrop/timer, chart động, PP, hệ yếu, Phase 3,
+  Firebase/Auth/history/admin hay production deploy; không sửa chemistry engine.
+- Tests: Node trực tiếp chạy lint/format/full suite PASS, 22/22 tests PASS;
+  `git diff --check` PASS. Lệnh `npm` không có trên PATH của môi trường nên các
+  script đích trong `npm run check` được chạy trực tiếp bằng bundled Node.
+- Browser smoke: `/simulate` load không console error; ca ban đầu cho pH 1.00,
+  input trống hiện lỗi cạnh trường; không overflow ngang tại 320/375/430/768/1366 px.
+- Phase 1 dependency: solver/tests vẫn PASS; peer run độc lập vẫn `PENDING`,
+  không tự ghi nhận PASS.
+- Risk: mới là lát cắt nhập liệu; chưa có state mô phỏng thống nhất và các gate
+  SIM/UI/CHEM-06 đầy đủ của Phase 2 chưa thể PASS.
+- Next: review branch/commit này; sau đó triển khai state + `addDrop` trong task riêng.

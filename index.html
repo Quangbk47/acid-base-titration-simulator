@@ -77,14 +77,14 @@
       <section data-view="simulate" aria-labelledby="simulate-title" hidden>
         <div class="page-heading">
           <div>
-            <p class="eyebrow">Guest workspace · Phase 1 baseline</p>
+            <p class="eyebrow">Guest workspace · Phase 2 input</p>
             <h1 id="simulate-title">Không gian mô phỏng</h1>
             <p class="lead">
-              Đây là khung giao diện tĩnh. Chemistry engine chưa được nối vào UI và
-              trang này không hiển thị dữ liệu pH giả.
+              Nhập dữ liệu HCl–NaOH để kiểm tra và tính trạng thái cân bằng bằng
+              chemistry engine đã được kiểm chứng ở Phase 1.
             </p>
           </div>
-          <span class="state-badge">Idle · Baseline</span>
+          <span class="state-badge" data-simulation-state>Idle</span>
         </div>
 
         <div class="simulation-layout">
@@ -97,43 +97,55 @@
               <span class="panel-index">01</span>
             </div>
 
-            <form class="control-form" aria-describedby="baseline-notice">
-              <p id="baseline-notice" class="notice" role="note">
-                Điều khiển sẽ chỉ được mở khi phần mô phỏng Phase 2 được triển khai và test.
+            <form id="titration-form" class="control-form" novalidate>
+              <p class="notice" role="note">
+                Lát cắt này chỉ hỗ trợ HCl–NaOH ở 25 °C. Chuyển động, đồ thị động và
+                chỉ thị màu chưa được triển khai.
               </p>
               <label for="case-selector">Ca chuẩn</label>
-              <select id="case-selector" disabled>
-                <option>Chưa có ca mô phỏng</option>
+              <select id="case-selector" aria-label="Khôi phục ca chuẩn"></select>
+
+              <label for="system-type">Loại chuẩn độ</label>
+              <select id="system-type" name="systemType" aria-describedby="system-type-error">
+                <option value="strong-acid-strong-base">Axit mạnh – bazơ mạnh</option>
               </select>
+              <span id="system-type-error" class="field-error" data-error-for="systemType" aria-live="polite"></span>
 
               <div class="form-grid">
                 <div>
                   <label for="analyte">Chất phân tích</label>
-                  <input id="analyte" type="text" placeholder="Chưa cấu hình" disabled />
+                  <input id="analyte" type="text" readonly />
                 </div>
                 <div>
                   <label for="titrant">Chất chuẩn</label>
-                  <input id="titrant" type="text" placeholder="Chưa cấu hình" disabled />
+                  <input id="titrant" type="text" readonly />
                 </div>
                 <div>
-                  <label for="concentration">Nồng độ (M)</label>
-                  <input id="concentration" type="text" placeholder="—" disabled />
+                  <label for="analyte-concentration">Nồng độ HCl (M)</label>
+                  <input id="analyte-concentration" name="analyteConcentrationM" type="text" inputmode="decimal" aria-describedby="analyte-concentration-error" />
+                  <span id="analyte-concentration-error" class="field-error" data-error-for="analyteConcentrationM" aria-live="polite"></span>
                 </div>
                 <div>
-                  <label for="volume">Thể tích (mL)</label>
-                  <input id="volume" type="text" placeholder="—" disabled />
+                  <label for="analyte-volume">Thể tích HCl ban đầu (mL)</label>
+                  <input id="analyte-volume" name="analyteVolumeMl" type="text" inputmode="decimal" aria-describedby="analyte-volume-error" />
+                  <span id="analyte-volume-error" class="field-error" data-error-for="analyteVolumeMl" aria-live="polite"></span>
+                </div>
+                <div>
+                  <label for="titrant-concentration">Nồng độ NaOH (M)</label>
+                  <input id="titrant-concentration" name="titrantConcentrationM" type="text" inputmode="decimal" aria-describedby="titrant-concentration-error" />
+                  <span id="titrant-concentration-error" class="field-error" data-error-for="titrantConcentrationM" aria-live="polite"></span>
+                </div>
+                <div>
+                  <label for="added-volume">Thể tích NaOH đã thêm (mL)</label>
+                  <input id="added-volume" name="addedVolumeMl" type="text" inputmode="decimal" aria-describedby="added-volume-error" />
+                  <span id="added-volume-error" class="field-error" data-error-for="addedVolumeMl" aria-live="polite"></span>
                 </div>
               </div>
 
               <div class="control-group" aria-label="Điều khiển mô phỏng">
-                <button class="button button-primary" type="button" disabled>Thêm giọt</button>
-                <button class="button button-secondary" type="button" disabled>Chạy</button>
-                <button class="button button-quiet" type="button" disabled>Đặt lại</button>
+                <button class="button button-primary" type="submit">Tính trạng thái</button>
               </div>
-              <div class="control-meta">
-                <span>Giọt: <strong>— mL</strong></span>
-                <span>Tốc độ: <strong>Vừa</strong></span>
-              </div>
+              <p class="form-error" data-form-error role="alert"></p>
             </form>
 
             <div class="vessel-stage" aria-label="Khu vực bình và buret, chưa có mô phỏng">
@@ -186,16 +198,16 @@
             <span class="panel-index">03</span>
           </div>
           <div class="chemistry-summary">
-            <div class="metric-card"><span>pH hiện tại</span><strong>—</strong><small>Chưa tính</small></div>
-            <div class="metric-card"><span>Tổng thể tích</span><strong>—</strong><small>Chưa tính</small></div>
-            <div class="metric-card"><span>Chất dư</span><strong>—</strong><small>Chưa tính</small></div>
-            <div class="metric-card"><span>Giai đoạn</span><strong>—</strong><small>Chưa tính</small></div>
+            <div class="metric-card"><span>pH hiện tại</span><strong data-result="ph">—</strong><small data-result="ph-label">Chưa tính</small></div>
+            <div class="metric-card"><span>Tổng thể tích</span><strong data-result="volume">—</strong><small>HCl + NaOH</small></div>
+            <div class="metric-card"><span>Chất dư</span><strong data-result="excess">—</strong><small>Ion quyết định pH</small></div>
+            <div class="metric-card"><span>Giai đoạn</span><strong data-result="stage">—</strong><small>So với tương đương</small></div>
           </div>
           <div class="chemistry-table table-wrapper">
             <table>
               <caption>Chi tiết trạng thái hóa học</caption>
               <thead><tr><th scope="col">Ion / chất</th><th scope="col">Số mol</th><th scope="col">Nồng độ</th><th scope="col">Phản ứng</th></tr></thead>
-              <tbody><tr><td colspan="4">Dữ liệu sẽ hiển thị sau khi chemistry engine được kiểm chứng.</td></tr></tbody>
+              <tbody><tr><td>HCl / NaOH</td><td>—</td><td>—</td><td data-result="reaction">Chưa tính</td></tr></tbody>
             </table>
           </div>
         </section>
@@ -204,7 +216,7 @@
 
     <footer class="site-footer">
       <div class="container footer-inner">
-        <span>Acid–Base Titration Simulator · Phase 1 Chemistry Foundation</span>
+        <span>Acid–Base Titration Simulator · Phase 2 Input &amp; Validation</span>
         <span>HTML · CSS · JavaScript modules</span>
       </div>
     </footer>
