@@ -32,4 +32,6 @@ Website mô phỏng tương tác phục vụ đề tài NCKH: **xây dựng, ki�
 
 ## Trạng thái
 
-Chưa có code, repo GitHub hay Firebase project được tạo trong checkpoint này. Chỉ bắt đầu triển khai sau khi các file trong `docs/` được nhóm đọc và thống nhất.
+**Phase 0 — DONE (PO PASS).** Baseline HTML/CSS/JavaScript, cấu trúc module,
+responsive placeholder, smoke checks và preview local đã hoàn tất. Chemistry
+engine, Firebase và Phase 1 chưa bắt đầu; production chưa deploy.

@@ -24,7 +24,7 @@
 
 ## 2026-09-04 — Phase 0 implementation baseline
 
-- Trạng thái: `DEV PASS — PO TESTING pending`.
+- Trạng thái: `DONE — PO PASS`.
 - Branch: `feature/phase-0-foundation`.
 - SHA implementation: `54e665c179ba3520339b27d941b5da3e099fce8e`.
 - P0-01…P0-05: hoàn tất scaffold tĩnh, responsive placeholder, accessibility baseline, lint/format/test command, CI và preview local.
@@ -34,4 +34,12 @@
 - Browser evidence: trang chủ và route `/simulate` load; status `Baseline sẵn sàng`; layout mobile một cột; không có runtime error hiển thị.
 - Scope: không có chemistry solver/pH giả, Firebase/Auth/Firestore, admin, history, production deploy hay thay đổi nội dung khoa học.
 - Risk: Phase 1 vẫn cần chemistry fixtures và kiểm chứng độc lập trước khi mở controls.
-- Next: PO test thủ công baseline; sau PO acceptance có thể bắt đầu Phase 1.
+- Next: Phase 1 chưa bắt đầu; chỉ bắt đầu theo chỉ đạo mới sau khi đóng Phase 0.
+
+## 2026-09-04 — PO acceptance and Phase 0 close
+
+- PO acceptance: `PASS`.
+- Phase 0: `CLOSED / DONE`.
+- Merge: branch `feature/phase-0-foundation` được yêu cầu merge vào `main`; merge SHA ghi nhận sau thao tác merge.
+- Production deploy: `NO`.
+- Phase 1: `NOT STARTED`.
