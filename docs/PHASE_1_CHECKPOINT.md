@@ -11,7 +11,7 @@
 - Veq: 25.000 mL; phenolphthalein transition-start endpoint: khoảng 25.000792 mL
 - Numerical safety: không NaN/Infinity/chia 0 trong solver/curve và invalid input path
 - Scope: chỉ units, strong-strong solver, milestones, curve, standard cases và tests/docs
-- SHA: ghi sau commit cuối của checkpoint
+- SHA implementation: `4bc9f0c6849b3c407b13a703cbd98bf728669b5f`
 
 ## PO checklist
 

@@ -20,7 +20,7 @@
 - Tests: `npm run check` và `git diff --check` PASS; 9/9 tests PASS.
 - Reference: `tests/fixtures/phase1Reference.js`; các mốc ban đầu, 25%, 50%, 99%, 100%, 101% và dư lớn.
 - Preview/deploy: không có preview UI mới; production `NO`.
-- SHA: ghi sau commit triển khai Phase 1.
+- SHA implementation: `4bc9f0c6849b3c407b13a703cbd98bf728669b5f`.
 
 ## Việc được phép tiếp theo
 

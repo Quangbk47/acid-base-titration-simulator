@@ -48,7 +48,7 @@
 
 - Trạng thái: `DEV PASS — chờ PO testing`; chưa phải `PO PASS`/`DONE`.
 - Branch: `feature/phase-1-hcl-naoh-chemistry`.
-- SHA: ghi sau commit triển khai Phase 1.
+- SHA implementation: `4bc9f0c6849b3c407b13a703cbd98bf728669b5f`.
 - CHEM-01: PASS — HCl–NaOH bằng M/V, trước/eq/sau, pH/pOH và mol ion dư khớp reference.
 - CHEM-02: PASS — 25%, 50%, 99%, 100%, 101%, dư lớn; curve deterministic và mốc `Veq`/endpoint tách biệt.
 - CHEM-05: PASS — 0/âm/NaN/Infinity/input sai/step curve sai trả lỗi có mã; không NaN/Infinity/chia 0.
