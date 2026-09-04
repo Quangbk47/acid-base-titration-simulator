@@ -2,7 +2,10 @@
 
 ## Hợp đồng đầu vào/đầu ra
 
-Mọi solver nhận đơn vị nội bộ M, L, K và trả object thuần:
+Mọi solver nhận đơn vị nội bộ M, L, K và trả object thuần. Với solver
+strong–strong Phase 1, `Ca`/`Cb` là M, `Va`/`Vb` là L và `temperature` là K.
+Boundary/UI dùng mL hoặc °C phải chuyển đổi tường minh qua `chemistry/units.js`;
+solver không tự đoán đơn vị.
 
 ```js
 { pH, pOH, totalVolumeL, stage, dominantReaction,
@@ -16,7 +19,10 @@ Không làm tròn khi tính; UI dùng `toFixed(2)` riêng. Nếu input/solver kh
 
 ## Giả thiết chung
 
-25 °C: `Kw=1e-14`, `pH+pOH=14`; dung dịch lý tưởng; phản ứng/cân bằng nhanh sau mỗi giọt; bỏ qua hoạt độ, CO₂, nhiệt và động học. Volume tổng luôn bao gồm thể tích titrant đã thêm.
+Phase 1 chỉ hỗ trợ đúng 25 °C (`298.15 K`): `Kw=1e-14`, `pH+pOH=14`.
+Nhiệt độ khác phải trả lỗi validation cho tới khi dự án có đặc tả `Kw(T)`.
+Dung dịch lý tưởng; phản ứng/cân bằng nhanh sau mỗi giọt; bỏ qua hoạt độ,
+CO₂, nhiệt và động học. Volume tổng luôn bao gồm thể tích titrant đã thêm.
 
 ## Axit mạnh–bazơ mạnh
 
@@ -26,7 +32,14 @@ Không làm tròn khi tính; UI dùng `toFixed(2)` riêng. Nếu input/solver kh
 - bằng nhau trong tolerance mol đã công bố: `pH=7.00`.
 - `nOH>nH`: `pH=14+log10((nOH-nH)/VT)`.
 
-`Veq=nH/Cb`; stage dùng margin thể tích/tolerance, không so sánh số thực bằng `===`. Reaction hiển thị `H⁺ + OH⁻ → H₂O`.
+`Veq=nH/Cb`; stage dùng margin thể tích/tolerance, không so sánh số thực bằng
+`===`. Tolerance mol tại equivalence là relative tolerance `1e-12 ×
+max(nH,nOH)`; không dùng absolute tolerance đủ lớn để nuốt mất mẫu hợp lệ có
+số mol nhỏ. Vùng `near-equivalence` dùng margin thể tích tương đối `0,1% ×
+Veq`, không dùng minimum tuyệt đối. Reaction hiển thị `H⁺ + OH⁻ → H₂O`.
+
+Curve sắp xếp và loại điểm gần trùng bằng relative volume tolerance `1e-12 ×
+maxVolumeMl`; không dùng absolute tolerance có thể làm mất checkpoint của hệ nhỏ.
 
 ## Axit yếu một nấc–bazơ mạnh
 

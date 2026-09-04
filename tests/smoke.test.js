@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import test from 'node:test';
+import { isPathInsideRoot } from '../scripts/path-security.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const read = (relativePath) => readFileSync(join(root, relativePath), 'utf8');
@@ -38,4 +39,11 @@ test('Phase 1 exposes chemistry without coupling it to DOM or Firebase', () => {
   }
   assert.match(read('src/data/standardCases.js'), /hcl-naoh-equivalence/);
   assert.match(read('src/firebase/index.js'), /deferred-to-phase-4/);
+});
+
+test('Preview path guard is cross-platform and blocks traversal', () => {
+  const previewRoot = resolve(root, 'preview-root');
+  assert.equal(isPathInsideRoot(previewRoot, previewRoot), true);
+  assert.equal(isPathInsideRoot(previewRoot, join(previewRoot, 'assets', 'styles.css')), true);
+  assert.equal(isPathInsideRoot(previewRoot, resolve(previewRoot, '..', 'secret.txt')), false);
 });

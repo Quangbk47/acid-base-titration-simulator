@@ -68,3 +68,33 @@
 - Final merge SHA: `021a8aaf646c955feb93aca9a6a34227b7dd5c7a`.
 - Production deploy: `NO`.
 - Phase 2: `NOT STARTED`.
+
+## 2026-09-04 — Phase 1 chemistry foundation hardening
+
+- Phase: `Phase 1 hardening — DEV PASS; GVHD approved for merge`.
+- Done: làm rõ contract M/L/K; giới hạn 298.15 K; tolerance mol/thể tích
+  theo tỷ lệ; curve tăng dần, không rỗng/gần trùng và có checkpoint bắt buộc;
+  preview path guard đa nền tảng; đồng bộ câu chữ UI tĩnh.
+- Files: `src/chemistry/`, `src/data/standardCases.js`, `scripts/serve.mjs`,
+  `scripts/path-security.mjs`, `tests/`, `index.html`, `src/app.js`,
+  `docs/CHEMISTRY_MODEL.md`, `docs/TEST_CASES.md`.
+- Tests: local developer rerun PASS — lint 17 JavaScript files; format baseline
+  18 files; 16/16 tests PASS gồm CHEM-01/02/05, temperature invalid, mol rất
+  nhỏ, curve checkpoints/dedup/order, tiny-volume curve và preview path guard;
+  `git diff --check` PASS; browser smoke `/` + `/simulate` PASS, CSS/JS load,
+  controls vẫn disabled, không chemistry output giả và không console error.
+- Preview-URL: `http://localhost:4173/` và `http://localhost:4173/simulate`
+  (local only); production deploy: `NO`.
+- Risk: public field names `Va`/`Vb`/`temperature` được giữ để không phá contract,
+  nhưng đơn vị M/L/K nay được ghi rõ; downstream Phase 2 phải chuyển đổi ở boundary.
+- Next: merge PR #1 theo chỉ đạo trực tiếp của GVHD, rồi chạy test/smoke trên
+  `main` và ghi closeout. Không bắt đầu Phase 2 trong đợt này.
+- Branch-SHA: `fix/phase1-chemistry-foundation` /
+  `9162d0c22f28f2d7bd4ea1c78408e03f17e7920a`.
+- DEV review SHA: `d1af2547339b92b04a42e9ef78262c801455c858`.
+- PR: `https://github.com/Quangbk47/acid-base-titration-simulator/pull/1`.
+- GVHD approval: `APPROVED FOR MERGE` — chỉ đạo trực tiếp cho phép merge PR #1.
+- Merge exception record: GVHD cho phép đóng đợt hardening dù chưa có bằng
+  chứng peer run độc lập; trạng thái peer vẫn được giữ nguyên, không suy diễn PASS.
+- Peer run: `PENDING`.
+- PO PASS: `PENDING`.

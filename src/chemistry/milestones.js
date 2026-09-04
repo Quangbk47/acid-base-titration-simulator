@@ -1,12 +1,20 @@
-import { createInputError, isFiniteNumber, mlToL } from './units.js';
+import { createInputError, isFiniteNumber, lToMl } from './units.js';
 
 export const PHENOLPHTHALEIN_START_PH = 8.2;
-export const EQUIVALENCE_MOL_TOLERANCE = 1e-12;
+export const EQUIVALENCE_RELATIVE_MOL_TOLERANCE = 1e-12;
+export const NEAR_EQUIVALENCE_RELATIVE_VOLUME_TOLERANCE = 1e-3;
+
+export const calculateEquivalenceMolTolerance = (acidMoles, baseMoles) => {
+  if (![acidMoles, baseMoles].every(isFiniteNumber) || acidMoles < 0 || baseMoles < 0) {
+    return null;
+  }
+  return Math.max(acidMoles, baseMoles) * EQUIVALENCE_RELATIVE_MOL_TOLERANCE;
+};
 
 export const calculateEquivalenceMl = (input = {}) => {
   const { Ca, Va, Cb } = input ?? {};
   if (![Ca, Va, Cb].every(isFiniteNumber) || Ca <= 0 || Va <= 0 || Cb <= 0) return null;
-  return (Ca * mlToL(Va) * 1000) / Cb;
+  return lToMl((Ca * Va) / Cb);
 };
 
 export const calculateEndpointMl = (input = {}) => {
@@ -15,7 +23,7 @@ export const calculateEndpointMl = (input = {}) => {
   if (equivalenceMl === null || !isFiniteNumber(endpointPh) || endpointPh >= 14) return null;
   const targetOh = 10 ** (endpointPh - 14);
   if (Cb <= targetOh) return null;
-  const numerator = Ca * mlToL(Va) + targetOh * mlToL(Va);
+  const numerator = Ca * Va + targetOh * Va;
   const denominator = Cb - targetOh;
   return (numerator / denominator) * 1000;
 };
@@ -41,10 +49,14 @@ export const classifyStage = ({
   equivalenceMl,
   acidMoles,
   baseMoles,
-  toleranceMol = EQUIVALENCE_MOL_TOLERANCE,
-  nearToleranceMl = Math.max(0.01, equivalenceMl * 0.001),
+  toleranceMol = calculateEquivalenceMolTolerance(acidMoles, baseMoles),
+  nearToleranceMl = equivalenceMl * NEAR_EQUIVALENCE_RELATIVE_VOLUME_TOLERANCE,
 }) => {
-  if (![addedVolumeMl, equivalenceMl, acidMoles, baseMoles].every(isFiniteNumber)) return null;
+  if (
+    ![addedVolumeMl, equivalenceMl, acidMoles, baseMoles, toleranceMol].every(isFiniteNumber)
+  ) {
+    return null;
+  }
   const molDelta = acidMoles - baseMoles;
   if (Math.abs(molDelta) <= toleranceMol) return 'at-equivalence';
   if (Math.abs(addedVolumeMl - equivalenceMl) <= nearToleranceMl) return 'near-equivalence';

@@ -1,5 +1,5 @@
 const ABSOLUTE_ZERO_K = 0;
-const CELSIUS_INPUT_THRESHOLD = 200;
+const SUPPORTED_TEMPERATURE_TOLERANCE_K = 1e-9;
 
 export const STANDARD_TEMPERATURE_C = 25;
 export const STANDARD_TEMPERATURE_K = 298.15;
@@ -33,11 +33,14 @@ export const lToMl = (litres) => {
   return litres * 1000;
 };
 
-export const normalizeTemperatureK = (temperature) => {
-  if (!isFiniteNumber(temperature) || temperature <= ABSOLUTE_ZERO_K) return null;
-  // Public cases may use the convenient 25 °C notation; values >= 200 are K.
-  return temperature < CELSIUS_INPUT_THRESHOLD ? temperature + 273.15 : temperature;
+export const celsiusToKelvin = (temperatureC) => {
+  if (!isFiniteNumber(temperatureC) || temperatureC <= -273.15) return null;
+  return temperatureC + 273.15;
 };
+
+export const isSupportedTemperatureK = (temperatureK) =>
+  isFiniteNumber(temperatureK) &&
+  Math.abs(temperatureK - STANDARD_TEMPERATURE_K) <= SUPPORTED_TEMPERATURE_TOLERANCE_K;
 
 export const validateStrongStrongInput = (input) => {
   if (!input || typeof input !== 'object') {
@@ -59,12 +62,14 @@ export const validateStrongStrongInput = (input) => {
     };
   }
   if (Ca <= 0) fields.Ca = 'Ca phải lớn hơn 0 M.';
-  if (Va <= 0) fields.Va = 'Va phải lớn hơn 0 mL.';
+  if (Va <= 0) fields.Va = 'Va phải lớn hơn 0 L.';
   if (Cb <= 0) fields.Cb = 'Cb phải lớn hơn 0 M.';
   // Zero is valid only for the initial titration state; negative volume is not.
-  if (Vb < 0) fields.Vb = 'Vb không được âm; 0 mL là trạng thái ban đầu.';
+  if (Vb < 0) fields.Vb = 'Vb không được âm; 0 L là trạng thái ban đầu.';
   if (temperature <= ABSOLUTE_ZERO_K) {
-    fields.temperature = 'temperature phải lớn hơn 0 K hoặc lớn hơn -273.15 °C.';
+    fields.temperature = 'temperature phải lớn hơn 0 K.';
+  } else if (!isSupportedTemperatureK(temperature)) {
+    fields.temperature = `Phase 1 chỉ hỗ trợ ${STANDARD_TEMPERATURE_K} K (25 °C).`;
   }
   if (Object.keys(fields).length > 0) {
     return {
@@ -73,19 +78,7 @@ export const validateStrongStrongInput = (input) => {
     };
   }
 
-  const temperatureK = normalizeTemperatureK(temperature);
-  if (!isFiniteNumber(temperatureK)) {
-    return {
-      ok: false,
-      error: createInputError('INVALID_TEMPERATURE', 'temperature không hợp lệ.', {
-        temperature: 'Không thể chuẩn hóa nhiệt độ.',
-      }),
-    };
-  }
-
-  const VaL = mlToL(Va);
-  const VbL = mlToL(Vb);
-  const totalVolumeL = VaL + VbL;
+  const totalVolumeL = Va + Vb;
   if (!(totalVolumeL > 0) || !isFiniteNumber(totalVolumeL)) {
     return {
       ok: false,
@@ -95,6 +88,6 @@ export const validateStrongStrongInput = (input) => {
 
   return {
     ok: true,
-    value: { Ca, Va, VaL, Cb, Vb, VbL, temperature, temperatureK, totalVolumeL },
+    value: { Ca, VaL: Va, Cb, VbL: Vb, temperatureK: temperature, totalVolumeL },
   };
 };

@@ -2,6 +2,7 @@ export { solveStrongStrong } from './strongStrong.js';
 export { generateCurve } from './curve.js';
 export {
   calculateEndpointMl,
+  calculateEquivalenceMolTolerance,
   calculateEquivalenceMl,
   calculateMilestones,
   classifyStage,
@@ -11,7 +12,8 @@ export {
   isFiniteNumber,
   lToMl,
   mlToL,
-  normalizeTemperatureK,
+  celsiusToKelvin,
+  isSupportedTemperatureK,
   validateStrongStrongInput,
 } from './units.js';
 

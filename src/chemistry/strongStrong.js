@@ -1,5 +1,15 @@
-import { createInputError, isFiniteNumber, STANDARD_KW, validateStrongStrongInput } from './units.js';
-import { calculateMilestones, classifyStage, EQUIVALENCE_MOL_TOLERANCE } from './milestones.js';
+import {
+  createInputError,
+  isFiniteNumber,
+  lToMl,
+  STANDARD_KW,
+  validateStrongStrongInput,
+} from './units.js';
+import {
+  calculateEquivalenceMolTolerance,
+  calculateMilestones,
+  classifyStage,
+} from './milestones.js';
 
 const MODEL_VERSION = 'strong-strong-v1';
 const DOMINANT_REACTION = 'H⁺ + OH⁻ → H₂O';
@@ -22,14 +32,20 @@ export const solveStrongStrong = (input) => {
   const validation = validateStrongStrongInput(input);
   if (!validation.ok) return { error: validation.error };
 
-  const { Ca, VaL, Cb, Vb, VbL, totalVolumeL, temperatureK } = validation.value;
+  const { Ca, VaL, Cb, VbL, totalVolumeL, temperatureK } = validation.value;
   const acidMoles = Ca * VaL;
   const baseMoles = Cb * VbL;
+  if (!(acidMoles > 0) || !isFiniteNumber(acidMoles) || !isFiniteNumber(baseMoles)) {
+    return {
+      error: createInputError(
+        'MOLE_CALCULATION_OUT_OF_RANGE',
+        'Input quá nhỏ hoặc quá lớn để tính số mol hữu hạn.',
+        {},
+      ),
+    };
+  }
   const rawDeltaMoles = acidMoles - baseMoles;
-  const toleranceMol = Math.max(
-    EQUIVALENCE_MOL_TOLERANCE,
-    Math.max(acidMoles, baseMoles) * 1e-12,
-  );
+  const toleranceMol = calculateEquivalenceMolTolerance(acidMoles, baseMoles);
   const atEquivalence = Math.abs(rawDeltaMoles) <= toleranceMol;
   const excessMoles = atEquivalence ? 0 : Math.abs(rawDeltaMoles);
   const excessSpecies = atEquivalence ? null : rawDeltaMoles > 0 ? 'H⁺' : 'OH⁻';
@@ -53,9 +69,15 @@ export const solveStrongStrong = (input) => {
   }
   const pH = -Math.log10(hConcentration);
   const pOH = -Math.log10(ohConcentration);
-  const equivalenceMl = (acidMoles / Cb) * 1000;
-  const stage = classifyStage({ addedVolumeMl: Vb, equivalenceMl, acidMoles, baseMoles, toleranceMol });
-  const milestones = calculateMilestones({ Ca, Va: VaL * 1000, Cb });
+  const equivalenceMl = lToMl(acidMoles / Cb);
+  const stage = classifyStage({
+    addedVolumeMl: lToMl(VbL),
+    equivalenceMl,
+    acidMoles,
+    baseMoles,
+    toleranceMol,
+  });
+  const milestones = calculateMilestones({ Ca, Va: VaL, Cb });
   if (milestones.error) return { error: milestones.error };
 
   const chlorideMoles = acidMoles;

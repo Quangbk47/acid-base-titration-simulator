@@ -40,17 +40,18 @@
             <h1 id="home-title">Khám phá đường cong chuẩn độ, từng giọt một.</h1>
             <p class="lead">
               Không gian học tập trực quan cho mô hình chuẩn độ axit–bazơ. Phiên bản
-              baseline hiện tập trung vào cấu trúc giao diện và khả năng truy cập.
+              Chemistry engine HCl–NaOH của Phase 1 đã được kiểm chứng; giao diện
+              mô phỏng vẫn là baseline tĩnh và chưa nối với engine.
             </p>
             <a class="button button-primary" href="/simulate">Vào không gian mô phỏng</a>
           </div>
           <aside class="hero-note" aria-label="Trạng thái phiên bản">
             <span class="note-icon" aria-hidden="true">✦</span>
-            <p class="eyebrow">Phase 0 · Foundation</p>
-            <h2>Sẵn sàng cho nền móng</h2>
+            <p class="eyebrow">Phase 1 · Chemistry foundation</p>
+            <h2>Lõi hóa học đã sẵn sàng</h2>
             <p>
-              Các mô hình hóa học, Firebase và dữ liệu ca chuẩn sẽ được bổ sung ở
-              các phase tiếp theo sau khi có kiểm chứng.
+              HCl–NaOH đã có fixture và test độc lập. Mô phỏng tương tác, đồ thị,
+              chỉ thị màu và Firebase vẫn được giữ ngoài phạm vi hiện tại.
             </p>
           </aside>
         </div>
@@ -66,8 +67,8 @@
           <div class="empty-icon" aria-hidden="true">⊙</div>
           <h3>Ca mô phỏng đang được chuẩn bị</h3>
           <p>
-            Khi chemistry engine được kiểm chứng, các ca HCl–NaOH và CH₃COOH–NaOH
-            sẽ xuất hiện tại đây.
+            Ca HCl–NaOH chỉ xuất hiện tại đây sau khi phần UI Phase 2 được triển khai
+            và kiểm chứng. CH₃COOH–NaOH vẫn thuộc Phase 3.
           </p>
           <a class="button button-secondary" href="/simulate">Xem giao diện mô phỏng</a>
         </div>
@@ -76,10 +77,11 @@
       <section data-view="simulate" aria-labelledby="simulate-title" hidden>
         <div class="page-heading">
           <div>
-            <p class="eyebrow">Guest workspace · Phase 0</p>
+            <p class="eyebrow">Guest workspace · Phase 1 baseline</p>
             <h1 id="simulate-title">Không gian mô phỏng</h1>
             <p class="lead">
-              Đây là khung giao diện tĩnh. Chưa có dữ liệu hóa học hoặc thuật toán pH.
+              Đây là khung giao diện tĩnh. Chemistry engine chưa được nối vào UI và
+              trang này không hiển thị dữ liệu pH giả.
             </p>
           </div>
           <span class="state-badge">Idle · Baseline</span>
@@ -97,7 +99,7 @@
 
             <form class="control-form" aria-describedby="baseline-notice">
               <p id="baseline-notice" class="notice" role="note">
-                Điều khiển sẽ được mở sau khi Phase 1 hoàn tất.
+                Điều khiển sẽ chỉ được mở khi phần mô phỏng Phase 2 được triển khai và test.
               </p>
               <label for="case-selector">Ca chuẩn</label>
               <select id="case-selector" disabled>
@@ -202,7 +204,7 @@
 
     <footer class="site-footer">
       <div class="container footer-inner">
-        <span>Acid–Base Titration Simulator · Phase 0 Foundation</span>
+        <span>Acid–Base Titration Simulator · Phase 1 Chemistry Foundation</span>
         <span>HTML · CSS · JavaScript modules</span>
       </div>
     </footer>
