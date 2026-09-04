@@ -21,3 +21,17 @@
 - Tối đa 50 ca/user, không tự xóa; có tự xóa tài khoản/dữ liệu.
 - Desktop hai nửa thí nghiệm–đồ thị; mobile xếp dọc.
 - Giọt 0,05–0,10 mL; tốc độ Chậm/Vừa/Nhanh chỉ là nhịp; phenolphthalein có hoạt ảnh đúng quy tắc đã chốt.
+
+## 2026-09-04 — Phase 0 implementation baseline
+
+- Trạng thái: `DEV PASS — PO TESTING pending`.
+- Branch: `feature/phase-0-foundation`.
+- SHA: `2b3969a23e39d5a9b64a2b25a87c2c9321a6fe3c` (scaffold commit; checkpoint update will be amended).
+- P0-01…P0-05: hoàn tất scaffold tĩnh, responsive placeholder, accessibility baseline, lint/format/test command, CI và preview local.
+- Files chính: `index.html`, `assets/styles.css`, `src/app.js`, `src/chemistry/`, `src/simulation/`, `src/ui/`, `src/data/`, `src/firebase/`, `scripts/`, `tests/`, `.github/workflows/ci.yml`, `.gitignore`, `LICENSE`, `DEPLOYMENT_TARGETS.md`.
+- Automated evidence: `npm run check` PASS; `git diff --check` PASS; 3 smoke tests PASS.
+- Preview: `http://localhost:4173/` và `http://localhost:4173/simulate`; ảnh baseline: `docs/preview-baseline.svg`.
+- Browser evidence: trang chủ và route `/simulate` load; status `Baseline sẵn sàng`; layout mobile một cột; không có runtime error hiển thị.
+- Scope: không có chemistry solver/pH giả, Firebase/Auth/Firestore, admin, history, production deploy hay thay đổi nội dung khoa học.
+- Risk: Phase 1 vẫn cần chemistry fixtures và kiểm chứng độc lập trước khi mở controls.
+- Next: PO test thủ công baseline; sau PO acceptance có thể bắt đầu Phase 1.

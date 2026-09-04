@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Nền tảng mô phỏng chuẩn độ axit–bazơ tương tác."
+    />
+    <title>Acid–Base Titration Simulator</title>
+    <link rel="stylesheet" href="/assets/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Bỏ qua đến nội dung chính</a>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="/" aria-label="Acid–Base Titration Simulator, trang chủ">
+          <span class="brand-mark" aria-hidden="true">A·B</span>
+          <span>
+            <strong>Acid–Base</strong>
+            <span class="brand-subtitle">Titration Simulator</span>
+          </span>
+        </a>
+        <nav class="primary-nav" aria-label="Điều hướng chính">
+          <a data-route="home" href="/">Thư viện ca</a>
+          <a data-route="simulate" href="/simulate">Mô phỏng</a>
+        </nav>
+        <div id="app-status" class="status-pill" role="status" aria-live="polite">
+          Đang tải ứng dụng…
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content" class="container page-content">
+      <section data-view="home" aria-labelledby="home-title">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">NCKH · Interactive learning</p>
+            <h1 id="home-title">Khám phá đường cong chuẩn độ, từng giọt một.</h1>
+            <p class="lead">
+              Không gian học tập trực quan cho mô hình chuẩn độ axit–bazơ. Phiên bản
+              baseline hiện tập trung vào cấu trúc giao diện và khả năng truy cập.
+            </p>
+            <a class="button button-primary" href="/simulate">Vào không gian mô phỏng</a>
+          </div>
+          <aside class="hero-note" aria-label="Trạng thái phiên bản">
+            <span class="note-icon" aria-hidden="true">✦</span>
+            <p class="eyebrow">Phase 0 · Foundation</p>
+            <h2>Sẵn sàng cho nền móng</h2>
+            <p>
+              Các mô hình hóa học, Firebase và dữ liệu ca chuẩn sẽ được bổ sung ở
+              các phase tiếp theo sau khi có kiểm chứng.
+            </p>
+          </aside>
+        </div>
+
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Published library</p>
+            <h2>Thư viện ca chuẩn</h2>
+          </div>
+          <span class="muted-label">Chưa có ca được xuất bản</span>
+        </div>
+        <div class="empty-state" role="status">
+          <div class="empty-icon" aria-hidden="true">⊙</div>
+          <h3>Ca mô phỏng đang được chuẩn bị</h3>
+          <p>
+            Khi chemistry engine được kiểm chứng, các ca HCl–NaOH và CH₃COOH–NaOH
+            sẽ xuất hiện tại đây.
+          </p>
+          <a class="button button-secondary" href="/simulate">Xem giao diện mô phỏng</a>
+        </div>
+      </section>
+
+      <section data-view="simulate" aria-labelledby="simulate-title" hidden>
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">Guest workspace · Phase 0</p>
+            <h1 id="simulate-title">Không gian mô phỏng</h1>
+            <p class="lead">
+              Đây là khung giao diện tĩnh. Chưa có dữ liệu hóa học hoặc thuật toán pH.
+            </p>
+          </div>
+          <span class="state-badge">Idle · Baseline</span>
+        </div>
+
+        <div class="simulation-layout">
+          <article class="panel experiment-panel" aria-labelledby="experiment-title">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Experiment</p>
+                <h2 id="experiment-title">Thiết lập thí nghiệm</h2>
+              </div>
+              <span class="panel-index">01</span>
+            </div>
+
+            <form class="control-form" aria-describedby="baseline-notice">
+              <p id="baseline-notice" class="notice" role="note">
+                Điều khiển sẽ được mở sau khi Phase 1 hoàn tất.
+              </p>
+              <label for="case-selector">Ca chuẩn</label>
+              <select id="case-selector" disabled>
+                <option>Chưa có ca mô phỏng</option>
+              </select>
+
+              <div class="form-grid">
+                <div>
+                  <label for="analyte">Chất phân tích</label>
+                  <input id="analyte" type="text" placeholder="Chưa cấu hình" disabled />
+                </div>
+                <div>
+                  <label for="titrant">Chất chuẩn</label>
+                  <input id="titrant" type="text" placeholder="Chưa cấu hình" disabled />
+                </div>
+                <div>
+                  <label for="concentration">Nồng độ (M)</label>
+                  <input id="concentration" type="text" placeholder="—" disabled />
+                </div>
+                <div>
+                  <label for="volume">Thể tích (mL)</label>
+                  <input id="volume" type="text" placeholder="—" disabled />
+                </div>
+              </div>
+
+              <div class="control-group" aria-label="Điều khiển mô phỏng">
+                <button class="button button-primary" type="button" disabled>Thêm giọt</button>
+                <button class="button button-secondary" type="button" disabled>Chạy</button>
+                <button class="button button-quiet" type="button" disabled>Đặt lại</button>
+              </div>
+              <div class="control-meta">
+                <span>Giọt: <strong>— mL</strong></span>
+                <span>Tốc độ: <strong>Vừa</strong></span>
+              </div>
+            </form>
+
+            <div class="vessel-stage" aria-label="Khu vực bình và buret, chưa có mô phỏng">
+              <div class="buret" aria-hidden="true">
+                <span class="buret-label">Buret</span>
+                <div class="buret-tube"><span></span></div>
+                <div class="buret-tip"></div>
+              </div>
+              <div class="flask" aria-hidden="true"><span></span></div>
+              <p>Chưa có giọt đang rơi</p>
+            </div>
+          </article>
+
+          <article class="panel graph-panel" aria-labelledby="graph-title">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Visualization</p>
+                <h2 id="graph-title">Đường cong pH–V</h2>
+              </div>
+              <span class="panel-index">02</span>
+            </div>
+            <div class="chart-placeholder" role="img" aria-label="Đồ thị pH theo thể tích, chưa có dữ liệu">
+              <span class="axis-y">pH</span>
+              <span class="axis-x">Thể tích chất chuẩn (mL)</span>
+              <div class="chart-grid-lines" aria-hidden="true"></div>
+              <div class="chart-empty-label">Chưa có dữ liệu mô phỏng</div>
+            </div>
+            <div class="legend" aria-label="Chú giải đồ thị">
+              <span><i class="legend-dot current"></i>Điểm hiện tại</span>
+              <span><i class="legend-dot milestone"></i>Nửa tương đương</span>
+              <span><i class="legend-dot equivalence"></i>Điểm tương đương</span>
+              <span><i class="legend-dot endpoint"></i>Điểm kết thúc</span>
+            </div>
+            <div class="table-wrapper">
+              <table>
+                <caption>Bảng dữ liệu đồ thị</caption>
+                <thead><tr><th scope="col">V (mL)</th><th scope="col">pH</th><th scope="col">Giai đoạn</th></tr></thead>
+                <tbody><tr><td colspan="3">Chưa có dữ liệu mô phỏng.</td></tr></tbody>
+              </table>
+            </div>
+          </article>
+        </div>
+
+        <section class="panel chemistry-panel" aria-labelledby="chemistry-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Chemistry state</p>
+              <h2 id="chemistry-title">Bảng hóa học</h2>
+            </div>
+            <span class="panel-index">03</span>
+          </div>
+          <div class="chemistry-summary">
+            <div class="metric-card"><span>pH hiện tại</span><strong>—</strong><small>Chưa tính</small></div>
+            <div class="metric-card"><span>Tổng thể tích</span><strong>—</strong><small>Chưa tính</small></div>
+            <div class="metric-card"><span>Chất dư</span><strong>—</strong><small>Chưa tính</small></div>
+            <div class="metric-card"><span>Giai đoạn</span><strong>—</strong><small>Chưa tính</small></div>
+          </div>
+          <div class="chemistry-table table-wrapper">
+            <table>
+              <caption>Chi tiết trạng thái hóa học</caption>
+              <thead><tr><th scope="col">Ion / chất</th><th scope="col">Số mol</th><th scope="col">Nồng độ</th><th scope="col">Phản ứng</th></tr></thead>
+              <tbody><tr><td colspan="4">Dữ liệu sẽ hiển thị sau khi chemistry engine được kiểm chứng.</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <span>Acid–Base Titration Simulator · Phase 0 Foundation</span>
+        <span>HTML · CSS · JavaScript modules</span>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/app.js"></script>
+  </body>
+</html>
+

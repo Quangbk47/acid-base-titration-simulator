@@ -2,11 +2,18 @@
 
 ## Phase 0 / Now
 
-- [ ] P0-01 Tạo repo public, thêm docs, `.gitignore`, LICENSE/attribution phù hợp.
-- [ ] P0-02 Tạo HTML/CSS/JS structure đúng ROADMAP section Architecture.
-- [ ] P0-03 Dựng layout placeholder responsive + accessibility baseline.
-- [ ] P0-04 Thiết lập lint/format/test command và CI tối thiểu.
-- [ ] P0-05 Xác nhận Firebase Project ID riêng; tạo `DEPLOYMENT_TARGETS.md`; tạo preview, không production.
+- [x] P0-01 Tạo repo public, thêm docs, `.gitignore`, LICENSE/attribution phù hợp.
+- [x] P0-02 Tạo HTML/CSS/JS structure đúng ROADMAP section Architecture.
+- [x] P0-03 Dựng layout placeholder responsive + accessibility baseline.
+- [x] P0-04 Thiết lập lint/format/test command và CI tối thiểu.
+- [x] P0-05 Firebase Project ID để trống đúng scope; tạo `DEPLOYMENT_TARGETS.md`; tạo preview local, không production.
+
+## Phase 0 evidence
+
+- Branch: `feature/phase-0-foundation`
+- SHA: `2b3969a23e39d5a9b64a2b25a87c2c9321a6fe3c`
+- Tests: `npm run check`, `git diff --check`
+- Preview: `http://localhost:4173/` và `http://localhost:4173/simulate`
 
 ## Phase 1 / Next
 
