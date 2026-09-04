@@ -2,42 +2,49 @@ import { solveStrongStrong } from './strongStrong.js';
 import { createInputError, isFiniteNumber, lToMl, mlToL } from './units.js';
 
 const DEFAULT_STEP_ML = 0.5;
-export const CURVE_VOLUME_TOLERANCE_ML = 1e-9;
-const CURVE_VOLUME_DECIMAL_PLACES = 9;
+export const CURVE_RELATIVE_VOLUME_TOLERANCE = 1e-12;
 
 const normalizeVolumeMl = (volumeMl) =>
-  Number(volumeMl.toFixed(CURVE_VOLUME_DECIMAL_PLACES));
+  Number(volumeMl.toPrecision(15));
 
-const range = (maxVolumeMl, stepMl) => {
+const curveVolumeToleranceMl = (maxVolumeMl) =>
+  Math.max(Math.abs(maxVolumeMl) * CURVE_RELATIVE_VOLUME_TOLERANCE, Number.MIN_VALUE);
+
+const range = (maxVolumeMl, stepMl, toleranceMl) => {
   const values = [];
   const fullSteps = Math.floor(maxVolumeMl / stepMl);
   for (let index = 0; index <= fullSteps; index += 1) {
     const volumeMl = index * stepMl;
     if (volumeMl <= maxVolumeMl) values.push(volumeMl);
   }
-  if (maxVolumeMl > 0 && maxVolumeMl - values.at(-1) > CURVE_VOLUME_TOLERANCE_ML) {
+  if (maxVolumeMl > 0 && maxVolumeMl - values.at(-1) > toleranceMl) {
     values.push(maxVolumeMl);
   }
   return values;
 };
 
-const sortAndDeduplicateVolumes = (volumesMl, criticalVolumesMl) => {
+const sortAndDeduplicateVolumes = (volumesMl, criticalVolumesMl, toleranceMl) => {
   const canonical = volumesMl.map((volumeMl) => {
     const critical = criticalVolumesMl.find(
-      (candidate) => Math.abs(candidate - volumeMl) <= CURVE_VOLUME_TOLERANCE_ML,
+      (candidate) => Math.abs(candidate - volumeMl) <= toleranceMl,
     );
     return normalizeVolumeMl(critical ?? volumeMl);
   });
   canonical.sort((left, right) => left - right);
   return canonical.filter(
     (volumeMl, index) =>
-      index === 0 || volumeMl - canonical[index - 1] > CURVE_VOLUME_TOLERANCE_ML,
+      index === 0 || volumeMl - canonical[index - 1] > toleranceMl,
   );
 };
 
 export const generateCurve = (input, options = {}) => {
   if (!input || typeof input !== 'object') {
     return { error: createInputError('INVALID_INPUT', 'Input phải là một object.', {}) };
+  }
+  if (!options || typeof options !== 'object' || Array.isArray(options)) {
+    return {
+      error: createInputError('INVALID_CURVE_OPTIONS', 'Curve options phải là một object.', {}),
+    };
   }
   const current = solveStrongStrong(input);
   if (current.error) return current;
@@ -70,6 +77,7 @@ export const generateCurve = (input, options = {}) => {
   if (!isFiniteNumber(stepMl) || stepMl <= 0) {
     return { error: createInputError('INVALID_CURVE_STEP', 'stepMl phải lớn hơn 0.', {}) };
   }
+  const volumeToleranceMl = curveVolumeToleranceMl(maxVolumeMl);
   const milestoneVolumesMl = [
     0,
     initial.milestones.equivalenceMl * 0.25,
@@ -78,10 +86,14 @@ export const generateCurve = (input, options = {}) => {
     initial.milestones.equivalenceMl,
     initial.milestones.equivalenceMl * 1.01,
     initial.milestones.equivalenceMl * 2,
-  ].filter((volumeMl) => volumeMl <= maxVolumeMl);
+  ].filter((volumeMl) => volumeMl - maxVolumeMl <= volumeToleranceMl);
   const volumesMl = sortAndDeduplicateVolumes(
-    [...(requestedVolumes ?? range(maxVolumeMl, stepMl)), ...milestoneVolumesMl],
+    [
+      ...(requestedVolumes ?? range(maxVolumeMl, stepMl, volumeToleranceMl)),
+      ...milestoneVolumesMl,
+    ],
     milestoneVolumesMl,
+    volumeToleranceMl,
   );
   if (
     !Array.isArray(volumesMl) ||
@@ -89,7 +101,7 @@ export const generateCurve = (input, options = {}) => {
       (volume) =>
         !isFiniteNumber(volume) ||
         volume < 0 ||
-        volume - maxVolumeMl > CURVE_VOLUME_TOLERANCE_ML,
+        volume - maxVolumeMl > volumeToleranceMl,
     )
   ) {
     return { error: createInputError('INVALID_CURVE_VOLUMES', 'volumesMl chứa thể tích không hợp lệ.', {}) };

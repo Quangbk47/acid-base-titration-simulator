@@ -38,6 +38,9 @@ max(nH,nOH)`; không dùng absolute tolerance đủ lớn để nuốt mất m�
 số mol nhỏ. Vùng `near-equivalence` dùng margin thể tích tương đối `0,1% ×
 Veq`, không dùng minimum tuyệt đối. Reaction hiển thị `H⁺ + OH⁻ → H₂O`.
 
+Curve sắp xếp và loại điểm gần trùng bằng relative volume tolerance `1e-12 ×
+maxVolumeMl`; không dùng absolute tolerance có thể làm mất checkpoint của hệ nhỏ.
+
 ## Axit yếu một nấc–bazơ mạnh
 
 Không chỉ dùng Henderson–Hasselbalch. Sau khi thêm NaOH, `CT=nHA0/VT`, `CNa=nNaOH/VT`, `h=[H+]`; giải nghiệm dương:

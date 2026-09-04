@@ -135,7 +135,7 @@ test('CHEM-02: generated volumes are non-empty, sorted, unique, and include chec
   const volumes = curve.points.map(({ volumeMl }) => volumeMl);
   for (let index = 1; index < volumes.length; index += 1) {
     assert.ok(volumes[index] > volumes[index - 1]);
-    assert.ok(volumes[index] - volumes[index - 1] > 1e-9);
+    assert.ok(volumes[index] - volumes[index - 1] > volumes.at(-1) * 1e-12);
   }
   for (const checkpoint of [0, 6.25, 12.5, 24.75, 25, 25.25, 50]) {
     assert.ok(volumes.includes(checkpoint), `missing ${checkpoint} mL checkpoint`);
@@ -151,4 +151,28 @@ test('CHEM-02: requested curve volumes are sorted and near-duplicates are remove
   assert.equal(curve.error, undefined);
   const volumes = curve.points.map(({ volumeMl }) => volumeMl);
   assert.deepEqual(volumes, [0, 0.3, 6.25, 12.5, 24.75, 25, 25.25]);
+});
+
+test('CHEM-02/05: curve volume tolerance preserves tiny valid titrations', () => {
+  const input = {
+    Ca: 0.1,
+    Va: 1e-12,
+    Cb: 0.1,
+    Vb: 0,
+    temperature: 298.15,
+  };
+  const curve = generateCurve(input);
+  assert.equal(curve.error, undefined);
+  assert.deepEqual(
+    curve.points.map(({ volumeMl }) => volumeMl),
+    [0, 2.5e-10, 5e-10, 9.9e-10, 1e-9, 1.01e-9, 2e-9],
+  );
+});
+
+test('CHEM-05: malformed curve options return coded errors', () => {
+  const input = inputFor('hcl-naoh-initial');
+  for (const options of [null, [], 'invalid']) {
+    const result = generateCurve(input, options);
+    assert.equal(result.error?.code, 'INVALID_CURVE_OPTIONS');
+  }
 });
