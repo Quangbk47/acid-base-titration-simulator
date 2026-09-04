@@ -26,7 +26,7 @@
 
 - Trạng thái: `DEV PASS — PO TESTING pending`.
 - Branch: `feature/phase-0-foundation`.
-- SHA: `2b3969a23e39d5a9b64a2b25a87c2c9321a6fe3c` (scaffold commit; checkpoint update will be amended).
+- SHA implementation: `54e665c179ba3520339b27d941b5da3e099fce8e`.
 - P0-01…P0-05: hoàn tất scaffold tĩnh, responsive placeholder, accessibility baseline, lint/format/test command, CI và preview local.
 - Files chính: `index.html`, `assets/styles.css`, `src/app.js`, `src/chemistry/`, `src/simulation/`, `src/ui/`, `src/data/`, `src/firebase/`, `scripts/`, `tests/`, `.github/workflows/ci.yml`, `.gitignore`, `LICENSE`, `DEPLOYMENT_TARGETS.md`.
 - Automated evidence: `npm run check` PASS; `git diff --check` PASS; 3 smoke tests PASS.

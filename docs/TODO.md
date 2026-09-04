@@ -11,7 +11,7 @@
 ## Phase 0 evidence
 
 - Branch: `feature/phase-0-foundation`
-- SHA: `2b3969a23e39d5a9b64a2b25a87c2c9321a6fe3c`
+- SHA implementation: `54e665c179ba3520339b27d941b5da3e099fce8e`
 - Tests: `npm run check`, `git diff --check`
 - Preview: `http://localhost:4173/` và `http://localhost:4173/simulate`
 

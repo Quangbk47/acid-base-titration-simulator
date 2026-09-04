@@ -12,7 +12,7 @@
 - Preview local: `http://localhost:4173/` và `http://localhost:4173/simulate`.
 - Tests: `npm run check` và `git diff --check` PASS.
 - Ảnh baseline: `docs/preview-baseline.svg`.
-- SHA: `2b3969a23e39d5a9b64a2b25a87c2c9321a6fe3c` (scaffold commit; checkpoint update will be amended).
+- SHA implementation: `54e665c179ba3520339b27d941b5da3e099fce8e`.
 
 ## Việc được phép tiếp theo
 
