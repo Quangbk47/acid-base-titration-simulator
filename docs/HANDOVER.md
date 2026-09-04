@@ -2,7 +2,7 @@
 
 ## Baseline
 
-- Current phase: `Phase 1 hardening — MERGED / CLOSED by GVHD direction`.
+- Current phase: `Phase 1 hardening — MERGED / CLOSED; PO PASS; GVHD approved`.
 - Quyết định sản phẩm/khoa học/Firebase đã chốt trong README và docs.
 - Repo GitHub và code baseline đã được xác nhận; Firebase Project ID và production URL vẫn để trống.
 
@@ -12,8 +12,9 @@
 - Merge SHA: `87ba1d17b30e3d383d4bc87046c8d79f57ee70f0`.
 - Post-merge tests: lint/format PASS; 16/16 tests PASS; local browser smoke PASS.
 - GitHub Actions on merge SHA: `PASS`.
-- GVHD approval: `APPROVED`.
-- Peer run: `PENDING`; PO PASS: `PENDING`.
+- GVHD approval: `PASS / APPROVED` — GVHD đồng thời là PO và đã trực tiếp
+  phê duyệt merge PR #1.
+- Peer run: `PENDING`; PO PASS: `PASS`.
 - Production deploy: `NO`; Phase 2: `NOT STARTED`.
 
 ## Bằng chứng Phase 0

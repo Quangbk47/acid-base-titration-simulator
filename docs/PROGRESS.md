@@ -71,7 +71,7 @@
 
 ## 2026-09-04 — Phase 1 chemistry foundation hardening
 
-- Phase: `Phase 1 hardening — DEV PASS; GVHD approved for merge`.
+- Phase: `Phase 1 hardening — DEV PASS; PO PASS; GVHD approved for merge`.
 - Done: làm rõ contract M/L/K; giới hạn 298.15 K; tolerance mol/thể tích
   theo tỷ lệ; curve tăng dần, không rỗng/gần trùng và có checkpoint bắt buộc;
   preview path guard đa nền tảng; đồng bộ câu chữ UI tĩnh.
@@ -93,11 +93,12 @@
   `9162d0c22f28f2d7bd4ea1c78408e03f17e7920a`.
 - DEV review SHA: `d1af2547339b92b04a42e9ef78262c801455c858`.
 - PR: `https://github.com/Quangbk47/acid-base-titration-simulator/pull/1`.
-- GVHD approval: `APPROVED FOR MERGE` — chỉ đạo trực tiếp cho phép merge PR #1.
+- GVHD approval: `PASS / APPROVED FOR MERGE` — GVHD đồng thời là PO và đã
+  trực tiếp cho phép merge PR #1.
 - Merge exception record: GVHD cho phép đóng đợt hardening dù chưa có bằng
   chứng peer run độc lập; trạng thái peer vẫn được giữ nguyên, không suy diễn PASS.
 - Peer run: `PENDING`.
-- PO PASS: `PENDING`.
+- PO PASS: `PASS` — GVHD đồng thời là PO và đã trực tiếp phê duyệt merge PR #1.
 
 ## 2026-09-04 — Phase 1 hardening merged / closed by GVHD direction
 
@@ -114,11 +115,12 @@
   (local smoke only; server đã dừng).
 - PR: `https://github.com/Quangbk47/acid-base-titration-simulator/pull/1`.
 - Merge SHA: `87ba1d17b30e3d383d4bc87046c8d79f57ee70f0`.
-- GVHD approval: `APPROVED` — cho phép merge và đóng đợt hardening.
+- GVHD approval: `PASS / APPROVED` — GVHD đồng thời là PO, đã cho phép merge
+  và đóng đợt hardening.
 - Peer run: `PENDING` — chưa có bằng chứng chạy độc lập; không ghi PASS.
-- PO PASS: `PENDING` — không tự suy diễn từ DEV test hoặc GVHD merge direction.
+- PO PASS: `PASS` — GVHD đồng thời là PO và đã trực tiếp phê duyệt merge PR #1.
 - Production deploy: `NO`.
-- Risk: peer run/PO evidence vẫn thiếu nhưng không chặn closeout theo chỉ đạo
-  trực tiếp của GVHD; boundary Phase 2 sau này phải giữ contract M/L/K.
+- Risk: peer run độc lập vẫn chưa có bằng chứng nhưng không chặn closeout đã
+  được GVHD/PO phê duyệt; boundary Phase 2 sau này phải giữ contract M/L/K.
 - Next: Phase 2 vẫn `NOT STARTED`; trước khi code phải đọc lại ROADMAP,
   PROJECT_RULES, CHEMISTRY_MODEL, UI_UX_SPEC và TEST_CASES.
