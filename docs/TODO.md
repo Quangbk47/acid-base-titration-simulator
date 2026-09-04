@@ -16,7 +16,7 @@
 - Tests: `npm run check`, `git diff --check`
 - Preview: `http://localhost:4173/` và `http://localhost:4173/simulate`
 
-## Phase 1 / DEV PASS — chờ PO testing
+## Phase 1 / CLOSED / DONE — PO PASS
 
 - [x] P1-01 Units/input validation.
 - [x] P1-02 HCl–NaOH solver + species/stages/milestones.
@@ -25,7 +25,7 @@
 
 Evidence: `feature/phase-1-hcl-naoh-chemistry`; `npm run check`,
 `git diff --check`; fixture `tests/fixtures/phase1Reference.js`.
-PO vẫn cần chạy checklist Phase 1 trước khi đóng phase.
+PO acceptance: PASS. Phase 1 đã đóng; Phase 2 vẫn `NOT STARTED`.
 
 ## Later
 

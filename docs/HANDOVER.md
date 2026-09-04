@@ -2,7 +2,7 @@
 
 ## Baseline
 
-- Current phase: `DEV PASS — Phase 1; chờ PO testing`.
+- Current phase: `DONE — Phase 1; PO PASS`.
 - Quyết định sản phẩm/khoa học/Firebase đã chốt trong README và docs.
 - Repo GitHub và code baseline đã được xác nhận; Firebase Project ID và production URL vẫn để trống.
 
@@ -21,10 +21,11 @@
 - Reference: `tests/fixtures/phase1Reference.js`; các mốc ban đầu, 25%, 50%, 99%, 100%, 101% và dư lớn.
 - Preview/deploy: không có preview UI mới; production `NO`.
 - SHA implementation: `4bc9f0c6849b3c407b13a703cbd98bf728669b5f`.
+- Merge SHA: ghi sau thao tác merge vào `main`.
 
 ## Việc được phép tiếp theo
 
-PO testing/acceptance cho Phase 1. Chỉ sau khi PO PASS mới bắt đầu Phase 2.
+Phase 2 là bước tiếp theo nhưng hiện vẫn `NOT STARTED`; chỉ bắt đầu theo chỉ đạo mới.
 
 ## Cấm mở rộng
 
