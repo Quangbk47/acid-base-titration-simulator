@@ -11,7 +11,7 @@ const route = initNavigation({
 
 const status = document.querySelector('#app-status');
 if (status) {
-  status.textContent = 'Baseline sẵn sàng';
+  status.textContent = 'Phase 1 · UI tĩnh';
   status.dataset.state = baselineState.screen;
 }
 

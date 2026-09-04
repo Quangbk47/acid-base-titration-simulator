@@ -1,6 +1,7 @@
 import { createServer } from 'node:http';
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { extname, join, normalize, resolve } from 'node:path';
+import { isPathInsideRoot } from './path-security.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const port = Number(process.env.PORT ?? 4173);
@@ -15,8 +16,7 @@ const contentTypes = {
 const server = createServer((request, response) => {
   const requestPath = decodeURIComponent(new URL(request.url ?? '/', `http://${request.headers.host ?? 'localhost'}`).pathname);
   const candidate = resolve(root, `.${normalize(requestPath)}`);
-  const isInsideRoot = candidate === root || candidate.startsWith(root + '\\');
-  if (!isInsideRoot) {
+  if (!isPathInsideRoot(root, candidate)) {
     response.writeHead(403);
     response.end('Forbidden');
     return;

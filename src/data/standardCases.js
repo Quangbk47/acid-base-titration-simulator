@@ -1,12 +1,23 @@
-// Public, verified Phase 1 cases. Expected values live in tests/fixtures and are
-// intentionally not generated from the solver, so tests retain an independent reference.
+import { celsiusToKelvin, mlToL } from '../chemistry/units.js';
+
+// Boundary-facing case data uses the units shown in the UI. Convert it explicitly
+// before calling the internal solver, whose contract is M, L and K.
 export const standardCases = Object.freeze([
-  Object.freeze({ id: 'hcl-naoh-initial', label: 'Ban đầu', Ca: 0.1, Va: 25, Cb: 0.1, Vb: 0, temperature: 25 }),
-  Object.freeze({ id: 'hcl-naoh-25-percent', label: '25% Veq', Ca: 0.1, Va: 25, Cb: 0.1, Vb: 6.25, temperature: 25 }),
-  Object.freeze({ id: 'hcl-naoh-50-percent', label: '50% Veq', Ca: 0.1, Va: 25, Cb: 0.1, Vb: 12.5, temperature: 25 }),
-  Object.freeze({ id: 'hcl-naoh-99-percent', label: '99% Veq', Ca: 0.1, Va: 25, Cb: 0.1, Vb: 24.75, temperature: 25 }),
-  Object.freeze({ id: 'hcl-naoh-equivalence', label: '100% Veq', Ca: 0.1, Va: 25, Cb: 0.1, Vb: 25, temperature: 25 }),
-  Object.freeze({ id: 'hcl-naoh-101-percent', label: '101% Veq', Ca: 0.1, Va: 25, Cb: 0.1, Vb: 25.25, temperature: 25 }),
-  Object.freeze({ id: 'hcl-naoh-large-excess', label: 'Dư lớn', Ca: 0.1, Va: 25, Cb: 0.1, Vb: 50, temperature: 25 }),
+  Object.freeze({ id: 'hcl-naoh-initial', label: 'Ban đầu', CaM: 0.1, VaMl: 25, CbM: 0.1, VbMl: 0, temperatureC: 25 }),
+  Object.freeze({ id: 'hcl-naoh-25-percent', label: '25% Veq', CaM: 0.1, VaMl: 25, CbM: 0.1, VbMl: 6.25, temperatureC: 25 }),
+  Object.freeze({ id: 'hcl-naoh-50-percent', label: '50% Veq', CaM: 0.1, VaMl: 25, CbM: 0.1, VbMl: 12.5, temperatureC: 25 }),
+  Object.freeze({ id: 'hcl-naoh-99-percent', label: '99% Veq', CaM: 0.1, VaMl: 25, CbM: 0.1, VbMl: 24.75, temperatureC: 25 }),
+  Object.freeze({ id: 'hcl-naoh-equivalence', label: '100% Veq', CaM: 0.1, VaMl: 25, CbM: 0.1, VbMl: 25, temperatureC: 25 }),
+  Object.freeze({ id: 'hcl-naoh-101-percent', label: '101% Veq', CaM: 0.1, VaMl: 25, CbM: 0.1, VbMl: 25.25, temperatureC: 25 }),
+  Object.freeze({ id: 'hcl-naoh-large-excess', label: 'Dư lớn', CaM: 0.1, VaMl: 25, CbM: 0.1, VbMl: 50, temperatureC: 25 }),
 ]);
+
+export const standardCaseToSolverInput = ({ CaM, VaMl, CbM, VbMl, temperatureC }) =>
+  Object.freeze({
+    Ca: CaM,
+    Va: mlToL(VaMl),
+    Cb: CbM,
+    Vb: mlToL(VbMl),
+    temperature: celsiusToKelvin(temperatureC),
+  });
 

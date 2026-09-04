@@ -8,10 +8,13 @@
 | CHEM-02 | 25/50/99/100/101% Veq, dư lớn | curve/stage/excess đổi đúng, không nhảy sai |
 | CHEM-03 | CH3COOH–NaOH đầu/buffer/half/eq | solver hội tụ; half ≈ pKa; bảng reference pass |
 | CHEM-04 | HCl–NH3 khi mở scope | solver Kb/reference pass |
-| CHEM-05 | 0/âm/NaN/Ka sai/drop sai | chặn, message rõ, không crash |
+| CHEM-05 | 0/âm/NaN/nhiệt độ khác 298,15 K/Ka sai/drop sai | chặn, message rõ, không crash |
 | CHEM-06 | PP HCl–NaOH | hồng local pre-eq 0,5s; eq không màu; post-eq hồng bền |
 
-Mỗi fixture lưu input, output expected, tolerance, nguồn/tính tay. Không dùng snapshot UI thay chemistry assertion.
+Mỗi fixture lưu input, output expected, tolerance, nguồn/tính tay. Phase 1 có
+thêm edge case số mol rất nhỏ để tolerance không phân loại nhầm equivalence;
+curve phải không rỗng, tăng dần, không có volume gần trùng và chứa các checkpoint
+0/25/50/99/100/101% cùng ca dư lớn. Không dùng snapshot UI thay chemistry assertion.
 
 ## Simulation/UI
 

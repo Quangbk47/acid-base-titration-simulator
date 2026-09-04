@@ -16,6 +16,7 @@ const requiredFiles = [
   'src/simulation/state.js',
   'src/ui/navigation.js',
   'scripts/lint.mjs',
+  'scripts/path-security.mjs',
   'scripts/serve.mjs',
   'tests/smoke.test.js',
   'tests/chemistry.test.js',
