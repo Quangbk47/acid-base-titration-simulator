@@ -6,6 +6,10 @@ const requiredFiles = [
   'index.html',
   'assets/styles.css',
   'src/app.js',
+  'src/chemistry/units.js',
+  'src/chemistry/strongStrong.js',
+  'src/chemistry/milestones.js',
+  'src/chemistry/curve.js',
   'src/chemistry/index.js',
   'src/data/standardCases.js',
   'src/firebase/index.js',
@@ -14,6 +18,8 @@ const requiredFiles = [
   'scripts/lint.mjs',
   'scripts/serve.mjs',
   'tests/smoke.test.js',
+  'tests/chemistry.test.js',
+  'tests/fixtures/phase1Reference.js',
 ];
 let failed = false;
 

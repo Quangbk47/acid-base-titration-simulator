@@ -16,12 +16,16 @@
 - Tests: `npm run check`, `git diff --check`
 - Preview: `http://localhost:4173/` và `http://localhost:4173/simulate`
 
-## Phase 1 / Next
+## Phase 1 / CLOSED / DONE — PO PASS
 
-- [ ] P1-01 Units/input validation.
-- [ ] P1-02 HCl–NaOH solver + species/stages/milestones.
-- [ ] P1-03 Curve generator + standard fixtures.
-- [ ] P1-04 Unit test CHEM-01/02/05 và peer run.
+- [x] P1-01 Units/input validation.
+- [x] P1-02 HCl–NaOH solver + species/stages/milestones.
+- [x] P1-03 Curve generator + standard fixtures.
+- [x] P1-04 Unit test CHEM-01/02/05 và peer run.
+
+Evidence: `feature/phase-1-hcl-naoh-chemistry`; `npm run check`,
+`git diff --check`; fixture `tests/fixtures/phase1Reference.js`.
+PO acceptance: PASS. Phase 1 đã đóng; Phase 2 vẫn `NOT STARTED`.
 
 ## Later
 
