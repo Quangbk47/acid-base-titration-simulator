@@ -27,6 +27,17 @@ Evidence: `feature/phase-1-hcl-naoh-chemistry`; `npm run check`,
 `git diff --check`; fixture `tests/fixtures/phase1Reference.js`.
 PO acceptance: PASS. Phase 1 đã đóng; Phase 2 vẫn `NOT STARTED`.
 
+## Phase 1 hardening / Review pending
+
+- [x] DEV review lại contract M/L/K, temperature/Kw, tolerance, curve và preview tooling.
+- [x] DEV test 16/16 + lint/format/diff check + local browser smoke.
+- [ ] Thành viên thứ hai chạy lại test và ghi bằng chứng (`Peer run: PENDING`).
+- [ ] PO/GVHD nghiệm thu đợt hardening (`PO PASS: PENDING`).
+- [ ] Merge PR #1 sau khi các gate review thực tế đạt yêu cầu.
+
+Evidence: branch `fix/phase1-chemistry-foundation`, PR #1 và `docs/PROGRESS.md`.
+Không tick ba mục review/PO/merge nếu chưa có bằng chứng thật.
+
 ## Later
 
 - [ ] P2 simulation/UI/PP; P3 weak acid/Guided/report; P4 Firebase learner; P5 Admin; P6 release.

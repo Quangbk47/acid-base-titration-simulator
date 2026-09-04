@@ -25,7 +25,10 @@
 
 ## Việc được phép tiếp theo
 
-Phase 2 là bước tiếp theo nhưng hiện vẫn `NOT STARTED`; chỉ bắt đầu theo chỉ đạo mới.
+Phase 1 chemistry foundation hardening đang ở `DEV PASS` trên branch
+`fix/phase1-chemistry-foundation`, PR #1. Local developer test 16/16 PASS;
+peer run và PO PASS cho đợt hardening vẫn `PENDING`. Việc tiếp theo là review
+chéo và nghiệm thu; không merge hoặc bắt đầu Phase 2 chỉ dựa trên DEV PASS.
 
 ## Cấm mở rộng
 
