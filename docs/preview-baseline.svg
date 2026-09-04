@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Acid–Base Titration Simulator Phase 0 baseline preview</title>
+  <desc id="desc">A static representation of the responsive baseline layout with experiment, chart, and chemistry panels.</desc>
+  <rect width="1200" height="760" fill="#fcfaf5"/>
+  <rect width="1200" height="76" fill="#ffffff" stroke="#dbe8e5"/>
+  <rect x="48" y="19" width="38" height="38" rx="12" fill="#0d7a79"/>
+  <text x="58" y="44" fill="#ffffff" font-family="Arial, sans-serif" font-size="12" font-weight="700">A·B</text>
+  <text x="102" y="36" fill="#17313b" font-family="Arial, sans-serif" font-size="14" font-weight="700">Acid–Base</text>
+  <text x="102" y="51" fill="#5f747b" font-family="Arial, sans-serif" font-size="11">Titration Simulator</text>
+  <text x="825" y="43" fill="#075d60" font-family="Arial, sans-serif" font-size="14">Thư viện ca</text>
+  <text x="960" y="43" fill="#075d60" font-family="Arial, sans-serif" font-size="14">Mô phỏng</text>
+  <rect x="1040" y="25" width="108" height="28" rx="14" fill="#e4f4ee" stroke="#b7ded2"/>
+  <text x="1055" y="43" fill="#075d60" font-family="Arial, sans-serif" font-size="11">Baseline sẵn sàng</text>
+  <text x="48" y="124" fill="#0d7a79" font-family="Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="2">GUEST WORKSPACE · PHASE 0</text>
+  <text x="48" y="168" fill="#17313b" font-family="Arial, sans-serif" font-size="44" font-weight="700">Không gian mô phỏng</text>
+  <text x="48" y="198" fill="#5f747b" font-family="Arial, sans-serif" font-size="16">Khung giao diện tĩnh, chưa có dữ liệu hóa học hoặc thuật toán pH.</text>
+  <rect x="48" y="236" width="528" height="366" rx="20" fill="#ffffff" stroke="#dbe8e5"/>
+  <text x="72" y="274" fill="#0d7a79" font-family="Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="2">EXPERIMENT</text>
+  <text x="72" y="305" fill="#17313b" font-family="Arial, sans-serif" font-size="24" font-weight="700">Thiết lập thí nghiệm</text>
+  <rect x="72" y="331" width="480" height="46" rx="8" fill="#fff8ed" stroke="#d9964b"/>
+  <text x="86" y="359" fill="#765831" font-family="Arial, sans-serif" font-size="12">Điều khiển sẽ được mở sau khi Phase 1 hoàn tất.</text>
+  <rect x="72" y="397" width="480" height="42" rx="8" fill="#f8fbfa" stroke="#dbe8e5"/>
+  <text x="86" y="423" fill="#5f747b" font-family="Arial, sans-serif" font-size="12">Chưa có ca mô phỏng</text>
+  <rect x="72" y="464" width="112" height="40" rx="9" fill="#0d7a79"/><text x="91" y="489" fill="#fff" font-family="Arial, sans-serif" font-size="12" font-weight="700">Thêm giọt</text>
+  <rect x="192" y="464" width="88" height="40" rx="9" fill="#e4f4ee"/><text x="220" y="489" fill="#075d60" font-family="Arial, sans-serif" font-size="12" font-weight="700">Chạy</text>
+  <rect x="288" y="464" width="96" height="40" rx="9" fill="#fff" stroke="#dbe8e5"/><text x="308" y="489" fill="#5f747b" font-family="Arial, sans-serif" font-size="12" font-weight="700">Đặt lại</text>
+  <text x="72" y="567" fill="#5f747b" font-family="Arial, sans-serif" font-size="12">Chưa có giọt đang rơi</text>
+  <rect x="596" y="236" width="556" height="366" rx="20" fill="#ffffff" stroke="#dbe8e5"/>
+  <text x="620" y="274" fill="#0d7a79" font-family="Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="2">VISUALIZATION</text>
+  <text x="620" y="305" fill="#17313b" font-family="Arial, sans-serif" font-size="24" font-weight="700">Đường cong pH–V</text>
+  <rect x="620" y="331" width="508" height="190" rx="14" fill="#fbfdfc" stroke="#dbe8e5"/>
+  <path d="M655 366V488H1092M655 396H1092M655 426H1092M655 456H1092M764 366V488M873 366V488M982 366V488" fill="none" stroke="#dbe8e5"/>
+  <text x="828" y="428" fill="#5f747b" font-family="Arial, sans-serif" font-size="13">Chưa có dữ liệu mô phỏng</text>
+  <rect x="48" y="626" width="1104" height="92" rx="20" fill="#ffffff" stroke="#dbe8e5"/>
+  <text x="72" y="663" fill="#0d7a79" font-family="Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="2">CHEMISTRY STATE</text>
+  <text x="72" y="692" fill="#17313b" font-family="Arial, sans-serif" font-size="20" font-weight="700">Bảng hóa học · Chưa tính</text>
+</svg>
+

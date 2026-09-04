@@ -2,13 +2,21 @@
 
 ## Baseline
 
-- Current phase: `PLANNED — Phase 0`.
+- Current phase: `DONE — Phase 0; PO PASS`.
 - Quyết định sản phẩm/khoa học/Firebase đã chốt trong README và docs.
-- Chưa có repo GitHub, Firebase Project ID, code, preview hay production URL được xác nhận trong checkpoint này.
+- Repo GitHub và code baseline đã được xác nhận; Firebase Project ID và production URL vẫn để trống.
+
+## Bằng chứng Phase 0
+
+- Branch: `feature/phase-0-foundation`.
+- Preview local: `http://localhost:4173/` và `http://localhost:4173/simulate`.
+- Tests: `npm run check` và `git diff --check` PASS.
+- Ảnh baseline: `docs/preview-baseline.svg`.
+- SHA implementation: `54e665c179ba3520339b27d941b5da3e099fce8e`.
 
 ## Việc được phép tiếp theo
 
-Sau khi PO cung cấp/xác nhận repo và Firebase Project ID riêng: thực hiện **P0-01 đến P0-05**, chỉ Phase 0. Đọc ROADMAP, PROJECT_RULES, UI_UX_SPEC, TEST_CASES trước khi sửa.
+Phase 1 là bước tiếp theo nhưng **chưa bắt đầu**. Khi có chỉ đạo bắt đầu, thực hiện **P1-01 đến P1-04**, chỉ chemistry engine HCl–NaOH. Đọc ROADMAP, PROJECT_RULES, CHEMISTRY_MODEL và TEST_CASES trước khi sửa.
 
 ## Cấm mở rộng
 
