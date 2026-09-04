@@ -74,7 +74,12 @@ h3 { margin-bottom: 8px; font-size: 1.1rem; }
 .panel-index { color: #9cb5b3; font-size: 12px; font-weight: 800; }
 .notice { padding: 11px 13px; border-left: 3px solid var(--gold); color: #765831; background: #fff8ed; font-size: 12px; line-height: 1.5; }
 .control-form label { display: block; margin: 0 0 7px; font-size: 12px; font-weight: 750; }
-.control-form select, .control-form input { width: 100%; min-height: 42px; margin-bottom: 16px; padding: 0 11px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: #f8fbfa; }
+.control-form select, .control-form input { width: 100%; min-height: 42px; margin-bottom: 5px; padding: 0 11px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: #f8fbfa; }
+.control-form > select { margin-bottom: 16px; }
+.control-form input[readonly] { color: var(--ink-soft); background: #f1f6f4; }
+.control-form [aria-invalid="true"] { border-color: #b33b46; background: #fff8f8; }
+.field-error { display: block; min-height: 17px; margin-bottom: 6px; color: #a42f3a; font-size: 11px; line-height: 1.4; }
+.form-error { min-height: 18px; margin: 10px 0 0; color: #a42f3a; font-size: 12px; }
 .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; }
 .control-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
 .control-group .button { flex: 1 1 92px; }

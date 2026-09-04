@@ -2,7 +2,7 @@
 
 ## Baseline
 
-- Current phase: `Phase 1 hardening — MERGED / CLOSED; PO PASS; GVHD approved`.
+- Current phase: `Phase 2 input/validation — IN PROGRESS / DEV PASS`.
 - Quyết định sản phẩm/khoa học/Firebase đã chốt trong README và docs.
 - Repo GitHub và code baseline đã được xác nhận; Firebase Project ID và production URL vẫn để trống.
 
@@ -44,10 +44,19 @@
 
 ## Việc được phép tiếp theo
 
-Phase 1 hardening đã đóng theo chỉ đạo GVHD. Main track bắt đầu theo thứ tự
-Phase 2 → Phase 3; Firebase track Phase 4A có thể chạy song song dưới ownership
-của Bắc Hà. Trước khi code phải đọc lại ROADMAP, PROJECT_RULES,
-CHEMISTRY_MODEL, UI_UX_SPEC và TEST_CASES.
+Review lát cắt form/validation trên `feature/phase-2-input-validation`. Sau khi
+được chấp thuận, tiếp tục Phase 2 bằng state + `addDrop` trong phạm vi riêng;
+không gộp animation/chart/PP vào thay đổi nhập liệu này.
+
+## Phase 2 input/validation handover
+
+- Form chỉ mở HCl–NaOH vì đó là hệ duy nhất engine hiện hỗ trợ.
+- UI boundary validate trước, đổi M/mL/°C sang contract M/L/K rồi gọi
+  `solveStrongStrong`; không có công thức pH trùng lặp trong UI.
+- Hiển thị cơ bản: pH, tổng thể tích, ion dư, stage và phản ứng.
+- Automated: lint/format/full suite 22/22 PASS; browser smoke và năm breakpoint
+  không overflow ngang. Không production deploy.
+- Phase 1 peer run: `PENDING`; không thay đổi trạng thái này.
 
 ## Cấm mở rộng
 
