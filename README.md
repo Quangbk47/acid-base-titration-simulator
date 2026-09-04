@@ -32,6 +32,6 @@ Website mô phỏng tương tác phục vụ đề tài NCKH: **xây dựng, ki�
 
 ## Trạng thái
 
-**Phase 0 — DONE (PO PASS).** Baseline HTML/CSS/JavaScript, cấu trúc module,
-responsive placeholder, smoke checks và preview local đã hoàn tất. Chemistry
-engine, Firebase và Phase 1 chưa bắt đầu; production chưa deploy.
+**Phase 1 — DEV PASS (chờ PO testing).** Baseline Phase 0 đã được PO PASS;
+chemistry engine HCl–NaOH thuần, fixture tính tay và test CHEM-01/02/05 đã hoàn
+tất. Firebase và production chưa deploy.

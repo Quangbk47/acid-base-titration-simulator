@@ -43,3 +43,19 @@
 - Merge: branch `feature/phase-0-foundation` được yêu cầu merge vào `main`; merge SHA ghi nhận sau thao tác merge.
 - Production deploy: `NO`.
 - Phase 1: `NOT STARTED`.
+
+## 2026-09-04 — Phase 1 chemistry DEV PASS
+
+- Trạng thái: `DEV PASS — chờ PO testing`; chưa phải `PO PASS`/`DONE`.
+- Branch: `feature/phase-1-hcl-naoh-chemistry`.
+- SHA: ghi sau commit triển khai Phase 1.
+- CHEM-01: PASS — HCl–NaOH bằng M/V, trước/eq/sau, pH/pOH và mol ion dư khớp reference.
+- CHEM-02: PASS — 25%, 50%, 99%, 100%, 101%, dư lớn; curve deterministic và mốc `Veq`/endpoint tách biệt.
+- CHEM-05: PASS — 0/âm/NaN/Infinity/input sai/step curve sai trả lỗi có mã; không NaN/Infinity/chia 0.
+- Files: `src/chemistry/units.js`, `strongStrong.js`, `milestones.js`, `curve.js`, `src/data/standardCases.js`, `tests/fixtures/phase1Reference.js`, `tests/chemistry.test.js`.
+- Automated evidence: `npm run check` PASS (lint 16 JS, format 17 files, 9 tests PASS); `git diff --check` PASS.
+- Reference: 0, 25%, 50%, 99%, 100%, 101% Veq và dư lớn của 0.100 M HCl 25.00 mL / 0.100 M NaOH; `Veq = 25.000 mL`, endpoint PP bắt đầu khoảng `25.000792 mL`.
+- Preview: không tạo preview UI mới; Phase 1 chỉ là engine/test thuần. Không deploy production.
+- Scope: không làm animation, chart UI, indicator UI, Firebase/Auth, Phase 2 hay model axit yếu/HCl–NH₃.
+- Risk/PO note: `temperature` nhận 25 °C hoặc 298.15 K; `Kw=1e-14` theo giả thiết 25 °C của CHEMISTRY_MODEL. `Vb=0` được phép cho trạng thái ban đầu.
+- Next: PO chạy checklist reference và thử import solver độc lập; sau PO acceptance mới mở Phase 2.

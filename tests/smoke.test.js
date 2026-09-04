@@ -30,10 +30,12 @@ test('HTML loads the app as an ES module and exposes accessible baseline regions
   assert.match(html, /data-view="simulate"/);
 });
 
-test('Phase 0 does not ship chemistry calculations or Firebase runtime calls', () => {
-  const app = read('src/app.js');
-  assert.doesNotMatch(app, /firestore|signIn|pH\s*=/i);
-  assert.match(read('src/chemistry/index.js'), /deferred-to-phase-1/);
+test('Phase 1 exposes chemistry without coupling it to DOM or Firebase', () => {
+  assert.match(read('src/chemistry/index.js'), /phase-1-strong-strong-verified/);
+  for (const file of ['src/chemistry/units.js', 'src/chemistry/strongStrong.js', 'src/chemistry/milestones.js', 'src/chemistry/curve.js']) {
+    const source = read(file);
+    assert.doesNotMatch(source, /document|window|firebase|firestore/i, file);
+  }
+  assert.match(read('src/data/standardCases.js'), /hcl-naoh-equivalence/);
   assert.match(read('src/firebase/index.js'), /deferred-to-phase-4/);
-  assert.match(read('src/data/standardCases.js'), /Object\.freeze\(\[\]\)/);
 });
