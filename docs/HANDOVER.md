@@ -26,9 +26,11 @@
 ## Việc được phép tiếp theo
 
 Phase 1 chemistry foundation hardening đang ở `DEV PASS` trên branch
-`fix/phase1-chemistry-foundation`, PR #1. Local developer test 16/16 PASS;
-peer run và PO PASS cho đợt hardening vẫn `PENDING`. Việc tiếp theo là review
-chéo và nghiệm thu; không merge hoặc bắt đầu Phase 2 chỉ dựa trên DEV PASS.
+`fix/phase1-chemistry-foundation`, PR #1. Local developer test 16/16 PASS và
+GVHD đã `APPROVED FOR MERGE` theo chỉ đạo trực tiếp. Peer run và PO PASS cho
+đợt hardening vẫn `PENDING`; việc thiếu peer evidence không được ghi thành PASS.
+Việc tiếp theo là merge PR #1, chạy post-merge checks và ghi closeout. Không bắt
+đầu Phase 2 trong đợt này.
 
 ## Cấm mở rộng
 

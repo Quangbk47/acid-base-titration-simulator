@@ -71,7 +71,7 @@
 
 ## 2026-09-04 — Phase 1 chemistry foundation hardening
 
-- Phase: `Phase 1 hardening — DEV PASS; review pending`.
+- Phase: `Phase 1 hardening — DEV PASS; GVHD approved for merge`.
 - Done: làm rõ contract M/L/K; giới hạn 298.15 K; tolerance mol/thể tích
   theo tỷ lệ; curve tăng dần, không rỗng/gần trùng và có checkpoint bắt buộc;
   preview path guard đa nền tảng; đồng bộ câu chữ UI tĩnh.
@@ -87,11 +87,14 @@
   (local only); production deploy: `NO`.
 - Risk: public field names `Va`/`Vb`/`temperature` được giữ để không phá contract,
   nhưng đơn vị M/L/K nay được ghi rõ; downstream Phase 2 phải chuyển đổi ở boundary.
-- Next: PR #1 đang mở vào `main`; yêu cầu thành viên thứ hai chạy lại test và
-  PO/GVHD nghiệm thu trước mọi quyết định merge hoặc chuyển Phase 2.
+- Next: merge PR #1 theo chỉ đạo trực tiếp của GVHD, rồi chạy test/smoke trên
+  `main` và ghi closeout. Không bắt đầu Phase 2 trong đợt này.
 - Branch-SHA: `fix/phase1-chemistry-foundation` /
   `9162d0c22f28f2d7bd4ea1c78408e03f17e7920a`.
 - DEV review SHA: `d1af2547339b92b04a42e9ef78262c801455c858`.
 - PR: `https://github.com/Quangbk47/acid-base-titration-simulator/pull/1`.
+- GVHD approval: `APPROVED FOR MERGE` — chỉ đạo trực tiếp cho phép merge PR #1.
+- Merge exception record: GVHD cho phép đóng đợt hardening dù chưa có bằng
+  chứng peer run độc lập; trạng thái peer vẫn được giữ nguyên, không suy diễn PASS.
 - Peer run: `PENDING`.
 - PO PASS: `PENDING`.
