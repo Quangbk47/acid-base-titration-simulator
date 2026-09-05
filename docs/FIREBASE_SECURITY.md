@@ -23,3 +23,13 @@ Google Sign-In tùy chọn; guest chỉ đọc content published. Role source of
 ## Deploy
 
 Rules deploy là task riêng: review + emulator evidence + đúng Project ID. Không deploy Hosting/Rules cùng lúc chỉ vì tiện. Client Firebase config là public config; service account/private key/admin token không được xuất hiện trong repo/log/ảnh.
+
+## Phase 4A baseline
+
+- Phase 4A được phép viết Rules/emulator baseline song song với Phase 2–3.
+- Không wildcard access để test cho nhanh.
+- Client không tự đổi role.
+- Không service account/private key/admin token trong repo.
+- Rules deploy là task riêng.
+- Emulator evidence phải được ghi trước DEV PASS.
+- Không production Rules deploy nếu chưa có review và PO approval.

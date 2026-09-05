@@ -1,17 +1,23 @@
 # DEPLOYMENT TARGETS
 
-## Phase 0 status
+Firebase/Deployment Owner: **Bắc Hà**
 
-No Firebase Hosting target is configured in Phase 0. This file intentionally keeps
-the deployment values empty until the group confirms a dedicated Firebase project.
+Các giá trị Firebase chỉ được điền sau khi triển khai thật vào project riêng của
+repo. Production luôn cần PO approval.
 
-| Target | Project ID | URL | Status |
-|---|---|---|---|
-| Preview |  | `http://localhost:4173` | Local static preview |
-| Production |  |  | Not configured |
+| Target | Project ID | Hosting Site | URL | Owner | Last deployed SHA | Status |
+|---|---|---|---|---|---|---|
+| Local preview | N/A | N/A | `http://localhost:4173` | Nhóm phát triển | N/A | Available locally |
+| Firebase preview | TBD | TBD | TBD | Bắc Hà | TBD | Not deployed |
+| Production | TBD | TBD | TBD | Bắc Hà | TBD | **NO DEPLOY — PO approval required** |
 
-## Confirmation required before Firebase work
+## Rollback record
 
-- Firebase Project ID: **TBD — must be a dedicated project for this group**
-- Hosting/Rules deployment: **out of Phase 0 scope**
+- Deployed SHA: `TBD`
+- Project ID: `TBD`
+- Hosting Site: `TBD`
+- URL: `TBD`
+- Command: `TBD`
+- Rollback SHA: `TBD`
+- Người thực hiện: `TBD — Bắc Hà khi triển khai thật`
 
