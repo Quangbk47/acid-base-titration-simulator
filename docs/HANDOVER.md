@@ -2,9 +2,17 @@
 
 ## Baseline
 
-- Current phase: `Phase 2 input/validation — IN PROGRESS / DEV PASS`.
+- Current phase: `Phase 2 input/validation — READY FOR REVIEW`.
 - Quyết định sản phẩm/khoa học/Firebase đã chốt trong README và docs.
 - Repo GitHub và code baseline đã được xác nhận; Firebase Project ID và production URL vẫn để trống.
+
+## Parallel delivery model
+
+- Current main track: `Phase 2 → Phase 3`.
+- Parallel Firebase track: `Phase 4A`.
+- Firebase/Deployment Owner: **Bắc Hà**.
+- Phase 4B: `BLOCKED` cho tới khi interface Phase 2–3 ổn định.
+- Production deploy: `NO`.
 
 ## Phase 1 hardening closeout
 
@@ -49,11 +57,33 @@ không gộp animation/chart/PP vào thay đổi nhập liệu này.
 - Automated: lint/format/full suite 22/22 PASS; browser smoke và năm breakpoint
   không overflow ngang. Không production deploy.
 - Phase 1 peer run: `PENDING`; không thay đổi trạng thái này.
+Phase 1 hardening đã đóng theo chỉ đạo GVHD. Main track tiếp tục theo thứ tự
+Phase 2 → Phase 3; Firebase track Phase 4A có thể chạy song song dưới ownership
+của Bắc Hà. Trước khi code tiếp theo phải đọc lại ROADMAP, PROJECT_RULES,
+CHEMISTRY_MODEL, UI_UX_SPEC và TEST_CASES.
 
 ## Cấm mở rộng
 
-Không làm animation/chart UI/indicator, Auth/Firestore/Rules/Admin, HCl–NH3,
-axit yếu–bazơ yếu hay production deploy trong Phase 1. Không dùng Firebase/URL/config của dự án khác.
+Trong Phase 2–3, không làm Auth/Firestore/Rules/Admin ngoài contract đã duyệt
+của Firebase track; không sửa chemistry ngoài phase tương ứng, HCl–NH3, axit
+yếu–bazơ yếu hay production deploy. Phase 4A không được sửa chemistry hoặc lõi
+simulation, và không dùng Firebase/URL/config của dự án khác.
+
+## Firebase handover checklist
+
+- [ ] Firebase Project ID
+- [ ] Hosting Site
+- [ ] Preview URL
+- [ ] Auth providers
+- [ ] Firestore status
+- [ ] Rules status
+- [ ] Emulator evidence
+- [ ] Repository/config files
+- [ ] Emulator command
+- [ ] Deploy command
+- [ ] Deployed SHA
+- [ ] Rollback target/SHA
+- [ ] Risks
 
 ## Báo cáo bàn giao
 

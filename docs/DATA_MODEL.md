@@ -20,3 +20,14 @@ substances/{id}, indicators/{id}, scenarios/{id}, guidedPrompts/{id}
 - mỗi user tối đa 50 docs saved; trước write thứ 51 query/count có phân trang/transaction phù hợp và UI yêu cầu chọn xóa. Không auto-delete.
 - content ID không dựa tên hiển thị; IDs ổn định để ca saved còn tái lập khi đổi title.
 - Admin publish chỉ khi payload schema valid; published content versioned bằng `updatedAt`/`modelVersion`.
+
+## Phase 4A boundary
+
+- Phase 4A có thể xây schema/repository skeleton song song với Phase 2–3.
+- Firebase không là source of truth cho chemistry/simulation.
+- Repository nhận và lưu snapshot do application layer cung cấp.
+- Phase 4A không tự phát minh chemistry fields.
+- Phase 4B mới nối vào state thật sau khi interface ổn định.
+- Guest không cần login; login chỉ khi Lưu/Mở.
+- Tối đa 50 ca, không auto-delete.
+- Không lưu curve arrays, ảnh, animation, secret/token.

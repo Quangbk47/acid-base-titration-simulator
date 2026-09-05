@@ -144,3 +144,19 @@
 - Risk: mới là lát cắt nhập liệu; chưa có state mô phỏng thống nhất và các gate
   SIM/UI/CHEM-06 đầy đủ của Phase 2 chưa thể PASS.
 - Next: review branch/commit này; sau đó triển khai state + `addDrop` trong task riêng.
+
+## 2026-09-05 — Parallel delivery model approved
+
+- PO/GVHD cho phép Phase 4A chạy song song Phase 2–3.
+- Main track = `Phase 2 → Phase 3`.
+- Firebase track = `Phase 4A`.
+- Owner = **Bắc Hà — Firebase/Deployment Owner**.
+- Phase 4B = `BLOCKED` cho tới khi interface Phase 2–3 ổn định.
+- Production deploy = `NO`.
+- Project ID / Preview URL / SHA = `TBD` tới khi Bắc Hà triển khai thật.
+
+## 2026-09-05 — Phase 2 baseline reconciliation
+
+- Branch `feature/phase-2-input-validation` integrated `main` by merge; documentation conflicts were resolved while retaining Phase 4A/4B management state.
+- Phase 2 input/validation slice: `READY FOR REVIEW`; not merged, no PO PASS or peer PASS.
+- Verification: 22/22 tests, lint, format, HTTP smoke and `git diff --check` PASS.
