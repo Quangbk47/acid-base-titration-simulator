@@ -46,9 +46,34 @@ Closeout: PR #1 merged tại
 Peer run vẫn để `PENDING`; PO PASS `PASS`; GVHD approval `PASS`; production
 deploy `NO`; Phase 2 `NOT STARTED`.
 
+## Main track
+
+- [ ] Phase 2 simulation/UI/phenolphthalein.
+- [ ] Phase 3 weak acid/Guided/report.
+
+## Firebase track — Phase 4A — có thể làm ngay
+
+**Owner: Bắc Hà — Firebase/Deployment Owner**
+
+- [ ] P4A-01 Xác nhận/tạo Firebase Project riêng.
+- [ ] P4A-02 Thiết lập `.firebaserc`, `firebase.json`.
+- [ ] P4A-03 Tạo preview channel và ghi Preview URL + SHA.
+- [ ] P4A-04 Tạo `src/firebase/config.js`, `auth.js`, repository skeleton.
+- [ ] P4A-05 Google Auth skeleton.
+- [ ] P4A-06 Firestore schema/repository skeleton.
+- [ ] P4A-07 Rules + emulator tests baseline.
+- [ ] P4A-08 Deploy/rollback documentation.
+- [ ] P4A-09 Chemistry regression PASS.
+- [ ] P4A-10 PO acceptance Phase 4A.
+
+## Phase 4B — BLOCKED
+
+Phase 4B bị chặn cho tới khi interface Phase 2–3 ổn định.
+
 ## Later
 
-- [ ] P2 simulation/UI/PP; P3 weak acid/Guided/report; P4 Firebase learner; P5 Admin; P6 release.
+- [ ] Phase 5 Admin.
+- [ ] Phase 6 release.
 
 ## Quy tắc cập nhật
 

@@ -124,3 +124,13 @@
   được GVHD/PO phê duyệt; boundary Phase 2 sau này phải giữ contract M/L/K.
 - Next: Phase 2 vẫn `NOT STARTED`; trước khi code phải đọc lại ROADMAP,
   PROJECT_RULES, CHEMISTRY_MODEL, UI_UX_SPEC và TEST_CASES.
+
+## 2026-09-05 — Parallel delivery model approved
+
+- PO/GVHD cho phép Phase 4A chạy song song Phase 2–3.
+- Main track = `Phase 2 → Phase 3`.
+- Firebase track = `Phase 4A`.
+- Owner = **Bắc Hà — Firebase/Deployment Owner**.
+- Phase 4B = `BLOCKED` cho tới khi interface Phase 2–3 ổn định.
+- Production deploy = `NO`.
+- Project ID / Preview URL / SHA = `TBD` tới khi Bắc Hà triển khai thật.

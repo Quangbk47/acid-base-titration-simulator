@@ -8,7 +8,25 @@
 
 - GVHD/PO nghiệm thu kết quả thực, quyết định phạm vi; không là nút chờ kỹ thuật hàng ngày.
 - Trưởng nhóm điều phối, không độc quyền merge/deploy.
-- Thành viên được branch/push/merge/deploy nhưng phải tự test và ghi bằng chứng.
+- Thành viên được branch/push/merge nhưng phải tự test và ghi bằng chứng; production deploy bắt buộc có PO approval.
+
+### Firebase/Deployment Owner — Bắc Hà
+
+Ownership chính:
+
+- `src/firebase/**`
+- `.firebaserc`, `firebase.json`
+- Firebase Hosting config
+- Firestore Rules/indexes
+- Firebase emulator/tests
+- `DEPLOYMENT_TARGETS.md`
+- deploy/rollback docs
+
+Không tự ý sửa `src/chemistry/**` hoặc lõi `src/simulation/**`. Nếu cần
+interface mới giữa simulation/app và Firebase, thay đổi phải nhỏ, ghi rõ
+contract, có regression test và không âm thầm sửa chemistry.
+
+Không được sử dụng Firebase project của dự án khác.
 
 ## Quy trình một task
 
@@ -32,6 +50,6 @@ Việc nhỏ/khẩn cấp có thể vào main sau tự test/ghi lý do, nhưng k
 
 - UI chỉ hiển thị dữ liệu chemistry engine; tốc độ ≠ động học; equivalence ≠ endpoint; màu tạm ≠ pH cân bằng.
 - Công thức mới phải có tính tay/reference + test; cập nhật Chemistry/Test khi đổi logic.
-- Luôn xác nhận Project ID riêng nhóm Tuấn. Chỉ sửa web dùng `firebase deploy --only hosting`; Rules là task/review/deploy riêng.
+- Luôn xác nhận Project ID riêng của repo. Chỉ sửa web dùng `firebase deploy --only hosting`; Rules là task/review/deploy riêng và production deploy cần PO approval.
 - Firebase web config có thể nằm phía client; quyền do Auth + Rules. Private key/token không vào repo.
 - Báo cáo mẫu: **Done / Files / Tests / Preview-URL / Risk / Next / Branch-SHA**. `DEV PASS` không thay `PO PASS`.

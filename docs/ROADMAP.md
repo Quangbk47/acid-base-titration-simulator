@@ -4,6 +4,16 @@
 
 Roadmap là hợp đồng giao việc. Không nhảy phase: mỗi phase chỉ bắt đầu sau khi đọc các tài liệu liên quan và chỉ `DONE` khi toàn bộ gate PASS. Trạng thái: `PLANNED → IN PROGRESS → DEV PASS → PO TESTING → PO PASS → DONE`. Mọi phase phải ghi branch/SHA, file sửa, test, preview, rủi ro và bước sau vào `PROGRESS.md`.
 
+## Mô hình delivery sau Phase 1
+
+Từ sau khi Phase 1 đạt PO PASS, dự án có hai track:
+
+* Main track: `Phase 2 → Phase 3`
+* Firebase track: `Phase 4A`
+
+Phase 4A được phép chạy song song với Phase 2–3; Phase 4B chỉ mở sau khi
+interface cần thiết của Phase 2–3 đã ổn định.
+
 ## Kiến trúc bắt buộc
 
 ```text
@@ -77,19 +87,56 @@ Không để UI tự tính pH, Firebase quyết định hóa học, hoặc hoạ
 
 **PASS:** CHEM-03 PASS với bảng tham chiếu độc lập; không giữ gợi ý cũ sau reset; báo cáo ghi đúng input/modelVersion/mốc.
 
-## Phase 4 — Firebase người học
+## Phase 4A — Firebase Foundation / Infrastructure
 
-**Điều kiện vào:** xác nhận Project ID riêng + owner; Phase 1–3 preview PASS.
+Phase 4A được phép chạy **song song với Phase 2–3** sau khi:
+
+* Phase 1 đạt PO PASS;
+* có Firebase Project ID riêng;
+* có người phụ trách.
+
+**Owner:** **Bắc Hà — Firebase/Deployment Owner**
 
 **Làm:**
 
-1. `firebase/config.js`, `auth.js`, repositories profile/experiments; Google Sign-In chỉ khi Lưu/Mở, Guest luôn mô phỏng được.
-2. Firestore lưu input + modelVersion + volume/state + summary; không Storage, không ảnh/animation/curve point.
-3. Tối đa 50 ca; ca thứ 51 phải hiện danh sách để người học tự xóa/thay thế, không tự xóa.
-4. Luồng xóa account: xác nhận, reauth nếu cần, xóa docs rồi Auth user, báo lỗi/trạng thái rõ.
-5. Rules và emulator tests theo DATA_MODEL/FIREBASE_SECURITY.
+1. Firebase project riêng của repo và Firebase Hosting.
+2. `.firebaserc`, `firebase.json`, `src/firebase/config.js` và `src/firebase/auth.js`.
+3. Repository skeleton cho profile/experiments.
+4. Google Auth skeleton và Firestore schema/repository skeleton.
+5. Firestore Rules và emulator tests.
+6. Preview channel, deploy/rollback documentation.
+7. Cập nhật Project ID, Hosting Site, Preview URL và SHA.
 
-**PASS:** FB-01..05 PASS; User A không đọc/ghi User B; client không đổi role; smoke xác nhận đúng project riêng.
+**Boundary bắt buộc:**
+
+* Không sửa hoặc quyết định logic trong `src/chemistry/**`.
+* Firebase không quyết định pH, equivalence, endpoint hay stage.
+* Không tự ý thay đổi lõi `src/simulation/**`.
+* Firebase chỉ lưu/đọc state do application layer cung cấp.
+* Nếu cần đổi interface app ↔ Firebase phải ghi contract rõ.
+* Không production deploy nếu chưa có PO approval.
+
+**PASS:**
+
+* Đúng Firebase project riêng.
+* Hosting/config skeleton hoạt động.
+* Rules/emulator baseline PASS.
+* Có preview URL + SHA + rollback record.
+* Chemistry regression vẫn PASS.
+
+## Phase 4B — Firebase Learner Integration
+
+Chỉ bắt đầu tích hợp sâu khi interface cần thiết của Phase 2–3 đã ổn định.
+
+**Làm:**
+
+1. Guest vẫn mô phỏng không login; Google Sign-In chỉ khi Lưu/Mở.
+2. Lưu `input + modelVersion + volume/state + summary`.
+3. Giới hạn 50 ca, không auto-delete.
+4. Xóa account/data.
+5. Hoàn thiện FB-01..05.
+
+Chỉ khi **4A + 4B cùng PASS** mới được đánh dấu toàn bộ Phase 4 DONE.
 
 ## Phase 5 — Admin Nháp → Xuất bản
 
