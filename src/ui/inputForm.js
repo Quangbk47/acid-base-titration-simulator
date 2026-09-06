@@ -1,6 +1,7 @@
 import { solveStrongStrong } from '../chemistry/index.js';
 import { standardCases } from '../data/standardCases.js';
 import { TITRATION_SYSTEMS, toChemistryInput, validateTitrationForm } from './validation.js';
+import { addDrop, createSimulationState, resetSimulation } from '../simulation/state.js';
 
 const FIELD_IDS = Object.freeze({
   systemType: 'system-type',
@@ -48,6 +49,9 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
   const analyte = form.querySelector('#analyte');
   const titrant = form.querySelector('#titrant');
   const stateBadge = root.querySelector('[data-simulation-state]');
+  const addDropButton = form.querySelector('#add-drop');
+  const resetButton = form.querySelector('#reset-simulation');
+  let simulationState = null;
 
   const syncSystem = () => {
     const system = TITRATION_SYSTEMS[systemSelector.value];
@@ -86,6 +90,58 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
     clearErrors(form);
     setText(form, '[data-form-error]', '');
     const { result } = evaluation;
+    const created = createSimulationState(evaluation.chemistryInput);
+    if (!created.ok) {
+      setText(form, '[data-form-error]', created.error.message);
+      if (stateBadge) stateBadge.textContent = 'Solver error';
+      return;
+    }
+    simulationState = created.state;
+    setText(root, '[data-result="ph"]', result.pH.toFixed(2));
+    setText(root, '[data-result="ph-label"]', result.pH < 7 ? 'Axit' : result.pH > 7 ? 'Bazơ' : 'Trung tính');
+    setText(root, '[data-result="volume"]', `${result.totalVolumeMl.toFixed(2)} mL`);
+    setText(root, '[data-result="excess"]', result.excess.species ?? 'Không');
+    setText(root, '[data-result="stage"]', result.stage);
+    setText(root, '[data-result="reaction"]', result.dominantReaction);
+    if (stateBadge) stateBadge.textContent = 'Ready';
+  });
+
+  addDropButton?.addEventListener('click', () => {
+    if (!simulationState) {
+      setText(form, '[data-form-error]', 'Hãy tính trạng thái ban đầu trước khi thêm giọt.');
+      if (stateBadge) stateBadge.textContent = 'Input error';
+      return;
+    }
+    const stepped = addDrop(simulationState);
+    if (!stepped.ok) {
+      setText(form, '[data-form-error]', stepped.error.message);
+      return;
+    }
+    simulationState = stepped.state;
+    const result = solve(simulationState.chemistryInput);
+    if (result.error) {
+      setText(form, '[data-form-error]', result.error.message);
+      if (stateBadge) stateBadge.textContent = 'Solver error';
+      return;
+    }
+    setText(root, '[data-result="ph"]', result.pH.toFixed(2));
+    setText(root, '[data-result="ph-label"]', result.pH < 7 ? 'Axit' : result.pH > 7 ? 'Bazơ' : 'Trung tính');
+    setText(root, '[data-result="volume"]', `${result.totalVolumeMl.toFixed(2)} mL`);
+    setText(root, '[data-result="excess"]', result.excess.species ?? 'Không');
+    setText(root, '[data-result="stage"]', result.stage);
+    setText(root, '[data-result="reaction"]', result.dominantReaction);
+    form.elements.addedVolumeMl.value = simulationState.addedVolumeMl;
+    if (stateBadge) stateBadge.textContent = 'Ready';
+  });
+
+  resetButton?.addEventListener('click', () => {
+    if (!simulationState) return;
+    const reset = resetSimulation(simulationState);
+    if (!reset.ok) return;
+    simulationState = reset.state;
+    form.elements.addedVolumeMl.value = simulationState.addedVolumeMl;
+    const result = solve(simulationState.chemistryInput);
+    if (result.error) return;
     setText(root, '[data-result="ph"]', result.pH.toFixed(2));
     setText(root, '[data-result="ph-label"]', result.pH < 7 ? 'Axit' : result.pH > 7 ? 'Bazơ' : 'Trung tính');
     setText(root, '[data-result="volume"]', `${result.totalVolumeMl.toFixed(2)} mL`);
