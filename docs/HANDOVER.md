@@ -93,3 +93,11 @@ simulation, và không dùng Firebase/URL/config của dự án khác.
 ## Báo cáo bàn giao
 
 `Phase | Done | Files | Tests | Preview | SHA | Risks | Next`. Cập nhật PROGRESS và TODO trước khi chuyển người/phiên.
+
+## Phase 3 handover
+
+`DEV PASS` implementation is on `feature/phase-3-weak-acid-guided-report`. Key files are
+`src/chemistry/weakAcidStrongBase.js`, `src/data/guidedPrompts.js`, `src/ui/report.js` and
+`tests/weak-acid.test.js`. Run `node scripts/lint.mjs`, `node scripts/check-format.mjs` and
+`node --test`. Before merge, review the CH₃COOH–NaOH UI at initial, half-equivalence,
+equivalence and post-equivalence, then obtain peer/PO acceptance. Firebase is out of scope.

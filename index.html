@@ -105,6 +105,7 @@
               <label for="system-type">Loại chuẩn độ</label>
               <select id="system-type" name="systemType" aria-describedby="system-type-error">
                 <option value="strong-acid-strong-base">Axit mạnh – bazơ mạnh</option>
+                <option value="weak-acid-strong-base">Axit yếu – bazơ mạnh</option>
               </select>
               <span id="system-type-error" class="field-error" data-error-for="systemType" aria-live="polite"></span>
 
@@ -136,6 +137,11 @@
                   <label for="added-volume">Thể tích NaOH đã thêm (mL)</label>
                   <input id="added-volume" name="addedVolumeMl" type="text" inputmode="decimal" aria-describedby="added-volume-error" />
                   <span id="added-volume-error" class="field-error" data-error-for="addedVolumeMl" aria-live="polite"></span>
+                </div>
+                <div data-ka-field hidden>
+                  <label for="ka">Ka của CH₃COOH</label>
+                  <input id="ka" name="Ka" type="text" inputmode="decimal" aria-describedby="ka-error" />
+                  <span id="ka-error" class="field-error" data-error-for="Ka" aria-live="polite"></span>
                 </div>
               </div>
 
@@ -220,6 +226,12 @@
               <tbody data-chemistry-rows><tr><td>HCl / NaOH</td><td>—</td><td>—</td><td data-result="reaction">Chưa tính</td></tr></tbody>
             </table>
           </div>
+        </section>
+        <section class="panel learning-panel" aria-labelledby="guided-title">
+          <div class="panel-heading"><div><p class="eyebrow">Guided learning</p><h2 id="guided-title">Khám phá theo mốc</h2></div><span class="panel-index">04</span></div>
+          <p data-guided-prompt>Chọn ca CH₃COOH–NaOH để bắt đầu hướng dẫn.</p>
+          <p class="notice" data-guided-feedback aria-live="polite"></p>
+          <button class="button button-secondary" type="button" data-download-report>Tải báo cáo cục bộ</button>
         </section>
       </section>
     </main>

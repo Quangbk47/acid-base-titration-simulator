@@ -1,4 +1,5 @@
 import { solveStrongStrong } from './strongStrong.js';
+import { solveWeakAcidStrongBase } from './weakAcidStrongBase.js';
 import { createInputError, isFiniteNumber, lToMl, mlToL } from './units.js';
 
 const DEFAULT_STEP_ML = 0.5;
@@ -46,9 +47,11 @@ export const generateCurve = (input, options = {}) => {
       error: createInputError('INVALID_CURVE_OPTIONS', 'Curve options phải là một object.', {}),
     };
   }
-  const current = solveStrongStrong(input);
+  const solve = options.solve ?? (input?.Ka ? solveWeakAcidStrongBase : solveStrongStrong);
+  if (typeof solve !== 'function') return { error: createInputError('INVALID_CURVE_SOLVER', 'Curve cần một solver hợp lệ.', {}) };
+  const current = solve(input);
   if (current.error) return current;
-  const initial = solveStrongStrong({ ...input, Vb: 0 });
+  const initial = solve({ ...input, Vb: 0 });
   if (initial.error) return initial;
   const requestedVolumes = options.volumesMl;
   if (
@@ -115,7 +118,7 @@ export const generateCurve = (input, options = {}) => {
 
   const points = [];
   for (const volumeMl of volumesMl) {
-    const solved = solveStrongStrong({ ...input, Vb: mlToL(volumeMl) });
+    const solved = solve({ ...input, Vb: mlToL(volumeMl) });
     if (solved.error) return solved;
     points.push({
       volumeMl,
@@ -127,7 +130,7 @@ export const generateCurve = (input, options = {}) => {
     });
   }
   return {
-    model: 'strong-strong',
+    model: current.model,
     points,
     milestones: initial.milestones,
     diagnostics: { solver: 'curve-sampler-v1', timer: false, pointCount: points.length },

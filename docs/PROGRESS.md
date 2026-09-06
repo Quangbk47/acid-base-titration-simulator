@@ -175,3 +175,17 @@
   local browser preview verified submit, add-drop, automatic runner and pause.
 - Remaining gate: full keyboard/mobile/reduced-motion review and peer/PO review;
   no PR or merge has been created for this slice.
+
+## 2026-09-06 — Phase 3 weak acid, guided learning and local report
+
+- Status: `DEV PASS; PO review pending` on `feature/phase-3-weak-acid-guided-report`.
+- Implemented CH₃COOH–NaOH only: charge-balance bisection on log[H⁺], curve checkpoints,
+  half-equivalence guidance driven by solver state, and a local text report that keeps solver
+  input, model version, milestones and an SVG chart data URL. No Firebase, HCl–NH₃ or
+  weak-acid/weak-base model was added.
+- Evidence: lint and formatting checks PASS; Node test suite 31/31 PASS; `git diff --check` PASS.
+- Scientific references in tests: 0.100 M CH₃COOH 25.00 mL, Ka 1.8e-5, titrated by 0.100 M
+  NaOH: initial pH ≈ 2.88, half-equivalence pH ≈ pKa, equivalence pH ≈ 8.72.
+- Preview/deploy: not created; production deploy `NO`.
+- Risk: the Phase 3 slice is built above the unmerged Phase 2 branch and still needs browser,
+  peer and PO review before merge.

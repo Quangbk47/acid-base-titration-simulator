@@ -40,10 +40,11 @@ test('Phase 2 validation rejects negative values and invalid zero values', () =>
   }
 });
 
-test('Phase 2 validation requires valid Ka or Kb for weak systems before rejecting unsupported chemistry', () => {
+test('Phase 3 validation accepts weak acid while keeping weak-base systems deferred', () => {
   const weakAcid = validateTitrationForm({ ...valid, systemType: 'weak-acid-strong-base' });
   assert.match(weakAcid.errors.Ka, /cần Ka/);
-  assert.match(weakAcid.errors.systemType, /chưa được.*hỗ trợ/);
+  const supported = validateTitrationForm({ ...valid, systemType: 'weak-acid-strong-base', Ka: '0.000018' });
+  assert.equal(supported.ok, true);
   const weakBase = validateTitrationForm({ ...valid, systemType: 'strong-acid-weak-base', Kb: '1' });
   assert.match(weakBase.errors.Kb, /0 < Kb < 1/);
 });

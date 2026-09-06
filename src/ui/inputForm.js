@@ -1,4 +1,4 @@
-import { solveStrongStrong } from '../chemistry/index.js';
+import { solveStrongStrong, solveWeakAcidStrongBase } from '../chemistry/index.js';
 import { standardCases } from '../data/standardCases.js';
 import { TITRATION_SYSTEMS, toChemistryInput, validateTitrationForm } from './validation.js';
 import { addDrop, createSimulationState, resetSimulation, setSimulationSpeed, setSimulationStatus, withSimulationResult } from '../simulation/state.js';
@@ -6,6 +6,8 @@ import { createSimulationRunner } from '../simulation/runner.js';
 import { renderExperimentView } from './experimentView.js';
 import { renderChartView } from './chartView.js';
 import { renderIndicatorView } from './indicatorView.js';
+import { promptForState } from '../data/guidedPrompts.js';
+import { createReport, downloadReport } from './report.js';
 
 const FIELD_IDS = Object.freeze({ systemType: 'system-type', analyteConcentrationM: 'analyte-concentration', analyteVolumeMl: 'analyte-volume', titrantConcentrationM: 'titrant-concentration', addedVolumeMl: 'added-volume' });
 const valuesFromForm = (form) => Object.fromEntries(new FormData(form).entries());
@@ -17,7 +19,7 @@ export function evaluateTitration(values, solve = solveStrongStrong) {
   const validation = validateTitrationForm(values);
   if (!validation.ok) return validation;
   const chemistryInput = toChemistryInput(validation.value);
-  const result = solve(chemistryInput);
+  const result = validation.value.solver === 'weak-acid-strong-base' ? solveWeakAcidStrongBase(chemistryInput) : solve(chemistryInput);
   if (result.error) return { ok: false, solverError: result.error };
   return { ok: true, chemistryInput, result };
 }
@@ -39,6 +41,9 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
     renderExperimentView(root, result, simulationState);
     renderIndicatorView(root, result, { transient: simulationState.dropCount > 0 && result.stage === 'before-equivalence' });
     renderChartView(root, simulationState.chemistryInput, simulationState.addedVolumeMl);
+    const prompt = result.model === 'weak-acid-strong-base' ? promptForState(result, simulationState.addedVolumeMl) : null;
+    const promptRoot = root.querySelector('[data-guided-prompt]'); if (promptRoot) promptRoot.textContent = prompt?.question ?? 'Thêm NaOH để đến mốc học tập kế tiếp.';
+    const feedback = root.querySelector('[data-guided-feedback]'); if (feedback) feedback.textContent = prompt?.feedback ?? '';
     if (form.elements.addedVolumeMl) form.elements.addedVolumeMl.value = simulationState.addedVolumeMl.toFixed(2);
   };
   const evaluateCurrent = () => {
@@ -64,8 +69,8 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
       setStateLabel(status === 'running' ? 'Running' : status === 'paused' ? 'Paused' : 'Ready');
     },
   });
-  const syncSystem = () => { const system = TITRATION_SYSTEMS[systemSelector.value]; form.querySelector('#analyte').value = system?.analyte ?? ''; form.querySelector('#titrant').value = system?.titrant ?? ''; };
-  const loadCase = () => { const selected = standardCases.find(({ id }) => id === caseSelector.value) ?? standardCases[0]; systemSelector.value = 'strong-acid-strong-base'; syncSystem(); form.elements.analyteConcentrationM.value = selected.CaM; form.elements.analyteVolumeMl.value = selected.VaMl; form.elements.titrantConcentrationM.value = selected.CbM; form.elements.addedVolumeMl.value = selected.VbMl; clearErrors(form); };
+  const syncSystem = () => { const system = TITRATION_SYSTEMS[systemSelector.value]; form.querySelector('#analyte').value = system?.analyte ?? ''; form.querySelector('#titrant').value = system?.titrant ?? ''; const ka = form.querySelector('[data-ka-field]'); if (ka) ka.hidden = systemSelector.value !== 'weak-acid-strong-base'; };
+  const loadCase = () => { const selected = standardCases.find(({ id }) => id === caseSelector.value) ?? standardCases[0]; systemSelector.value = selected.systemType ?? 'strong-acid-strong-base'; syncSystem(); form.elements.analyteConcentrationM.value = selected.CaM; form.elements.analyteVolumeMl.value = selected.VaMl; form.elements.titrantConcentrationM.value = selected.CbM; form.elements.addedVolumeMl.value = selected.VbMl; if (form.elements.Ka) form.elements.Ka.value = selected.Ka ?? ''; clearErrors(form); };
   for (const item of standardCases) caseSelector.add(new Option(item.label, item.id));
   loadCase();
   caseSelector.addEventListener('change', loadCase); systemSelector.addEventListener('change', syncSystem);
@@ -82,5 +87,6 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
   pauseButton?.addEventListener('click', () => runner.pause());
   speedSelector?.addEventListener('change', () => { runner.setSpeed(speedSelector.value); if (simulationState) { const next = setSimulationSpeed(simulationState, speedSelector.value); if (next.ok) simulationState = next.state; } });
   resetButton?.addEventListener('click', () => { if (!simulationState) return; runner.reset(); const reset = resetSimulation(simulationState); if (reset.ok) { simulationState = reset.state; evaluateCurrent(); setStateLabel('Ready'); } });
+  root.querySelector('[data-download-report]')?.addEventListener('click', () => { if (simulationState?.result) downloadReport(createReport({ result: simulationState.result, input: simulationState.chemistryInput, addedVolumeMl: simulationState.addedVolumeMl, chart: root.querySelector('[data-chart]') })); });
   return { loadCase, getState: () => simulationState, dispose: () => runner.dispose() };
 }
