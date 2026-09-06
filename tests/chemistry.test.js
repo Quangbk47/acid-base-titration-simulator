@@ -3,11 +3,14 @@ import test from 'node:test';
 import {
   celsiusToKelvin,
   generateCurve,
+  generateWeakAcidCurve,
   mlToL,
   solveStrongStrong,
+  solveWeakAcidStrongBase,
 } from '../src/chemistry/index.js';
 import { standardCases, standardCaseToSolverInput } from '../src/data/standardCases.js';
 import { phase1Reference } from './fixtures/phase1Reference.js';
+import { phase3Reference } from './fixtures/phase3Reference.js';
 
 const inputFor = (id) => standardCaseToSolverInput(standardCases.find((item) => item.id === id));
 const referenceFor = (id) => phase1Reference.find((item) => item.id === id);
@@ -174,5 +177,64 @@ test('CHEM-05: malformed curve options return coded errors', () => {
   for (const options of [null, [], 'invalid']) {
     const result = generateCurve(input, options);
     assert.equal(result.error?.code, 'INVALID_CURVE_OPTIONS');
+  }
+});
+
+const weakAcidInput = (volumeMl) => ({
+  Ca: 0.1,
+  Va: 0.025,
+  Cb: 0.1,
+  Vb: volumeMl / 1000,
+  Ka: 1.8e-5,
+  temperature: 298.15,
+});
+
+test('CHEM-03: weak acid solver converges before, at half, and at equivalence', () => {
+  const initial = solveWeakAcidStrongBase(weakAcidInput(0));
+  const half = solveWeakAcidStrongBase(weakAcidInput(12.5));
+  const equivalence = solveWeakAcidStrongBase(weakAcidInput(25));
+  for (const result of [initial, half, equivalence]) {
+    assert.equal(result.error, undefined);
+    assert.equal(result.diagnostics.converged, true);
+    assert.ok(Number.isFinite(result.diagnostics.residual));
+    assert.ok(result.species.every(({ moles, concentration }) => Number.isFinite(moles) && Number.isFinite(concentration)));
+  }
+  assert.ok(initial.pH > 2.8 && initial.pH < 3.0);
+  closeTo(half.pH, -Math.log10(1.8e-5), 1e-3);
+  assert.ok(equivalence.pH > 8.5 && equivalence.pH < 9.0);
+  assert.equal(half.stage, 'before-equivalence');
+  assert.equal(equivalence.stage, 'at-equivalence');
+  assert.equal(equivalence.excess.species, null);
+  assert.equal(equivalence.dominantReaction, 'HA + OH⁻ → A⁻ + H₂O');
+});
+
+test('CHEM-03/05: weak acid solver rejects invalid Ka and temperature', () => {
+  const valid = weakAcidInput(0);
+  for (const input of [{ ...valid, Ka: 0 }, { ...valid, Ka: 1 }, { ...valid, temperature: 300 }]) {
+    const result = solveWeakAcidStrongBase(input);
+    assert.equal(result.error?.code, 'OUT_OF_RANGE');
+    assert.doesNotMatch(JSON.stringify(result), /NaN|Infinity/);
+  }
+});
+
+test('CHEM-03: weak acid curve includes half-equivalence and equivalence checkpoints', () => {
+  const curve = generateWeakAcidCurve(weakAcidInput(0), { stepMl: 5 });
+  assert.equal(curve.error, undefined);
+  assert.equal(curve.model, 'weak-acid-strong-base');
+  assert.ok(curve.points.some(({ volumeMl }) => Math.abs(volumeMl - 12.5) < 1e-10));
+  assert.ok(curve.points.some(({ volumeMl }) => Math.abs(volumeMl - 25) < 1e-10));
+  assert.ok(curve.points.every(({ pH }) => Number.isFinite(pH)));
+  assert.equal(curve.diagnostics.timer, false);
+});
+
+test('CHEM-03 independent review: solver matches external weak-acid reference table', () => {
+  for (const reference of phase3Reference) {
+    const result = solveWeakAcidStrongBase(weakAcidInput(reference.volumeMl));
+    assert.equal(result.error, undefined, `solver error at ${reference.volumeMl} mL`);
+    closeTo(result.pH, reference.pH, 1e-9);
+    assert.equal(result.stage, reference.stage);
+    assert.equal(result.excess.species, reference.excessSpecies);
+    assert.equal(result.diagnostics.converged, true);
+    assert.ok(Math.abs(result.diagnostics.residual) < 1e-12);
   }
 });

@@ -1,5 +1,7 @@
 export { solveStrongStrong } from './strongStrong.js';
+export { solveWeakAcidStrongBase } from './weakAcidStrongBase.js';
 export { generateCurve } from './curve.js';
+export { generateWeakAcidCurve } from './weakCurve.js';
 export {
   calculateEndpointMl,
   calculateEquivalenceMolTolerance,

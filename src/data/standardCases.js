@@ -12,12 +12,26 @@ export const standardCases = Object.freeze([
   Object.freeze({ id: 'hcl-naoh-large-excess', label: 'Dư lớn', CaM: 0.1, VaMl: 25, CbM: 0.1, VbMl: 50, temperatureC: 25 }),
 ]);
 
+export const weakAcidCases = Object.freeze([
+  Object.freeze({ id: 'acetic-acid-naoh', label: 'CH₃COOH 0,100 M · NaOH 0,100 M', acid: 'CH₃COOH', base: 'NaOH', CaM: 0.1, VaMl: 25, CbM: 0.1, Ka: 1.8e-5, VbMl: 0, temperatureC: 25 }),
+]);
+
 export const standardCaseToSolverInput = ({ CaM, VaMl, CbM, VbMl, temperatureC }) =>
   Object.freeze({
     Ca: CaM,
     Va: mlToL(VaMl),
     Cb: CbM,
     Vb: mlToL(VbMl),
+    temperature: celsiusToKelvin(temperatureC),
+  });
+
+export const weakAcidCaseToSolverInput = ({ CaM, VaMl, CbM, Ka, VbMl, temperatureC }) =>
+  Object.freeze({
+    Ca: CaM,
+    Va: mlToL(VaMl),
+    Cb: CbM,
+    Vb: mlToL(VbMl),
+    Ka,
     temperature: celsiusToKelvin(temperatureC),
   });
 

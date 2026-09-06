@@ -1,3 +1,6 @@
-// Firebase integration is intentionally deferred until Phase 4 and a dedicated project is confirmed.
-export const firebaseModuleStatus = 'deferred-to-phase-4';
+export { authStatus, createAuthService } from './auth.js';
+export { firebaseConfig, firebaseConfigStatus, validateFirebaseConfig } from './config.js';
+export { createExperimentRepository, validateSavedExperiment } from './repository.js';
+
+export const firebaseModuleStatus = 'phase-4a-foundation-skeleton';
 

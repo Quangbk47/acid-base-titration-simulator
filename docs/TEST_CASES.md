@@ -7,7 +7,7 @@
 | CHEM-01 | HCl–NaOH equal M/V, kiểm trước/eq/sau | pH và mol dư khớp tính tay; eq=7,00 ở 25 °C |
 | CHEM-02 | 25/50/99/100/101% Veq, dư lớn | curve/stage/excess đổi đúng, không nhảy sai |
 | CHEM-03 | CH3COOH–NaOH đầu/buffer/half/eq | solver hội tụ; half ≈ pKa; bảng reference pass |
-| CHEM-04 | HCl–NH3 khi mở scope | solver Kb/reference pass |
+| CHEM-04 | NH3–HCl reference validation Phase 4 | solver Kb/reference pass |
 | CHEM-05 | 0/âm/NaN/nhiệt độ khác 298,15 K/Ka sai/drop sai | chặn, message rõ, không crash |
 | CHEM-06 | PP HCl–NaOH | hồng local pre-eq 0,5s; eq không màu; post-eq hồng bền |
 
@@ -25,7 +25,15 @@ curve phải không rỗng, tăng dần, không có volume gần trùng và ch�
 - UI-02: keyboard focus/label/aria error; chart có text/table alternative.
 - UI-03: equivalence và endpoint khác label/legend/tooltip.
 
-## Firebase/release
+## Phase 4 reference validation
+
+- REF-01: raw reference tables from Tuấn/Nhật Anh are preserved unchanged.
+- REF-02: independently calculate `Veq` and compare with each table.
+- REF-03: compare pH, species, excess, stage and tolerance at every supplied row.
+- REF-04: compare curve checkpoints, monotonic segments, buffer region and
+	equivalence/endpoint shape; record every discrepancy for review.
+
+## Firebase/release — Phase 6
 
 - FB-01 guest simulate; FB-02 sign-in only when save; FB-03 50 cap manual delete; FB-04 delete account; FB-05 ownership/role; FB-06 draft/publish.
 - Release: check project ID, SHA, preview then production URL, hard refresh, CHEM-01 smoke, mobile smoke, Firebase scope (Hosting/Rules) đúng lệnh.
