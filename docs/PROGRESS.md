@@ -160,3 +160,17 @@
 - Branch `feature/phase-2-input-validation` integrated `main` by merge; documentation conflicts were resolved while retaining Phase 4A/4B management state.
 - Phase 2 input/validation slice: `READY FOR REVIEW`; not merged, no PO PASS or peer PASS.
 - Verification: 22/22 tests, lint, format, HTTP smoke and `git diff --check` PASS.
+
+## 2026-09-06 — Phase 2 simulation/UI implementation slice
+
+- Phase: `Phase 2 — IN PROGRESS / DEV PASS pending browser gate`.
+- Implemented: immutable simulation state with 0.05–0.10 mL drops and reset;
+  timer runner with pause/resume and slow/normal/fast cadence; experiment view;
+  curve view backed by `generateCurve` with current/half-equivalence/equivalence/
+  endpoint markers; phenolphthalein state view; chemistry species table.
+- Boundary: UI still calls `solveStrongStrong` only after validation and keeps
+  mL→L and 25 °C→298.15 K conversion in `src/ui/validation.js`.
+- Verification: 27/27 Node tests PASS, lint/format PASS, `git diff --check` PASS;
+  local browser preview verified submit, add-drop, automatic runner and pause.
+- Remaining gate: full keyboard/mobile/reduced-motion review and peer/PO review;
+  no PR or merge has been created for this slice.

@@ -1,37 +1,17 @@
 import { solveStrongStrong } from '../chemistry/index.js';
 import { standardCases } from '../data/standardCases.js';
 import { TITRATION_SYSTEMS, toChemistryInput, validateTitrationForm } from './validation.js';
-import { addDrop, createSimulationState, resetSimulation } from '../simulation/state.js';
+import { addDrop, createSimulationState, resetSimulation, setSimulationSpeed, setSimulationStatus, withSimulationResult } from '../simulation/state.js';
+import { createSimulationRunner } from '../simulation/runner.js';
+import { renderExperimentView } from './experimentView.js';
+import { renderChartView } from './chartView.js';
+import { renderIndicatorView } from './indicatorView.js';
 
-const FIELD_IDS = Object.freeze({
-  systemType: 'system-type',
-  analyteConcentrationM: 'analyte-concentration',
-  analyteVolumeMl: 'analyte-volume',
-  titrantConcentrationM: 'titrant-concentration',
-  addedVolumeMl: 'added-volume',
-});
-
+const FIELD_IDS = Object.freeze({ systemType: 'system-type', analyteConcentrationM: 'analyte-concentration', analyteVolumeMl: 'analyte-volume', titrantConcentrationM: 'titrant-concentration', addedVolumeMl: 'added-volume' });
 const valuesFromForm = (form) => Object.fromEntries(new FormData(form).entries());
-
-const clearErrors = (form) => {
-  for (const output of form.querySelectorAll('[data-error-for]')) output.textContent = '';
-  for (const control of form.elements) control.removeAttribute?.('aria-invalid');
-};
-
-const showErrors = (form, errors) => {
-  clearErrors(form);
-  for (const [field, message] of Object.entries(errors)) {
-    const control = form.querySelector(`#${FIELD_IDS[field] ?? field}`);
-    const output = form.querySelector(`[data-error-for="${field}"]`);
-    control?.setAttribute('aria-invalid', 'true');
-    if (output) output.textContent = message;
-  }
-};
-
-const setText = (root, selector, value) => {
-  const element = root.querySelector(selector);
-  if (element) element.textContent = value;
-};
+const setText = (root, selector, value) => { const element = root.querySelector(selector); if (element) element.textContent = value; };
+const clearErrors = (form) => { for (const output of form.querySelectorAll('[data-error-for]')) output.textContent = ''; for (const control of form.elements) control.removeAttribute?.('aria-invalid'); };
+const showErrors = (form, errors) => { clearErrors(form); for (const [field, message] of Object.entries(errors)) { form.querySelector(`#${FIELD_IDS[field] ?? field}`)?.setAttribute('aria-invalid', 'true'); const output = form.querySelector(`[data-error-for="${field}"]`); if (output) output.textContent = message; } };
 
 export function evaluateTitration(values, solve = solveStrongStrong) {
   const validation = validateTitrationForm(values);
@@ -46,110 +26,61 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
   if (!form) return null;
   const caseSelector = form.querySelector('#case-selector');
   const systemSelector = form.querySelector('#system-type');
-  const analyte = form.querySelector('#analyte');
-  const titrant = form.querySelector('#titrant');
-  const stateBadge = root.querySelector('[data-simulation-state]');
   const addDropButton = form.querySelector('#add-drop');
   const resetButton = form.querySelector('#reset-simulation');
+  const runButton = form.querySelector('#run-simulation');
+  const pauseButton = form.querySelector('#pause-simulation');
+  const speedSelector = form.querySelector('#simulation-speed');
+  const stateBadge = root.querySelector('[data-simulation-state]');
   let simulationState = null;
-
-  const syncSystem = () => {
-    const system = TITRATION_SYSTEMS[systemSelector.value];
-    analyte.value = system?.analyte ?? '';
-    titrant.value = system?.titrant ?? '';
+  const setStateLabel = (value) => { if (stateBadge) stateBadge.textContent = value; const vessel = root.querySelector('.vessel-stage'); if (vessel) vessel.dataset.state = value.toLowerCase(); const vesselStatus = root.querySelector('[data-vessel-status]'); if (vesselStatus) vesselStatus.textContent = value === 'Running' ? 'Đang nhỏ giọt tự động' : value === 'Paused' ? 'Đã tạm dừng' : value === 'Ready' ? 'Sẵn sàng mô phỏng' : 'Chưa có mô phỏng'; };
+  const render = (result = simulationState?.result) => {
+    if (!simulationState || !result) return;
+    renderExperimentView(root, result, simulationState);
+    renderIndicatorView(root, result, { transient: simulationState.dropCount > 0 && result.stage === 'before-equivalence' });
+    renderChartView(root, simulationState.chemistryInput, simulationState.addedVolumeMl);
+    if (form.elements.addedVolumeMl) form.elements.addedVolumeMl.value = simulationState.addedVolumeMl.toFixed(2);
   };
-
-  const loadCase = () => {
-    const selected = standardCases.find(({ id }) => id === caseSelector.value) ?? standardCases[0];
-    systemSelector.value = 'strong-acid-strong-base';
-    syncSystem();
-    form.elements.analyteConcentrationM.value = selected.CaM;
-    form.elements.analyteVolumeMl.value = selected.VaMl;
-    form.elements.titrantConcentrationM.value = selected.CbM;
-    form.elements.addedVolumeMl.value = selected.VbMl;
-    clearErrors(form);
+  const evaluateCurrent = () => {
+    const result = solve(simulationState.chemistryInput);
+    if (result.error) return result;
+    simulationState = withSimulationResult(simulationState, result).state;
+    render(result);
+    return result;
   };
-
+  const step = () => {
+    const next = addDrop(simulationState);
+    if (!next.ok) return false;
+    simulationState = next.state;
+    const result = evaluateCurrent();
+    if (result.error || simulationState.addedVolumeMl > 2 * result.Veq) return false;
+    return true;
+  };
+  const runner = createSimulationRunner({
+    onStep: step,
+    onStateChange: (status) => {
+      const next = setSimulationStatus(simulationState, status);
+      if (next.ok) simulationState = next.state;
+      setStateLabel(status === 'running' ? 'Running' : status === 'paused' ? 'Paused' : 'Ready');
+    },
+  });
+  const syncSystem = () => { const system = TITRATION_SYSTEMS[systemSelector.value]; form.querySelector('#analyte').value = system?.analyte ?? ''; form.querySelector('#titrant').value = system?.titrant ?? ''; };
+  const loadCase = () => { const selected = standardCases.find(({ id }) => id === caseSelector.value) ?? standardCases[0]; systemSelector.value = 'strong-acid-strong-base'; syncSystem(); form.elements.analyteConcentrationM.value = selected.CaM; form.elements.analyteVolumeMl.value = selected.VaMl; form.elements.titrantConcentrationM.value = selected.CbM; form.elements.addedVolumeMl.value = selected.VbMl; clearErrors(form); };
   for (const item of standardCases) caseSelector.add(new Option(item.label, item.id));
   loadCase();
-  caseSelector.addEventListener('change', loadCase);
-  systemSelector.addEventListener('change', syncSystem);
-
+  caseSelector.addEventListener('change', loadCase); systemSelector.addEventListener('change', syncSystem);
   form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    if (stateBadge) stateBadge.textContent = 'Validating';
-    setText(form, '[data-form-error]', '');
+    event.preventDefault(); setStateLabel('Validating'); setText(form, '[data-form-error]', '');
     const evaluation = evaluateTitration(valuesFromForm(form), solve);
-    if (!evaluation.ok) {
-      if (evaluation.errors) showErrors(form, evaluation.errors);
-      else setText(form, '[data-form-error]', evaluation.solverError.message);
-      if (stateBadge) stateBadge.textContent = evaluation.errors ? 'Input error' : 'Solver error';
-      return;
-    }
-
-    clearErrors(form);
-    setText(form, '[data-form-error]', '');
-    const { result } = evaluation;
-    const created = createSimulationState(evaluation.chemistryInput);
-    if (!created.ok) {
-      setText(form, '[data-form-error]', created.error.message);
-      if (stateBadge) stateBadge.textContent = 'Solver error';
-      return;
-    }
-    simulationState = created.state;
-    setText(root, '[data-result="ph"]', result.pH.toFixed(2));
-    setText(root, '[data-result="ph-label"]', result.pH < 7 ? 'Axit' : result.pH > 7 ? 'Bazơ' : 'Trung tính');
-    setText(root, '[data-result="volume"]', `${result.totalVolumeMl.toFixed(2)} mL`);
-    setText(root, '[data-result="excess"]', result.excess.species ?? 'Không');
-    setText(root, '[data-result="stage"]', result.stage);
-    setText(root, '[data-result="reaction"]', result.dominantReaction);
-    if (stateBadge) stateBadge.textContent = 'Ready';
+    if (!evaluation.ok) { if (evaluation.errors) showErrors(form, evaluation.errors); else setText(form, '[data-form-error]', evaluation.solverError.message); setStateLabel(evaluation.errors ? 'Input error' : 'Solver error'); return; }
+    clearErrors(form); const created = createSimulationState(evaluation.chemistryInput);
+    if (!created.ok) { setText(form, '[data-form-error]', created.error.message); setStateLabel('Solver error'); return; }
+    simulationState = withSimulationResult(created.state, evaluation.result).state; render(evaluation.result); setStateLabel('Ready');
   });
-
-  addDropButton?.addEventListener('click', () => {
-    if (!simulationState) {
-      setText(form, '[data-form-error]', 'Hãy tính trạng thái ban đầu trước khi thêm giọt.');
-      if (stateBadge) stateBadge.textContent = 'Input error';
-      return;
-    }
-    const stepped = addDrop(simulationState);
-    if (!stepped.ok) {
-      setText(form, '[data-form-error]', stepped.error.message);
-      return;
-    }
-    simulationState = stepped.state;
-    const result = solve(simulationState.chemistryInput);
-    if (result.error) {
-      setText(form, '[data-form-error]', result.error.message);
-      if (stateBadge) stateBadge.textContent = 'Solver error';
-      return;
-    }
-    setText(root, '[data-result="ph"]', result.pH.toFixed(2));
-    setText(root, '[data-result="ph-label"]', result.pH < 7 ? 'Axit' : result.pH > 7 ? 'Bazơ' : 'Trung tính');
-    setText(root, '[data-result="volume"]', `${result.totalVolumeMl.toFixed(2)} mL`);
-    setText(root, '[data-result="excess"]', result.excess.species ?? 'Không');
-    setText(root, '[data-result="stage"]', result.stage);
-    setText(root, '[data-result="reaction"]', result.dominantReaction);
-    form.elements.addedVolumeMl.value = simulationState.addedVolumeMl;
-    if (stateBadge) stateBadge.textContent = 'Ready';
-  });
-
-  resetButton?.addEventListener('click', () => {
-    if (!simulationState) return;
-    const reset = resetSimulation(simulationState);
-    if (!reset.ok) return;
-    simulationState = reset.state;
-    form.elements.addedVolumeMl.value = simulationState.addedVolumeMl;
-    const result = solve(simulationState.chemistryInput);
-    if (result.error) return;
-    setText(root, '[data-result="ph"]', result.pH.toFixed(2));
-    setText(root, '[data-result="ph-label"]', result.pH < 7 ? 'Axit' : result.pH > 7 ? 'Bazơ' : 'Trung tính');
-    setText(root, '[data-result="volume"]', `${result.totalVolumeMl.toFixed(2)} mL`);
-    setText(root, '[data-result="excess"]', result.excess.species ?? 'Không');
-    setText(root, '[data-result="stage"]', result.stage);
-    setText(root, '[data-result="reaction"]', result.dominantReaction);
-    if (stateBadge) stateBadge.textContent = 'Ready';
-  });
-
-  return { loadCase };
+  addDropButton?.addEventListener('click', () => { if (!simulationState) { setText(form, '[data-form-error]', 'Hãy tính trạng thái ban đầu trước khi thêm giọt.'); setStateLabel('Input error'); return; } if (step()) setStateLabel('Ready'); });
+  runButton?.addEventListener('click', () => { if (simulationState) runner.start(); });
+  pauseButton?.addEventListener('click', () => runner.pause());
+  speedSelector?.addEventListener('change', () => { runner.setSpeed(speedSelector.value); if (simulationState) { const next = setSimulationSpeed(simulationState, speedSelector.value); if (next.ok) simulationState = next.state; } });
+  resetButton?.addEventListener('click', () => { if (!simulationState) return; runner.reset(); const reset = resetSimulation(simulationState); if (reset.ok) { simulationState = reset.state; evaluateCurrent(); setStateLabel('Ready'); } });
+  return { loadCase, getState: () => simulationState, dispose: () => runner.dispose() };
 }

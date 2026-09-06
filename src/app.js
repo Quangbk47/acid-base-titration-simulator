@@ -12,7 +12,7 @@ const route = initNavigation({
 
 const status = document.querySelector('#app-status');
 if (status) {
-  status.textContent = 'Phase 2 · Nhập liệu';
+  status.textContent = 'Phase 2 · Mô phỏng';
   status.dataset.state = baselineState.screen;
 }
 

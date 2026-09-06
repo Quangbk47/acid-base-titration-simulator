@@ -41,7 +41,7 @@
             <p class="lead">
               Không gian học tập trực quan cho mô hình chuẩn độ axit–bazơ. Phiên bản
               Chemistry engine HCl–NaOH của Phase 1 đã được kiểm chứng; giao diện
-              mô phỏng vẫn là baseline tĩnh và chưa nối với engine.
+              mô phỏng từng giọt, đường cong và trạng thái chỉ thị ở Phase 2.
             </p>
             <a class="button button-primary" href="/simulate">Vào không gian mô phỏng</a>
           </div>
@@ -50,8 +50,8 @@
             <p class="eyebrow">Phase 1 · Chemistry foundation</p>
             <h2>Lõi hóa học đã sẵn sàng</h2>
             <p>
-              HCl–NaOH đã có fixture và test độc lập. Mô phỏng tương tác, đồ thị,
-              chỉ thị màu và Firebase vẫn được giữ ngoài phạm vi hiện tại.
+              HCl–NaOH có fixture và test độc lập; mô phỏng tương tác, đồ thị và
+              phenolphthalein đang được kiểm chứng trên branch Phase 2.
             </p>
           </aside>
         </div>
@@ -65,10 +65,10 @@
         </div>
         <div class="empty-state" role="status">
           <div class="empty-icon" aria-hidden="true">⊙</div>
-          <h3>Ca mô phỏng đang được chuẩn bị</h3>
+          <h3>Ca mô phỏng HCl–NaOH</h3>
           <p>
-            Ca HCl–NaOH chỉ xuất hiện tại đây sau khi phần UI Phase 2 được triển khai
-            và kiểm chứng. CH₃COOH–NaOH vẫn thuộc Phase 3.
+            Ca HCl–NaOH đã sẵn sàng để mở trong không gian mô phỏng. CH₃COOH–NaOH
+            vẫn thuộc Phase 3.
           </p>
           <a class="button button-secondary" href="/simulate">Xem giao diện mô phỏng</a>
         </div>
@@ -80,8 +80,8 @@
             <p class="eyebrow">Guest workspace · Phase 2 input</p>
             <h1 id="simulate-title">Không gian mô phỏng</h1>
             <p class="lead">
-              Nhập dữ liệu HCl–NaOH để kiểm tra và tính trạng thái cân bằng bằng
-              chemistry engine đã được kiểm chứng ở Phase 1.
+              Nhập dữ liệu HCl–NaOH để tính trạng thái cân bằng bằng chemistry engine
+              đã được kiểm chứng ở Phase 1.
             </p>
           </div>
           <span class="state-badge" data-simulation-state>Idle</span>
@@ -98,10 +98,7 @@
             </div>
 
             <form id="titration-form" class="control-form" novalidate>
-              <p class="notice" role="note">
-                Lát cắt này chỉ hỗ trợ HCl–NaOH ở 25 °C. Chuyển động, đồ thị động và
-                chỉ thị màu chưa được triển khai.
-              </p>
+              <p class="notice" role="note">HCl–NaOH ở 25 °C · thể tích nhập bằng mL, chemistry engine dùng L/K.</p>
               <label for="case-selector">Ca chuẩn</label>
               <select id="case-selector" aria-label="Khôi phục ca chuẩn"></select>
 
@@ -145,12 +142,19 @@
               <div class="control-group" aria-label="Điều khiển mô phỏng">
                 <button class="button button-primary" type="submit">Tính trạng thái</button>
                 <button class="button button-secondary" type="button" id="add-drop">Thêm giọt 0,05 mL</button>
+                <button class="button button-secondary" type="button" id="run-simulation">Chạy tự động</button>
+                <button class="button button-quiet" type="button" id="pause-simulation">Tạm dừng</button>
                 <button class="button button-quiet" type="button" id="reset-simulation">Đặt lại trạng thái</button>
               </div>
+              <label for="simulation-speed">Tốc độ mô phỏng</label>
+              <select id="simulation-speed" aria-label="Tốc độ mô phỏng">
+                <option value="slow">Chậm</option><option value="normal" selected>Chuẩn</option><option value="fast">Nhanh</option>
+              </select>
+              <div class="control-meta"><span>Thể tích đã thêm</span><strong data-result="added-volume">0,00 mL</strong></div>
               <p class="form-error" data-form-error role="alert"></p>
             </form>
 
-            <div class="vessel-stage" aria-label="Khu vực bình và buret, trạng thái trình bày trung tính">
+            <div class="vessel-stage" aria-label="Khu vực bình và buret">
               <div class="buret" aria-hidden="true">
                 <span class="buret-label">Buret</span>
                 <div class="buret-tube"><span></span></div>
@@ -158,9 +162,10 @@
                 <div class="buret-tip"></div>
                 <span class="buret-drop" aria-hidden="true"></span>
               </div>
-              <div class="flask" aria-hidden="true"><span></span></div>
+              <div class="flask" aria-hidden="true"><span data-indicator-solution></span></div>
               <p data-vessel-status>Chưa có mô phỏng đang chạy</p>
             </div>
+            <p class="indicator-status" role="status">Phenolphthalein: <strong data-indicator-state>Chưa có dữ liệu</strong></p>
           </article>
 
           <article class="panel graph-panel" aria-labelledby="graph-title">
@@ -171,11 +176,12 @@
               </div>
               <span class="panel-index">02</span>
             </div>
-            <div class="chart-placeholder" role="img" aria-label="Khung đồ thị pH theo thể tích, chưa có dữ liệu chemistry">
+            <div class="chart-placeholder" role="img" aria-label="Đồ thị pH theo thể tích chất chuẩn">
               <span class="axis-y">pH</span>
               <span class="axis-x">Thể tích chất chuẩn (mL)</span>
               <div class="chart-grid-lines" aria-hidden="true"></div>
-              <div class="chart-empty-label">Đồ thị sẽ hiển thị sau khi nối curve engine</div>
+              <svg class="titration-chart" data-chart aria-hidden="true"></svg>
+              <div class="chart-empty-label" data-chart-empty>Nhập dữ liệu để tạo đường cong</div>
             </div>
             <div class="legend" aria-label="Chú giải đồ thị">
               <span><i class="legend-dot current"></i>Điểm hiện tại</span>
@@ -187,7 +193,7 @@
               <table>
                 <caption>Bảng dữ liệu đồ thị</caption>
                 <thead><tr><th scope="col">V (mL)</th><th scope="col">pH</th><th scope="col">Giai đoạn</th></tr></thead>
-                <tbody><tr><td colspan="3">Chưa có dữ liệu mô phỏng.</td></tr></tbody>
+                <tbody data-curve-rows><tr><td colspan="3">Chưa có dữ liệu mô phỏng.</td></tr></tbody>
               </table>
             </div>
           </article>
@@ -211,7 +217,7 @@
             <table>
               <caption>Chi tiết trạng thái hóa học</caption>
               <thead><tr><th scope="col">Ion / chất</th><th scope="col">Số mol</th><th scope="col">Nồng độ</th><th scope="col">Phản ứng</th></tr></thead>
-              <tbody><tr><td>HCl / NaOH</td><td>—</td><td>—</td><td data-result="reaction">Chưa tính</td></tr></tbody>
+              <tbody data-chemistry-rows><tr><td>HCl / NaOH</td><td>—</td><td>—</td><td data-result="reaction">Chưa tính</td></tr></tbody>
             </table>
           </div>
         </section>
@@ -220,7 +226,7 @@
 
     <footer class="site-footer">
       <div class="container footer-inner">
-        <span>Acid–Base Titration Simulator · Phase 2 Input &amp; Validation</span>
+        <span>Acid–Base Titration Simulator · Phase 2 Simulation</span>
         <span>HTML · CSS · JavaScript modules</span>
       </div>
     </footer>

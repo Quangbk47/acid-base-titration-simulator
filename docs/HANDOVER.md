@@ -2,7 +2,7 @@
 
 ## Baseline
 
-- Current phase: `Phase 2 input/validation — READY FOR REVIEW`.
+- Current phase: `Phase 2 simulation/UI — IN PROGRESS; DEV PASS pending browser/mobile review`.
 - Quyết định sản phẩm/khoa học/Firebase đã chốt trong README và docs.
 - Repo GitHub và code baseline đã được xác nhận; Firebase Project ID và production URL vẫn để trống.
 
@@ -47,6 +47,11 @@
 Review lát cắt form/validation trên `feature/phase-2-input-validation`. Sau khi
 được chấp thuận, tiếp tục Phase 2 bằng state + `addDrop` trong phạm vi riêng;
 không gộp animation/chart/PP vào thay đổi nhập liệu này.
+
+Lát cắt tiếp theo đã thêm state/drop runner, chart, experiment view và
+phenolphthalein vào cùng branch. Các thành phần đã được kiểm tra bằng 27/27 test
+và browser preview cục bộ; vẫn cần review keyboard/mobile/reduced-motion trước
+khi ghi `DEV PASS` hoặc mở PR.
 
 ## Phase 2 input/validation handover
 

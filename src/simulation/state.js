@@ -3,6 +3,7 @@ import { isFiniteNumber, lToMl, mlToL } from '../chemistry/units.js';
 export const DEFAULT_DROP_SIZE_ML = 0.05;
 export const MIN_DROP_SIZE_ML = 0.05;
 export const MAX_DROP_SIZE_ML = 0.1;
+export const SIMULATION_SPEEDS = Object.freeze({ slow: 1200, normal: 700, fast: 280 });
 
 const freezeState = (state) => Object.freeze({
   ...state,
@@ -34,7 +35,7 @@ export const createSimulationState = (chemistryInput, options = {}) => {
   const initialAddedVolumeMl = lToMl(chemistryInput.Vb);
   return {
     ok: true,
-    state: freezeState({ screen: 'ready', chemistryInput, initialAddedVolumeMl, addedVolumeMl: initialAddedVolumeMl, dropSizeMl, dropCount: 0 }),
+    state: freezeState({ screen: 'ready', status: 'ready', speed: 'normal', chemistryInput, initialAddedVolumeMl, addedVolumeMl: initialAddedVolumeMl, dropSizeMl, dropCount: 0, result: null }),
   };
 };
 
@@ -46,7 +47,7 @@ export const addDrop = (state, dropSizeMl = state?.dropSizeMl) => {
   const addedVolumeMl = state.addedVolumeMl + dropSizeMl;
   return {
     ok: true,
-    state: freezeState({ ...state, chemistryInput: { ...state.chemistryInput, Vb: mlToL(addedVolumeMl) }, addedVolumeMl, dropCount: state.dropCount + 1, screen: 'ready' }),
+    state: freezeState({ ...state, chemistryInput: { ...state.chemistryInput, Vb: mlToL(addedVolumeMl) }, addedVolumeMl, dropCount: state.dropCount + 1, screen: 'ready', status: 'ready', result: null }),
   };
 };
 
@@ -54,9 +55,24 @@ export const resetSimulation = (state) => {
   if (!state || typeof state !== 'object' || !state.chemistryInput) return invalid('INVALID_SIMULATION_STATE', 'Simulation state không hợp lệ.');
   return {
     ok: true,
-    state: freezeState({ ...state, chemistryInput: { ...state.chemistryInput, Vb: mlToL(state.initialAddedVolumeMl) }, addedVolumeMl: state.initialAddedVolumeMl, dropCount: 0, screen: 'ready' }),
+    state: freezeState({ ...state, chemistryInput: { ...state.chemistryInput, Vb: mlToL(state.initialAddedVolumeMl) }, addedVolumeMl: state.initialAddedVolumeMl, dropCount: 0, screen: 'ready', status: 'ready', result: null }),
   };
 };
 
 export const baselineState = Object.freeze({ screen: 'idle', addedVolumeMl: null, hasSimulationData: false });
+
+export const withSimulationResult = (state, result) => {
+  if (!state || !state.chemistryInput) return invalid('INVALID_SIMULATION_STATE', 'Simulation state không hợp lệ.');
+  return { ok: true, state: freezeState({ ...state, result: result ?? null }) };
+};
+
+export const setSimulationStatus = (state, status) => {
+  if (!state || !state.chemistryInput || !['ready', 'running', 'paused'].includes(status)) return invalid('INVALID_SIMULATION_STATE', 'Trạng thái mô phỏng không hợp lệ.');
+  return { ok: true, state: freezeState({ ...state, status, screen: status }) };
+};
+
+export const setSimulationSpeed = (state, speed) => {
+  if (!state || !state.chemistryInput || !(speed in SIMULATION_SPEEDS)) return invalid('INVALID_SIMULATION_SPEED', 'Tốc độ mô phỏng không hợp lệ.');
+  return { ok: true, state: freezeState({ ...state, speed }) };
+};
 
