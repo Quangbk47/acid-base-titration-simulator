@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { solveStrongStrong } from '../src/chemistry/index.js';
 import { addDrop, createSimulationState, resetSimulation } from '../src/simulation/state.js';
+import { createSimulationRunner } from '../src/simulation/runner.js';
 
 const input = { Ca: 0.1, Va: 0.025, Cb: 0.1, Vb: 0, temperature: 298.15 };
 
@@ -47,4 +48,17 @@ test('SIM-03: invalid state, input and drop size are rejected without NaN', () =
   assert.equal(addDrop(state, 0).error.code, 'INVALID_DROP_SIZE');
   assert.equal(addDrop(null).error.code, 'INVALID_SIMULATION_STATE');
   assert.doesNotMatch(JSON.stringify(addDrop(state, Number.NaN)), /NaN|Infinity/);
+});
+
+test('SIM-04: runner schedules one deterministic step at a time and pauses cleanly', () => {
+  const callbacks = new Map(); let nextId = 0; const statuses = []; let steps = 0;
+  const runner = createSimulationRunner({ onStep: () => { steps += 1; return steps < 2; }, onStateChange: (status) => statuses.push(status), setTimeoutFn: (fn) => { const id = ++nextId; callbacks.set(id, fn); return id; }, clearTimeoutFn: (id) => callbacks.delete(id) });
+  runner.start();
+  assert.equal(callbacks.size, 1); assert.equal(runner.running, true);
+  const fire = () => { const [id, fn] = callbacks.entries().next().value; callbacks.delete(id); fn(); };
+  fire();
+  assert.equal(steps, 1); assert.equal(callbacks.size, 1);
+  fire();
+  assert.equal(steps, 2); assert.equal(runner.running, false); assert.equal(statuses.at(-1), 'ready');
+  runner.pause(); assert.equal(callbacks.size, 0); assert.equal(statuses.at(-1), 'paused');
 });

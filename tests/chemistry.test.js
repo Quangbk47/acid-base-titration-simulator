@@ -178,6 +178,7 @@ test('CHEM-05: malformed curve options return coded errors', () => {
     const result = generateCurve(input, options);
     assert.equal(result.error?.code, 'INVALID_CURVE_OPTIONS');
   }
+  assert.equal(generateCurve(input, { volumesMl: [0, 'bad'] }).error.code, 'INVALID_CURVE_VOLUMES');
 });
 
 const weakAcidInput = (volumeMl) => ({

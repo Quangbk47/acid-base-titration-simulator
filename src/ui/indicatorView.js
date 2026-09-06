@@ -1,17 +1,21 @@
-export const phenolphthalein = Object.freeze({ transitionStart: 8.2, transitionEnd: 10 });
-
-export const indicatorState = (result) => {
-  if (!result) return { color: 'clear', label: 'Chưa quan sát' };
-  if (result.pH < phenolphthalein.transitionStart) return { color: 'clear', label: 'Không màu' };
-  if (result.pH < phenolphthalein.transitionEnd) return { color: 'pink-transition', label: 'Đang chuyển hồng' };
-  return { color: 'pink', label: 'Hồng bền' };
+export const derivePhenolphthaleinState = (result) => {
+  if (!result) return { state: 'idle', color: 'transparent', transient: false };
+  if (result.stage === 'at-equivalence' || result.stage === 'near-equivalence') return { state: 'equivalence', color: 'transparent', transient: false };
+  if (result.excess?.species === 'OH⁻' || result.pH >= 10) return { state: 'base-excess', color: '#f38bb6', transient: false };
+  return { state: 'acidic', color: 'transparent', transient: true };
 };
 
-export const renderIndicator = (result) => {
-  const element = document.querySelector('[data-indicator]');
-  if (!element) return;
-  const state = indicatorState(result);
-  element.textContent = `Phenolphthalein: ${state.label}`;
-  element.dataset.color = state.color;
+const transientTimers = new WeakMap();
+export const renderIndicatorView = (root, result, { transient = false } = {}) => {
+  const solution = root?.querySelector('[data-indicator-solution]');
+  const label = root?.querySelector('[data-indicator-state]');
+  if (!solution) return;
+  const indicator = derivePhenolphthaleinState(result);
+  solution.dataset.indicator = indicator.state;
+  solution.style.setProperty('--indicator-color', indicator.color);
+  const prior = transientTimers.get(solution);
+  if (prior) clearTimeout(prior);
+  solution.classList.toggle('indicator-transient', Boolean(transient));
+  if (transient) transientTimers.set(solution, setTimeout(() => { solution.classList.remove('indicator-transient'); transientTimers.delete(solution); }, 500));
+  if (label) label.textContent = indicator.state === 'base-excess' ? 'Hồng bền (dư OH⁻)' : indicator.state === 'equivalence' ? 'Không màu · tương đương' : indicator.state === 'acidic' ? 'Không màu · trước tương đương' : 'Chưa có dữ liệu';
 };
-

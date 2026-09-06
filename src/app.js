@@ -12,7 +12,7 @@ import { initInputForm } from './ui/inputForm.js';
 const route = initNavigation({ links: document.querySelectorAll('[data-route]'), views: document.querySelectorAll('[data-view]') });
 const status = document.querySelector('#app-status');
 if (status) {
-  status.textContent = 'Phase 2 · Nhập liệu';
+  status.textContent = 'Phase 2 · Mô phỏng';
   status.dataset.state = baselineState.screen;
 }
 
