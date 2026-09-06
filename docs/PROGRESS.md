@@ -164,6 +164,7 @@
 ## 2026-09-06 — Phase 2 simulation/UI implementation slice
 
 - Phase: `Phase 2 — IN PROGRESS / DEV PASS pending browser gate`.
+- Branch/SHA: `feature/phase-2-input-validation` / `ab72937`.
 - Implemented: immutable simulation state with 0.05–0.10 mL drops and reset;
   timer runner with pause/resume and slow/normal/fast cadence; experiment view;
   curve view backed by `generateCurve` with current/half-equivalence/equivalence/
