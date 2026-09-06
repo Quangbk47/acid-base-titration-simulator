@@ -70,6 +70,11 @@ deploy `NO`; Phase 2 `NOT STARTED`.
 
 Phase 4B bị chặn cho tới khi interface Phase 2–3 ổn định.
 
+## Phase 4 — Chemistry reference validation
+
+- [x] CHEM-04 NH3-HCl charge-balance solver, fixed reference fixtures, and pH-error check.
+- [ ] Independent peer/reference review and PO acceptance of CHEM-04.
+
 ## Later
 
 - [ ] Phase 5 Admin.

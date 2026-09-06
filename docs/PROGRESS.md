@@ -239,3 +239,21 @@
   deploy và không dùng để thay đổi chemistry/simulation trong Phase 4.
 - Next: chờ bảng reference đã ghi rõ input, tolerance, nguồn tính tay và người
   review; sau đó tạo `tests/fixtures/phase4Reference.js` và automated review.
+
+## 2026-09-07 — Phase 4 NH3-HCl chemistry validation
+
+- Status: `DEV PASS`; scope is chemistry only, with no Firebase, UI, or deployment change.
+- Done: added a pure strong-acid/weak-base charge-balance solver for NH3-HCl,
+  independent fixed reference fixtures, and a 15-point automated comparison.
+- Reference cases: standard 0.1000 M / 0.1000 M; changed concentration 0.01000 M
+  NH3 / 0.02000 M HCl; dilute 1.000e-6 M / 1.000e-6 M model-boundary case.
+- Result: every row passes `|delta pH| <= 0.02`; maximum observed error against
+  the four-decimal reference table is `0.000048`.
+- Files: `src/chemistry/strongAcidWeakBase.js`, `src/chemistry/index.js`,
+  `tests/fixtures/phase4Reference.js`, `tests/phase4Nh3Hcl.test.js`, and
+  `docs/PHASE_4_NH3_HCL_REFERENCE.md`.
+- Tests: `npm run check` PASS (31/31); `git diff --check` PASS.
+- Risk: the dilute case correctly retains water autoionisation but ideal-solution
+  assumptions, CO2 absorption, activity, and volumetric error limit its use as
+  experimental data.
+- Next: peer/reference review and PO acceptance before marking CHEM-04 closed.

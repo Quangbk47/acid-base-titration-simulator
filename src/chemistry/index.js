@@ -1,5 +1,6 @@
 export { solveStrongStrong } from './strongStrong.js';
 export { solveWeakAcidStrongBase } from './weakAcidStrongBase.js';
+export { solveStrongAcidWeakBase } from './strongAcidWeakBase.js';
 export { generateCurve } from './curve.js';
 export { generateWeakAcidCurve } from './weakCurve.js';
 export {
