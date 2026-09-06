@@ -148,15 +148,16 @@
               <p class="form-error" data-form-error role="alert"></p>
             </form>
 
-            <div class="vessel-stage" aria-label="Khu vực bình và buret" aria-live="polite">
+            <div class="vessel-stage" aria-label="Khu vực bình và buret, trạng thái trình bày trung tính">
               <div class="buret" aria-hidden="true">
                 <span class="buret-label">Buret</span>
                 <div class="buret-tube"><span></span></div>
+                <div class="buret-stopcock"></div>
                 <div class="buret-tip"></div>
+                <span class="buret-drop" aria-hidden="true"></span>
               </div>
               <div class="flask" aria-hidden="true"><span></span></div>
-              <p data-field="vessel">Chưa có giọt đang rơi</p>
-              <p data-indicator aria-live="polite">Phenolphthalein: Không màu</p>
+              <p data-vessel-status>Chưa có mô phỏng đang chạy</p>
             </div>
           </article>
 
@@ -168,11 +169,11 @@
               </div>
               <span class="panel-index">02</span>
             </div>
-            <div class="chart-placeholder" role="img" aria-label="Đồ thị pH theo thể tích">
+            <div class="chart-placeholder" role="img" aria-label="Khung đồ thị pH theo thể tích, chưa có dữ liệu chemistry">
               <span class="axis-y">pH</span>
               <span class="axis-x">Thể tích chất chuẩn (mL)</span>
               <div class="chart-grid-lines" aria-hidden="true"></div>
-              <svg data-chart-svg viewBox="0 0 560 250" preserveAspectRatio="none" aria-label="Đường cong pH theo thể tích"></svg>
+              <div class="chart-empty-label">Đồ thị sẽ hiển thị sau khi nối curve engine</div>
             </div>
             <div class="legend" aria-label="Chú giải đồ thị">
               <span><i class="legend-dot current"></i>Điểm hiện tại</span>
