@@ -257,3 +257,12 @@
   assumptions, CO2 absorption, activity, and volumetric error limit its use as
   experimental data.
 - Next: peer/reference review and PO acceptance before marking CHEM-04 closed.
+
+## 2026-09-07 — Phase 4 NH3-HCl data synchronization
+
+- Synced the Phase 4 implementation against the current files from GitHub.
+- Corrected the stoichiometric excess contract: NH3 before equivalence, no
+  excess at equivalence, and H+ after equivalence; equilibrium species remain
+  separate from stoichiometric excess.
+- Added ammonia mass-balance, `pH + pOH = 14`, and stage-transition assertions.
+- Scope remains chemistry-only; Firebase, UI, and deployment are unchanged.

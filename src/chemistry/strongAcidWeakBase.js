@@ -93,6 +93,8 @@ export const solveStrongAcidWeakBase = (input) => {
     toleranceMol,
   });
   const excessH = Math.max(0, acidMoles - baseMoles);
+  const residualNH3 = Math.max(0, baseMoles - acidMoles);
+  const stoichiometricNH4 = Math.min(acidMoles, baseMoles);
 
   return {
     model: 'strong-acid-weak-base',
@@ -106,10 +108,18 @@ export const solveStrongAcidWeakBase = (input) => {
     Veq: equivalenceMl,
     totalVolumeL,
     totalVolumeMl: lToMl(totalVolumeL),
-    moles: { ammoniaInitial: baseMoles, hclAdded: acidMoles, residualH: excessH },
-    excess: excessH > toleranceMol
-      ? { species: 'H+', moles: excessH, concentration: excessH / totalVolumeL }
-      : { species: null, moles: 0, concentration: 0 },
+    moles: {
+      ammoniaInitial: baseMoles,
+      hclAdded: acidMoles,
+      residualNH3,
+      stoichiometricNH4,
+      residualH: excessH,
+    },
+    excess: residualNH3 > toleranceMol
+      ? { species: 'NH3', moles: residualNH3, concentration: residualNH3 / totalVolumeL }
+      : excessH > toleranceMol
+        ? { species: 'H+', moles: excessH, concentration: excessH / totalVolumeL }
+        : { species: null, moles: 0, concentration: 0 },
     concentrations: {
       HPlus: h,
       OHMinus: oh,

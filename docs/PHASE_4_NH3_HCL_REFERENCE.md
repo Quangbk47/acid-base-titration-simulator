@@ -43,3 +43,8 @@ from this ideal model by more than 0.02 pH.
 If a row fails, inspect dilution (`VT`), the `Kb`/`Ka` relation, ammonia versus
 ammonium ratio in the buffer, and HCl excess after equivalence. A pH of 7 at
 equivalence is also incorrect: NH₄⁺ is a weak acid.
+
+The reported stoichiometric excess is NH₃ before equivalence, none at
+equivalence, and H⁺ after equivalence. Equilibrium species remain available
+separately in `concentrations` and `species`; they must not be confused with the
+stoichiometric excess field.
