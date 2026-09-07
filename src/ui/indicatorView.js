@@ -6,7 +6,7 @@ export const derivePhenolphthaleinState = (result) => {
 };
 
 const transientTimers = new WeakMap();
-export const renderIndicatorView = (root, result, { transient = false } = {}) => {
+export const renderIndicatorView = (root, result, { transient = false, setTimeoutFn = globalThis.setTimeout, clearTimeoutFn = globalThis.clearTimeout } = {}) => {
   const solution = root?.querySelector('[data-indicator-solution]');
   const label = root?.querySelector('[data-indicator-state]');
   if (!solution) return;
@@ -14,8 +14,8 @@ export const renderIndicatorView = (root, result, { transient = false } = {}) =>
   solution.dataset.indicator = indicator.state;
   solution.style.setProperty('--indicator-color', indicator.color);
   const prior = transientTimers.get(solution);
-  if (prior) clearTimeout(prior);
+  if (prior) clearTimeoutFn(prior);
   solution.classList.toggle('indicator-transient', Boolean(transient));
-  if (transient) transientTimers.set(solution, setTimeout(() => { solution.classList.remove('indicator-transient'); transientTimers.delete(solution); }, 500));
+  if (transient) transientTimers.set(solution, setTimeoutFn(() => { solution.classList.remove('indicator-transient'); transientTimers.delete(solution); }, 500));
   if (label) label.textContent = indicator.state === 'base-excess' ? 'Hồng bền (dư OH⁻)' : indicator.state === 'equivalence' ? 'Không màu · tương đương' : indicator.state === 'acidic' ? 'Không màu · trước tương đương' : 'Chưa có dữ liệu';
 };
