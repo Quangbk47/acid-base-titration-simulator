@@ -80,7 +80,7 @@
             <p class="eyebrow">Guest workspace · Phase 2 input</p>
             <h1 id="simulate-title">Không gian mô phỏng</h1>
             <p class="lead">
-              Nhập dữ liệu HCl–NaOH để tính trạng thái cân bằng bằng chemistry engine
+              Nhập dữ liệu chuẩn độ để tính trạng thái cân bằng bằng chemistry engine
               đã được kiểm chứng ở Phase 1.
             </p>
           </div>
@@ -98,7 +98,7 @@
             </div>
 
             <form id="titration-form" class="control-form" novalidate>
-              <p class="notice" role="note">HCl–NaOH ở 25 °C · thể tích nhập bằng mL, chemistry engine dùng L/K.</p>
+              <p class="notice" data-system-description role="note">HCl–NaOH ở 25 °C · thể tích nhập bằng mL, chemistry engine dùng L/K.</p>
               <label for="case-selector">Ca chuẩn</label>
               <select id="case-selector" aria-label="Khôi phục ca chuẩn"></select>
 
@@ -215,7 +215,7 @@
           </div>
           <div class="chemistry-summary">
             <div class="metric-card"><span>pH hiện tại</span><strong data-result="ph">—</strong><small data-result="ph-label">Chưa tính</small></div>
-            <div class="metric-card"><span>Tổng thể tích</span><strong data-result="volume">—</strong><small>HCl + NaOH</small></div>
+            <div class="metric-card"><span>Tổng thể tích</span><strong data-result="volume">—</strong><small data-result="system">HCl + NaOH</small></div>
             <div class="metric-card"><span>Chất dư</span><strong data-result="excess">—</strong><small>Ion quyết định pH</small></div>
             <div class="metric-card"><span>Giai đoạn</span><strong data-result="stage">—</strong><small>So với tương đương</small></div>
           </div>
@@ -223,7 +223,7 @@
             <table>
               <caption>Chi tiết trạng thái hóa học</caption>
               <thead><tr><th scope="col">Ion / chất</th><th scope="col">Số mol</th><th scope="col">Nồng độ</th><th scope="col">Phản ứng</th></tr></thead>
-              <tbody data-chemistry-rows><tr><td>HCl / NaOH</td><td>—</td><td>—</td><td data-result="reaction">Chưa tính</td></tr></tbody>
+              <tbody data-chemistry-rows><tr><td data-result="species-summary">HCl / NaOH</td><td>—</td><td>—</td><td data-result="reaction">Chưa tính</td></tr></tbody>
             </table>
           </div>
         </section>

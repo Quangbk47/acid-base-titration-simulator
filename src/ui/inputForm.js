@@ -19,9 +19,15 @@ export function evaluateTitration(values, solve = solveStrongStrong) {
   const validation = validateTitrationForm(values);
   if (!validation.ok) return validation;
   const chemistryInput = toChemistryInput(validation.value);
-  const result = validation.value.solver === 'weak-acid-strong-base' ? solveWeakAcidStrongBase(chemistryInput) : solve(chemistryInput);
+  const result = solveChemistryInput(chemistryInput, solve);
   if (result.error) return { ok: false, solverError: result.error };
   return { ok: true, chemistryInput, result };
+}
+
+export function solveChemistryInput(chemistryInput, strongSolver = solveStrongStrong) {
+  return chemistryInput?.Ka !== undefined
+    ? solveWeakAcidStrongBase(chemistryInput)
+    : strongSolver(chemistryInput);
 }
 
 export function initInputForm({ form, root = document, solve = solveStrongStrong } = {}) {
@@ -47,7 +53,7 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
     if (form.elements.addedVolumeMl) form.elements.addedVolumeMl.value = simulationState.addedVolumeMl.toFixed(2);
   };
   const evaluateCurrent = () => {
-    const result = solve(simulationState.chemistryInput);
+    const result = solveChemistryInput(simulationState.chemistryInput, solve);
     if (result.error) return result;
     simulationState = withSimulationResult(simulationState, result).state;
     render(result);
@@ -69,7 +75,17 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
       setStateLabel(status === 'running' ? 'Running' : status === 'paused' ? 'Paused' : 'Ready');
     },
   });
-  const syncSystem = () => { const system = TITRATION_SYSTEMS[systemSelector.value]; form.querySelector('#analyte').value = system?.analyte ?? ''; form.querySelector('#titrant').value = system?.titrant ?? ''; const ka = form.querySelector('[data-ka-field]'); if (ka) ka.hidden = systemSelector.value !== 'weak-acid-strong-base'; };
+  const syncSystem = () => {
+    const system = TITRATION_SYSTEMS[systemSelector.value];
+    form.querySelector('#analyte').value = system?.analyte ?? '';
+    form.querySelector('#titrant').value = system?.titrant ?? '';
+    const description = systemSelector.value === 'weak-acid-strong-base'
+      ? 'CH₃COOH–NaOH ở 25 °C · thể tích nhập bằng mL, chemistry engine dùng L/K.'
+      : 'HCl–NaOH ở 25 °C · thể tích nhập bằng mL, chemistry engine dùng L/K.';
+    for (const element of root.querySelectorAll('[data-system-description]')) element.textContent = description;
+    const ka = form.querySelector('[data-ka-field]');
+    if (ka) ka.hidden = systemSelector.value !== 'weak-acid-strong-base';
+  };
   const loadCase = () => { const selected = standardCases.find(({ id }) => id === caseSelector.value) ?? standardCases[0]; systemSelector.value = selected.systemType ?? 'strong-acid-strong-base'; syncSystem(); form.elements.analyteConcentrationM.value = selected.CaM; form.elements.analyteVolumeMl.value = selected.VaMl; form.elements.titrantConcentrationM.value = selected.CbM; form.elements.addedVolumeMl.value = selected.VbMl; if (form.elements.Ka) form.elements.Ka.value = selected.Ka ?? ''; clearErrors(form); };
   for (const item of standardCases) caseSelector.add(new Option(item.label, item.id));
   loadCase();
