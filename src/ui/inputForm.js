@@ -9,11 +9,12 @@ import { renderIndicatorView } from './indicatorView.js';
 import { promptForState } from '../data/guidedPrompts.js';
 import { createReport, downloadReport } from './report.js';
 
-const FIELD_IDS = Object.freeze({ systemType: 'system-type', analyteConcentrationM: 'analyte-concentration', analyteVolumeMl: 'analyte-volume', titrantConcentrationM: 'titrant-concentration', addedVolumeMl: 'added-volume' });
+export const FIELD_IDS = Object.freeze({ systemType: 'system-type', analyteConcentrationM: 'analyte-concentration', analyteVolumeMl: 'analyte-volume', titrantConcentrationM: 'titrant-concentration', addedVolumeMl: 'added-volume', Ka: 'ka' });
+export const fieldIdFor = (field) => FIELD_IDS[field] ?? field;
 const valuesFromForm = (form) => Object.fromEntries(new FormData(form).entries());
 const setText = (root, selector, value) => { const element = root.querySelector(selector); if (element) element.textContent = value; };
 const clearErrors = (form) => { for (const output of form.querySelectorAll('[data-error-for]')) output.textContent = ''; for (const control of form.elements) control.removeAttribute?.('aria-invalid'); };
-const showErrors = (form, errors) => { clearErrors(form); for (const [field, message] of Object.entries(errors)) { form.querySelector(`#${FIELD_IDS[field] ?? field}`)?.setAttribute('aria-invalid', 'true'); const output = form.querySelector(`[data-error-for="${field}"]`); if (output) output.textContent = message; } };
+const showErrors = (form, errors) => { clearErrors(form); for (const [field, message] of Object.entries(errors)) { form.querySelector(`#${fieldIdFor(field)}`)?.setAttribute('aria-invalid', 'true'); const output = form.querySelector(`[data-error-for="${field}"]`); if (output) output.textContent = message; } };
 
 export function evaluateTitration(values, solve = solveStrongStrong) {
   const validation = validateTitrationForm(values);
@@ -30,6 +31,17 @@ export function solveChemistryInput(chemistryInput, strongSolver = solveStrongSt
     : strongSolver(chemistryInput);
 }
 
+export const simulationControlState = ({ hasSimulation = false, state = 'Idle' } = {}) => {
+  const canSimulate = hasSimulation && ['Ready', 'Running', 'Paused'].includes(state);
+  return {
+    submitDisabled: state === 'Validating' || state === 'Running',
+    addDropDisabled: !canSimulate || state === 'Running',
+    runDisabled: !canSimulate || state === 'Running',
+    pauseDisabled: !canSimulate || state !== 'Running',
+    resetDisabled: !hasSimulation || state === 'Validating',
+  };
+};
+
 export function initInputForm({ form, root = document, solve = solveStrongStrong } = {}) {
   if (!form) return null;
   const caseSelector = form.querySelector('#case-selector');
@@ -41,7 +53,16 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
   const speedSelector = form.querySelector('#simulation-speed');
   const stateBadge = root.querySelector('[data-simulation-state]');
   let simulationState = null;
-  const setStateLabel = (value) => { if (stateBadge) stateBadge.textContent = value; const vessel = root.querySelector('.vessel-stage'); if (vessel) vessel.dataset.state = value.toLowerCase(); const vesselStatus = root.querySelector('[data-vessel-status]'); if (vesselStatus) vesselStatus.textContent = value === 'Running' ? 'Đang nhỏ giọt tự động' : value === 'Paused' ? 'Đã tạm dừng' : value === 'Ready' ? 'Sẵn sàng mô phỏng' : 'Chưa có mô phỏng'; };
+  const applyControlState = (value) => {
+    const controls = simulationControlState({ hasSimulation: Boolean(simulationState), state: value });
+    const submitButton = form.querySelector('button[type="submit"]');
+    if (submitButton) submitButton.disabled = controls.submitDisabled;
+    if (addDropButton) addDropButton.disabled = controls.addDropDisabled;
+    if (runButton) runButton.disabled = controls.runDisabled;
+    if (pauseButton) pauseButton.disabled = controls.pauseDisabled;
+    if (resetButton) resetButton.disabled = controls.resetDisabled;
+  };
+  const setStateLabel = (value) => { if (stateBadge) stateBadge.textContent = value; const vessel = root.querySelector('.vessel-stage'); if (vessel) vessel.dataset.state = value.toLowerCase(); const vesselStatus = root.querySelector('[data-vessel-status]'); if (vesselStatus) vesselStatus.textContent = value === 'Running' ? 'Đang nhỏ giọt tự động' : value === 'Paused' ? 'Đã tạm dừng' : value === 'Ready' ? 'Sẵn sàng mô phỏng' : 'Chưa có mô phỏng'; applyControlState(value); };
   const render = (result = simulationState?.result) => {
     if (!simulationState || !result) return;
     renderExperimentView(root, result, simulationState);
@@ -79,6 +100,7 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
     const system = TITRATION_SYSTEMS[systemSelector.value];
     form.querySelector('#analyte').value = system?.analyte ?? '';
     form.querySelector('#titrant').value = system?.titrant ?? '';
+    for (const element of root.querySelectorAll('[data-analyte-label]')) element.textContent = system?.analyte ?? '';
     const description = systemSelector.value === 'weak-acid-strong-base'
       ? 'CH₃COOH–NaOH ở 25 °C · thể tích nhập bằng mL, chemistry engine dùng L/K.'
       : 'HCl–NaOH ở 25 °C · thể tích nhập bằng mL, chemistry engine dùng L/K.';
@@ -88,7 +110,7 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
   };
   const loadCase = () => { const selected = standardCases.find(({ id }) => id === caseSelector.value) ?? standardCases[0]; systemSelector.value = selected.systemType ?? 'strong-acid-strong-base'; syncSystem(); form.elements.analyteConcentrationM.value = selected.CaM; form.elements.analyteVolumeMl.value = selected.VaMl; form.elements.titrantConcentrationM.value = selected.CbM; form.elements.addedVolumeMl.value = selected.VbMl; if (form.elements.Ka) form.elements.Ka.value = selected.Ka ?? ''; clearErrors(form); };
   for (const item of standardCases) caseSelector.add(new Option(item.label, item.id));
-  loadCase();
+  loadCase(); setStateLabel('Idle');
   caseSelector.addEventListener('change', loadCase); systemSelector.addEventListener('change', syncSystem);
   form.addEventListener('submit', (event) => {
     event.preventDefault(); setStateLabel('Validating'); setText(form, '[data-form-error]', '');

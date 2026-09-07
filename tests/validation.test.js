@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { evaluateTitration, solveChemistryInput } from '../src/ui/inputForm.js';
+import { evaluateTitration, fieldIdFor, solveChemistryInput } from '../src/ui/inputForm.js';
 import { addDrop, createSimulationState } from '../src/simulation/state.js';
 import { toChemistryInput, validateTitrationForm } from '../src/ui/validation.js';
 
@@ -70,6 +70,12 @@ test('invalid form data never calls the chemistry engine', () => {
   });
   assert.equal(evaluation.ok, false);
   assert.equal(calls, 0);
+});
+
+test('Phase 2 validation maps Ka errors to the Ka control for aria-invalid', () => {
+  const weakAcid = validateTitrationForm({ ...valid, systemType: 'weak-acid-strong-base', Ka: '0' });
+  assert.match(weakAcid.errors.Ka, /0 < Ka < 1/);
+  assert.equal(fieldIdFor('Ka'), 'ka');
 });
 
 test('Phase 3 weak-acid add-drop keeps the weak-acid solver and species', () => {

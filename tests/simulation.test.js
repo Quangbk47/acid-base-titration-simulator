@@ -41,6 +41,35 @@ test('SIM-02: reset restores the original added volume without mutating prior st
   assert.equal(stepped.state.addedVolumeMl, 12.55);
 });
 
+test('SIM-02: speed changes delay only, not chemistry at the same added volume', () => {
+  const runAtSpeed = (speed) => {
+    let state = createSimulationState(input).state;
+    let result;
+    const callbacks = [];
+    const delays = [];
+    const runner = createSimulationRunner({
+      speed,
+      onStep: () => {
+        const next = addDrop(state);
+        state = next.state;
+        result = solveStrongStrong(state.chemistryInput);
+        return state.dropCount < 3;
+      },
+      setTimeoutFn: (callback, delay) => { delays.push(delay); callbacks.push(callback); return callbacks.length; },
+      clearTimeoutFn: () => {},
+    });
+    runner.start();
+    while (callbacks.length) callbacks.shift()();
+    return { addedVolumeMl: state.addedVolumeMl, pH: result.pH, stage: result.stage, totalVolumeMl: result.totalVolumeMl, delays };
+  };
+  const outcomes = ['slow', 'normal', 'fast'].map(runAtSpeed);
+  for (const { addedVolumeMl } of outcomes) assert.ok(Math.abs(addedVolumeMl - 0.15) < 1e-12);
+  assert.equal(new Set(outcomes.map(({ pH }) => pH)).size, 1);
+  assert.equal(new Set(outcomes.map(({ stage }) => stage)).size, 1);
+  assert.equal(new Set(outcomes.map(({ totalVolumeMl }) => totalVolumeMl)).size, 1);
+  assert.deepEqual(outcomes.map(({ delays }) => delays[0]), [1200, 700, 280]);
+});
+
 test('SIM-03: invalid state, input and drop size are rejected without NaN', () => {
   assert.equal(createSimulationState({ ...input, Vb: -1 }).error.code, 'INVALID_CHEMISTRY_INPUT');
   assert.equal(createSimulationState(input, { dropSizeMl: 0.2 }).error.code, 'INVALID_DROP_SIZE');
