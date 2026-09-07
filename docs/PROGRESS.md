@@ -226,6 +226,13 @@
 - Next: owner chạy `npx firebase-tools login`, sau đó xác nhận để chạy
   `projects:list`, deploy Rules/Hosting preview và ghi URL/SHA/rollback.
 
+## 2026-09-07 — Phase 3 audit correction
+
+- Status supersedes the earlier Phase 3 `DONE` claim: `IN PROGRESS — integration fixes under review`.
+- Audit reproduced three UI integration gaps on `main`: no current-point marker in the chart, the app bypassed the indicator renderer, and guided mode did not identify half-equivalence from the actual state volume.
+- Fix branch `fix/phase-3-integration-audit` adds the current marker, routes indicator rendering through its single module, and derives the half-equivalence prompt from `volumeMl` plus `milestones.halfEqMl`.
+- Evidence: lint, formatting, full Node suite 32/32, `git diff --check`, and HTTP `/simulate` smoke PASS. Browser/keyboard/mobile and peer/PO review remain required; no Phase PASS is claimed.
+
 ## 2026-09-06 — Schedule correction: Phase 4 reference validation
 
 - Quyết định nhóm: dừng Firebase/Auth/Firestore/deploy ở thời điểm này; các

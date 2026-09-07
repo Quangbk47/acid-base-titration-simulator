@@ -89,6 +89,8 @@ h3 { margin-bottom: 8px; font-size: 1.1rem; }
 .buret-tip { position: absolute; bottom: 0; left: 25px; width: 6px; height: 24px; background: #91b7ae; clip-path: polygon(0 0, 100% 0, 65% 100%, 35% 100%); }
 .flask { position: relative; width: 118px; height: 94px; margin-bottom: 28px; border: 3px solid #6ba8a0; border-top: 0; border-radius: 0 0 50% 50%; background: linear-gradient(165deg, rgba(255,255,255,0.9), rgba(196, 231, 221, 0.65)); clip-path: polygon(35% 0, 65% 0, 65% 28%, 100% 100%, 0 100%, 35% 28%); }
 .flask span { position: absolute; inset: 53% 12% 7%; border-radius: 50%; background: rgba(13, 122, 121, 0.18); }
+[data-indicator][data-color="pink-transition"] { color: #be4c7d; font-weight: 700; }
+[data-indicator][data-color="pink"] { color: #a82461; font-weight: 800; }
 
 .chart-placeholder { position: relative; min-height: 295px; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: #fbfdfc; }
 .chart-grid-lines { position: absolute; inset: 28px 24px 46px 48px; opacity: 0.8; background: repeating-linear-gradient(to right, transparent 0 calc(25% - 1px), #dbe8e5 calc(25% - 1px) 25%), repeating-linear-gradient(to bottom, transparent 0 calc(25% - 1px), #dbe8e5 calc(25% - 1px) 25%); }

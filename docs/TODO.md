@@ -70,6 +70,10 @@ deploy `NO`; Phase 2 `NOT STARTED`.
 
 Phase 4B bị chặn cho tới khi interface Phase 2–3 ổn định.
 
+## Audit status — 2026-09-07
+
+- [ ] Phase 3 audit correction: integration fixes are implemented on `fix/phase-3-integration-audit`; browser, peer and PO review are still required. Do not treat the previous `DONE` note as Phase PASS.
+
 ## Later
 
 - [ ] Phase 5 Admin.

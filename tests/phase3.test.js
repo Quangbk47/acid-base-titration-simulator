@@ -18,6 +18,11 @@ test('Phase 3 guided workflow scores answers from the current chemistry state', 
   assert.match(evaluation.feedback, /Chính xác/);
 });
 
+test('Phase 3 guided prompt recognises half-equivalence from its actual milestone', () => {
+  const prompt = guidedPromptFor({ volumeMl: 12.5, milestones: { halfEqMl: 12.5 }, moles: { naohAdded: 0.00125 }, pH: 4.74, stage: 'before-equivalence' });
+  assert.equal(prompt.milestone, 'half-equivalence');
+});
+
 test('Phase 3 report records model version, input, milestones, and graph points', () => {
   const report = createSimulationReport({
     input: { Ca: 0.1, Va: 0.025, Cb: 0.1, Vb: 0, Ka: 1.8e-5, temperature: 298.15 },

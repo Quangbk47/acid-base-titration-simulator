@@ -11,11 +11,6 @@ export const renderExperiment = (state) => {
   text('[data-field="excess"]', result?.excess?.species ?? '—');
   text('[data-field="stage"]', result?.stage ?? '—');
   text('[data-field="vessel"]', result ? `Đã thêm ${state.addedVolumeMl.toFixed(2)} mL` : 'Chưa có giọt đang rơi');
-  const indicator = document.querySelector('[data-indicator]');
-  if (indicator) {
-    const label = !result ? 'Chưa quan sát' : result.pH < 8.2 ? 'Không màu' : result.pH < 10 ? 'Đang chuyển hồng' : 'Hồng bền';
-    indicator.textContent = `Phenolphthalein: ${label}`;
-  }
   const table = document.querySelector('[data-chemistry-body]');
   if (!table) return;
   table.replaceChildren();

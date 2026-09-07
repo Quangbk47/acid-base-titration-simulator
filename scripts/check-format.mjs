@@ -20,6 +20,7 @@ const requiredFiles = [
   'scripts/serve.mjs',
   'tests/smoke.test.js',
   'tests/chemistry.test.js',
+  'tests/chart.test.js',
   'tests/fixtures/phase1Reference.js',
 ];
 let failed = false;

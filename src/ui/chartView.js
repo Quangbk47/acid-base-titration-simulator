@@ -16,5 +16,12 @@ export const renderChart = (history, milestones = {}) => {
     marker.setAttribute('x1', x); marker.setAttribute('x2', x); marker.setAttribute('y1', 0); marker.setAttribute('y2', height);
     marker.setAttribute('stroke', color); marker.setAttribute('stroke-dasharray', '4 4'); marker.setAttribute('data-milestone', label); svg.append(marker);
   }
+  const current = history.at(-1);
+  const currentPoint = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  currentPoint.setAttribute('cx', (current.volumeMl / maxV) * width);
+  currentPoint.setAttribute('cy', height - (current.pH / 14) * height);
+  currentPoint.setAttribute('r', '5'); currentPoint.setAttribute('fill', '#0d7a79');
+  currentPoint.setAttribute('stroke', '#ffffff'); currentPoint.setAttribute('stroke-width', '2');
+  currentPoint.setAttribute('data-current-point', 'true'); svg.append(currentPoint);
   for (const point of history) { const row = document.createElement('tr'); row.innerHTML = `<td>${point.volumeMl.toFixed(2)}</td><td>${point.pH.toFixed(2)}</td><td>${point.stage}</td>`; table.append(row); }
 };

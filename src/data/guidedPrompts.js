@@ -1,6 +1,9 @@
 const milestoneFor = (result) => {
   if (!result) return 'initial';
-  if ((result.moles?.naohAdded ?? 0) === 0) return 'initial';
+  const volumeMl = result.volumeMl;
+  if (Number.isFinite(volumeMl) && Math.abs(volumeMl) <= 1e-9) return 'initial';
+  if (!Number.isFinite(volumeMl) && (result.moles?.naohAdded ?? 0) === 0) return 'initial';
+  if (Number.isFinite(volumeMl) && Number.isFinite(result.milestones?.halfEqMl) && Math.abs(volumeMl - result.milestones.halfEqMl) <= 0.05) return 'half-equivalence';
   if (result.stage === 'at-equivalence') return 'equivalence';
   if (result.stage === 'after-equivalence') return 'after-equivalence';
   if (result.pH > 3 && result.pH < 7) return 'buffer';
@@ -8,6 +11,7 @@ const milestoneFor = (result) => {
 };
 
 const prompts = Object.freeze({
+  'half-equivalence': Object.freeze({ question: 'At half equivalence, compare pH with pKa.', expected: 'At half equivalence, pH is approximately pKa.' }),
   initial: Object.freeze({ question: 'Dự đoán pH ban đầu và màu phenolphthalein.', expected: 'Axit yếu có pH lớn hơn 1; phenolphthalein không màu.' }),
   'before-equivalence': Object.freeze({ question: 'Bạn dự đoán dung dịch đang ở vùng đệm hay đã tương đương?', expected: 'Trước tương đương, HA và A⁻ cùng tồn tại; pH tăng dần trong vùng đệm.' }),
   buffer: Object.freeze({ question: 'Chất nào đang đệm thay đổi pH khi thêm một giọt NaOH?', expected: 'Cặp HA/A⁻ hấp thụ thay đổi nhỏ của acid/base.' }),

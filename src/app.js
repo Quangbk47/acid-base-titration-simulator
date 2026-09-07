@@ -6,6 +6,7 @@ import { addDropState, createSimulationState, resetSimulationState } from './sim
 import { createRunner, speedDelayMs } from './simulation/runner.js';
 import { renderChart } from './ui/chartView.js';
 import { renderExperiment } from './ui/experimentView.js';
+import { renderIndicator } from './ui/indicatorView.js';
 import { initNavigation } from './ui/navigation.js';
 import { createSimulationReport, downloadSimulationReport } from './ui/report.js';
 
@@ -32,6 +33,7 @@ const updateButtons = () => {
 };
 const render = () => {
   renderExperiment(state);
+  renderIndicator(state.current);
   renderChart(state.history, state.current?.milestones ?? solveAt(0).milestones);
   const analyte = document.querySelector('#analyte');
   if (analyte) analyte.value = activeModel === 'weak' ? 'CH₃COOH' : 'HCl';
