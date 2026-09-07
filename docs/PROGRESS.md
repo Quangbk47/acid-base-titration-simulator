@@ -189,3 +189,27 @@
 - Preview/deploy: not created; production deploy `NO`.
 - Risk: the Phase 3 slice is built above the unmerged Phase 2 branch and still needs browser,
   peer and PO review before merge.
+
+## 2026-09-07 — Phase 2 implementation and acceptance closeout
+
+- Phase: `Phase 2 — READY TO CLOSE / acceptance PASS`.
+- Branch/SHA: `feature/phase-3-weak-acid-guided-report` /
+  `e6ffd10c43e9b2627f640e19a5dec95329ffdaff`.
+- Code closeout: Ka accessibility mapping, simulation control states, dynamic
+  HCl/CH₃COOH labels, SIM-02 speed invariance regression and CHEM-06 indicator
+  regression were committed in `e6ffd10`.
+- Regression fix evidence: `aac830341c32dbbf720713a2221d41a2af6ad6e8`
+  (`fix: preserve titration solver during simulation`) preserves the selected
+  weak-acid/strong-acid solver during add-drop and subsequent simulation steps.
+- Acceptance: SIM-01, SIM-02, SIM-03, UI-01, UI-02, UI-03 and CHEM-06 PASS;
+  responsive runtime PASS at 320/360/375/430/768/1280/1366 px.
+- Reduced motion: manual Windows + Edge evidence PASS. Windows Animation effects
+  were Off; `window.matchMedia('(prefers-reduced-motion: reduce)').matches`
+  returned `true`; submit/add-drop/run/pause/resume/reset remained functional and
+  buret/drop animation was reduced to near-zero motion.
+- Automated evidence: `node --test` 36/36 PASS; lint PASS; format PASS;
+  `git diff --check` PASS.
+- Scope: no chemistry formula, unit convention, Firebase or Phase 4 change.
+- Phase 3 remains `DEV PASS; PO review pending` and is not declared complete.
+- Next: review Phase 3 independently; do not re-open Phase 2 unless a new
+  regression is found.

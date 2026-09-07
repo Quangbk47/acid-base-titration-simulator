@@ -48,7 +48,9 @@ deploy `NO`; Phase 2 `NOT STARTED`.
 
 ## Main track
 
-- [ ] Phase 2 simulation/UI/phenolphthalein (implementation slice present; review pending).
+- [x] Phase 2 simulation/UI/phenolphthalein (READY TO CLOSE; acceptance PASS;
+  closeout `e6ffd10c43e9b2627f640e19a5dec95329ffdaff`; 36/36 tests, responsive
+  and reduced-motion runtime evidence PASS).
 - [ ] Phase 3 weak acid/Guided/report.
 
 ## Firebase track — Phase 4A — có thể làm ngay
@@ -72,9 +74,12 @@ Phase 4B bị chặn cho tới khi interface Phase 2–3 ổn định.
 
 ## Later
 
-- [x] P2 input form + validation + Phase 1 engine boundary (READY FOR REVIEW; PO/peer review pending).
-- [ ] P2 simulation state/drop/runner, chart, experiment view và PP (implementation present; PR/PO/peer review pending).
-- [x] P3 weak acid/Guided/report (DEV PASS; PO review pending); P4 Firebase learner; P5 Admin; P6 release.
+- [x] P2 input form + validation + Phase 1 engine boundary (included in Phase 2
+  closeout; acceptance PASS).
+- [x] P2 simulation state/drop/runner, chart, experiment view và PP (acceptance
+  PASS; responsive and reduced-motion runtime verified).
+- [ ] P3 weak acid/Guided/report (DEV PASS; PO review pending).
+- [ ] P4 Firebase learner; P5 Admin; P6 release.
 - [ ] Phase 5 Admin.
 - [ ] Phase 6 release.
 

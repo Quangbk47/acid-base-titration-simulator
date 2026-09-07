@@ -2,9 +2,13 @@
 
 ## Baseline
 
-- Current phase: `Phase 2 simulation/UI — IN PROGRESS; DEV PASS pending browser/mobile review`.
+- Current phase: `Phase 2 simulation/UI — implementation + acceptance PASS; READY TO CLOSE`.
+- Current branch: `feature/phase-3-weak-acid-guided-report`.
+- Current HEAD: `e6ffd10c43e9b2627f640e19a5dec95329ffdaff`.
 - Quyết định sản phẩm/khoa học/Firebase đã chốt trong README và docs.
 - Repo GitHub và code baseline đã được xác nhận; Firebase Project ID và production URL vẫn để trống.
+- `origin/main` đang diverge với branch hiện tại; không tự động merge/rebase.
+- Firebase/main competing implementation chưa được tích hợp vào branch hiện tại.
 
 ## Parallel delivery model
 
@@ -42,16 +46,27 @@
 - SHA implementation: `4bc9f0c6849b3c407b13a703cbd98bf728669b5f`.
 - Merge SHA: `021a8aaf646c955feb93aca9a6a34227b7dd5c7a`.
 
+## Phase 2 closeout
+
+- Implementation và acceptance của Phase 2 đã hoàn tất; trạng thái hiện tại là
+  `READY TO CLOSE`, chưa tự đánh dấu `DONE` trong tài liệu roadmap.
+- Evidence: SIM-01..03, UI-01..03 và CHEM-06 PASS; responsive runtime PASS;
+  reduced-motion runtime manual PASS trên Windows + Microsoft Edge.
+- Automated: `node --test` 36/36 PASS; lint PASS; format PASS;
+  `git diff --check` PASS.
+- Closeout commit: `e6ffd10c43e9b2627f640e19a5dec95329ffdaff`.
+- Solver dispatch regression fix: `aac830341c32dbbf720713a2221d41a2af6ad6e8`.
+- Không có thay đổi Firebase, chemistry formula, Ka/Kw convention hoặc đơn vị.
+
 ## Việc được phép tiếp theo
 
-Review lát cắt form/validation trên `feature/phase-2-input-validation`. Sau khi
-được chấp thuận, tiếp tục Phase 2 bằng state + `addDrop` trong phạm vi riêng;
-không gộp animation/chart/PP vào thay đổi nhập liệu này.
+Tập trung review Phase 3 trên `feature/phase-3-weak-acid-guided-report`:
+CH₃COOH–NaOH tại initial/half-equivalence/equivalence/post-equivalence,
+guided prompts và local report. Không quay lại Phase 2 trừ khi phát hiện
+regression mới.
 
-Lát cắt tiếp theo đã thêm state/drop runner, chart, experiment view và
-phenolphthalein vào cùng branch. Các thành phần đã được kiểm tra bằng 27/27 test
-và browser preview cục bộ; vẫn cần review keyboard/mobile/reduced-motion trước
-khi ghi `DEV PASS` hoặc mở PR.
+Lát cắt Phase 2 đã được kiểm tra bằng automated suite 36/36, browser responsive
+smoke và manual reduced-motion evidence; đã có closeout commit nêu trên.
 
 ## Phase 2 input/validation handover
 
