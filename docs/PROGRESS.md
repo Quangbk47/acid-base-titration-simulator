@@ -199,10 +199,14 @@
   `matchMedia('(prefers-reduced-motion: reduce)').matches === true`, controls
   remained functional and motion was reduced to near-zero. `assets/styles.css`
   is unchanged between that evidence commit and PR #5.
-- Keyboard focus and complete manual accessibility review remain
-  `PENDING REVIEW EVIDENCE`; the historical peer report has blank manual fields.
-  Labels, ARIA error attributes and chart data table/text alternative are
-  implementation/test evidence, not manual confirmation.
+- Manual keyboard/accessibility review is now **CONFIRMED** on current HEAD
+  `632a08939e08cb63edb502922f1a1390ea87349d` using the Codex In-app Browser on
+  Windows at `http://localhost:4173/simulate` on 2026-09-08. Keyboard-only
+  Tab/Shift+Tab traversal, input editing, Enter/Space activation for submit,
+  add-drop, run, pause, resume and reset, speed selection, focus visibility,
+  validation error, labels, accessible names, text status, chemistry fields and
+  chart data-table alternative all passed. No keyboard trap or mouse-only
+  critical control was observed.
 - Historical peer report at `cf5f2772e51c25b62205c3b2dc18f6272d65075a` was
   authored by `Noname000-Zero` and reports browser interaction PASS, but is
   `STALE / RECHECK` for PR #5 because the relevant implementation changed.

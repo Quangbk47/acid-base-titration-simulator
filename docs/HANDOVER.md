@@ -59,9 +59,11 @@ Lát cắt state/drop runner, chart, experiment view và phenolphthalein đã đ
 evidence 320/375/430/768/1366 và local runtime evidence đã được ghi trong
 `PROGRESS.md`; historical closeout evidence còn ghi 360/1280. Reduced-motion
 runtime được xác nhận lại từ evidence `e6ffd10` trên Windows + Edge và code
-motion liên quan vẫn áp dụng cho PR #5. Keyboard focus và complete accessibility
-review vẫn `PENDING REVIEW EVIDENCE`; peer report cũ có manual fields để trống
-và stale do implementation đã thay đổi.
+motion liên quan vẫn áp dụng cho PR #5. Keyboard focus và complete manual
+accessibility review đã **CONFIRMED** trên HEAD `632a089` bằng browser thật
+trên Windows: Tab/Shift+Tab, input, Enter/Space controls, speed selector,
+focus visible, validation error, labels, status text và chart table alternative
+đều PASS; không thấy keyboard trap. Peer report cũ vẫn stale cho mục peer review.
 
 ## Phase 2 input/validation handover
 

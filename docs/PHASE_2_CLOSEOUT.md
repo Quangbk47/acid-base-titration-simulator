@@ -39,9 +39,9 @@
   no console/page errors at the recorded SHA.
 - Accessible labels, form fields, ARIA error attributes and the chart data-table
   alternative are implemented and partly covered by tests.
-- Keyboard focus and complete manual accessibility review:
-  **PENDING REVIEW EVIDENCE**. The historical peer report has blank manual
-  keyboard fields, so it cannot be reused as confirmation.
+- Keyboard focus and complete manual accessibility review: **CONFIRMED** on
+  the current HEAD below. The historical peer report has blank manual fields,
+  but this review was performed directly on PR #5 implementation.
 - Reduced-motion: **CONFIRMED / reusable historical evidence**. At
   `e6ffd10c43e9b2627f640e19a5dec95329ffdaff` (`2026-09-07`, Windows + Edge),
   Windows Animation effects were Off, `matchMedia('(prefers-reduced-motion:
@@ -67,6 +67,54 @@
   `:focus-visible`, labels, ARIA attributes and the chart table are implementation
   evidence only, not a completed manual gate.
 
+## Manual keyboard and accessibility review — current HEAD
+
+- Date: `2026-09-08`
+- HEAD reviewed: `632a08939e08cb63edb502922f1a1390ea87349d`
+- Branch: `fix/phase-2-clean-closeout`
+- PR: `#5`
+- Browser: Codex In-app Browser (Chromium-based)
+- OS: Windows (version not exposed by the browser harness)
+- URL: `http://localhost:4173/simulate`
+- Method: real browser keyboard interaction; no mouse used after browser/preview
+  startup.
+- Result: keyboard manual review **PASS**; manual accessibility review
+  **PASS**.
+
+### Keyboard checklist
+
+- Tab order through navigation, selectors, fields, simulation controls, speed
+  and guided controls: **PASS**.
+- Visible focus ring: **PASS**, observed on focused simulation controls.
+- Edit form input by keyboard: **PASS**.
+- Submit with Enter: **PASS**, status changed to `Ready` and simulation data
+  rendered.
+- Add Drop with Space: **PASS**, volume changed from 0.00 to 0.05 mL.
+- Run with Enter: **PASS**, status changed to `Running`.
+- Pause with Space: **PASS**, status changed to `Paused`.
+- Resume with Enter: **PASS**, status changed to `Running`.
+- Reset with Space: **PASS**, state returned to `Ready` and 0.00 mL.
+- Speed selector with keyboard arrows/Enter: **PASS**, value changed to `Nhanh`.
+- Shift+Tab reverse traversal: **PASS**.
+- Keyboard trap or mouse-only critical control: **PASS**, none observed.
+
+### Accessibility checklist
+
+- Clear input labels: **PASS**.
+- Understandable accessible names for buttons/controls: **PASS**.
+- Validation error text: **PASS**, error appeared beside the input.
+- Focus remained identifiable after validation error: **PASS**.
+- ARIA/error presentation: **PASS** for the observed field error state.
+- Status communicated as text, not color only: **PASS** (`Ready`, `Running`,
+  `Paused`, and corresponding vessel status text).
+- pH, volume, stage and species communicated as text: **PASS**.
+- Chart has text/data-table alternative: **PASS**.
+- Equivalence and endpoint have distinct textual legend/stage information:
+  **PASS**.
+- Important information dependent only on color/animation: **PASS**, no
+  obvious blocker observed.
+- Obvious accessibility blocker: **NONE OBSERVED**.
+
 ## Scope exclusions
 
 - Phase 3 solver, Guided prompts and report work
@@ -84,7 +132,7 @@ this fix and passed.
 
 ## Open gates
 
-- Peer review, including confirmation of keyboard/accessibility evidence
+- Peer review/recheck of the current implementation
 - PO/GVHD acceptance
 - Merge PR #5
 - Post-merge verification and final closeout update
