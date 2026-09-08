@@ -193,10 +193,19 @@
   final flow.
 - Responsive evidence recorded in earlier repo evidence: local browser smoke
   checked 320/375/430/768/1366 px with no horizontal overflow; mobile layout
-  is one column. Keyboard focus, complete accessible-label review and
-  reduced-motion runtime review remain `PENDING REVIEW EVIDENCE`; chart data
-  table/text alternative is implemented and covered by UI-02 test, but still
-  needs reviewer confirmation.
+  is one column. Historical closeout evidence also records 360/1280 px.
+- Reduced-motion evidence is reusable from `e6ffd10c43e9b2627f640e19a5dec95329ffdaff`
+  (`2026-09-07`, Windows + Edge): Animation effects Off,
+  `matchMedia('(prefers-reduced-motion: reduce)').matches === true`, controls
+  remained functional and motion was reduced to near-zero. `assets/styles.css`
+  is unchanged between that evidence commit and PR #5.
+- Keyboard focus and complete manual accessibility review remain
+  `PENDING REVIEW EVIDENCE`; the historical peer report has blank manual fields.
+  Labels, ARIA error attributes and chart data table/text alternative are
+  implementation/test evidence, not manual confirmation.
+- Historical peer report at `cf5f2772e51c25b62205c3b2dc18f6272d65075a` was
+  authored by `Noname000-Zero` and reports browser interaction PASS, but is
+  `STALE / RECHECK` for PR #5 because the relevant implementation changed.
 - The clean branch excludes Phase 3, NH3–HCl, Firebase and Admin/auth/save/load.
 - Closeout wiring fix: `src/app.js` previously used the old simulation API;
   commit `cc4d41f` wires the Phase 2 API and the verification above was run

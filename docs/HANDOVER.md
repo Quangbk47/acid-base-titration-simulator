@@ -57,8 +57,11 @@ feature Phase 2 nếu reviewer không phát hiện lỗi.
 Lát cắt state/drop runner, chart, experiment view và phenolphthalein đã được
 đưa vào clean branch; Phase 2 tests 15/15 và full suite 41/41 PASS. Responsive
 evidence 320/375/430/768/1366 và local runtime evidence đã được ghi trong
-`PROGRESS.md`. Keyboard focus, complete accessibility review và reduced-motion
-runtime evidence vẫn `PENDING REVIEW EVIDENCE`.
+`PROGRESS.md`; historical closeout evidence còn ghi 360/1280. Reduced-motion
+runtime được xác nhận lại từ evidence `e6ffd10` trên Windows + Edge và code
+motion liên quan vẫn áp dụng cho PR #5. Keyboard focus và complete accessibility
+review vẫn `PENDING REVIEW EVIDENCE`; peer report cũ có manual fields để trống
+và stale do implementation đã thay đổi.
 
 ## Phase 2 input/validation handover
 

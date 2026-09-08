@@ -32,14 +32,40 @@
 ## Responsive and accessibility evidence
 
 - Recorded responsive browser smoke checked 320/375/430/768/1366 px with no
-  horizontal overflow; mobile layout is one column.
+  horizontal overflow; mobile layout is one column. Historical acceptance
+  evidence additionally records 360/1280 px at `e6ffd10`.
 - Recorded local peer/runtime evidence covers `/`, `/simulate`, required
   controls, graph data, chemistry state, add/run/pause/reset interaction and
   no console/page errors at the recorded SHA.
 - Accessible labels, form fields, ARIA error attributes and the chart data-table
   alternative are implemented and partly covered by tests.
-- Keyboard focus, complete manual accessibility review and reduced-motion
-  runtime review: **PENDING REVIEW EVIDENCE**. These are not claimed as PASS.
+- Keyboard focus and complete manual accessibility review:
+  **PENDING REVIEW EVIDENCE**. The historical peer report has blank manual
+  keyboard fields, so it cannot be reused as confirmation.
+- Reduced-motion: **CONFIRMED / reusable historical evidence**. At
+  `e6ffd10c43e9b2627f640e19a5dec95329ffdaff` (`2026-09-07`, Windows + Edge),
+  Windows Animation effects were Off, `matchMedia('(prefers-reduced-motion:
+  reduce)').matches` returned `true`, and submit/add-drop/run/pause/resume/reset
+  remained functional with near-zero buret/drop motion. The relevant
+  `assets/styles.css` is identical at that evidence commit and PR #5; `src/app.js`
+  differs only in trailing whitespace. This is manual developer evidence, not
+  peer or PO acceptance.
+
+## Historical evidence audit
+
+- `docs/PEER_RUN_REPORT.md`, recorded at `cf5f2772e51c25b62205c3b2dc18f6272d65075a`
+  on `2026-09-06`, reports `/`, `/simulate`, controls, graph, chemistry state,
+  interaction and console checks PASS. The report was committed by
+  `Noname000-Zero`, but its manual keyboard/accessibility fields are blank and
+  the Phase 2 UI/simulation files changed materially before PR #5. Peer evidence
+  status for this PR: **STALE / RECHECK**.
+- `da0f9905a7d33722ba6ff2c51c9f648ef2be9297` records Phase 2 responsive runtime
+  and reduced-motion acceptance on the Phase 3 branch. It is not an ancestor of
+  this clean branch, but the reduced-motion CSS/behavior evidence was compared
+  against PR #5 and is reusable as documented above.
+- No historical manual keyboard focus/tab/no-trap evidence was found. CSS
+  `:focus-visible`, labels, ARIA attributes and the chart table are implementation
+  evidence only, not a completed manual gate.
 
 ## Scope exclusions
 
@@ -58,8 +84,7 @@ this fix and passed.
 
 ## Open gates
 
-- Peer review, including confirmation of keyboard/accessibility/reduced-motion
-  evidence
+- Peer review, including confirmation of keyboard/accessibility evidence
 - PO/GVHD acceptance
 - Merge PR #5
 - Post-merge verification and final closeout update

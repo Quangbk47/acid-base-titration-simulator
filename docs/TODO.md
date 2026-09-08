@@ -50,8 +50,10 @@ deploy `NO`; Phase 2 `NOT STARTED`.
 
 - [x] Phase 2 simulation/UI/phenolphthalein implementation (SIM-01..03,
   UI-01..03, CHEM-06) — DEV PASS; PR #5 opened from clean branch.
-- [ ] Phase 2 peer review, including keyboard/accessibility/reduced-motion
-  evidence confirmation.
+- [ ] Phase 2 peer review, including keyboard/accessibility evidence
+  confirmation; historical peer report is stale for PR #5.
+- [x] Phase 2 reduced-motion runtime evidence reused from historical Windows +
+  Edge verification at `e6ffd10`.
 - [ ] Phase 2 PO/GVHD acceptance.
 - [ ] Merge PR #5 after review and acceptance.
 - [ ] Post-merge verification and final Phase 2 closeout update.
