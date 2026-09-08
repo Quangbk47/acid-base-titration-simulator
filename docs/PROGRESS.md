@@ -125,6 +125,26 @@
 - Next: Phase 2 vẫn `NOT STARTED`; trước khi code phải đọc lại ROADMAP,
   PROJECT_RULES, CHEMISTRY_MODEL, UI_UX_SPEC và TEST_CASES.
 
+## 2026-09-04 — Phase 2 input and validation slice
+
+- Phase: `Phase 2 — IN PROGRESS / DEV PASS`.
+- Branch: `feature/phase-2-input-validation`.
+- Done: form HCl–NaOH, validation lỗi tại trường nhập, khôi phục ca Phase 1,
+  chuyển đổi mL → L và 25 °C → 298.15 K tại UI boundary, gọi duy nhất
+  `solveStrongStrong`, hiển thị pH/tổng thể tích/chất dư/stage/phản ứng cơ bản.
+- Scope giữ lại: không animation, addDrop/timer, chart động, PP, hệ yếu, Phase 3,
+  Firebase/Auth/history/admin hay production deploy; không sửa chemistry engine.
+- Tests: Node trực tiếp chạy lint/format/full suite PASS, 22/22 tests PASS;
+  `git diff --check` PASS. Lệnh `npm` không có trên PATH của môi trường nên các
+  script đích trong `npm run check` được chạy trực tiếp bằng bundled Node.
+- Browser smoke: `/simulate` load không console error; ca ban đầu cho pH 1.00,
+  input trống hiện lỗi cạnh trường; không overflow ngang tại 320/375/430/768/1366 px.
+- Phase 1 dependency: solver/tests vẫn PASS; peer run độc lập vẫn `PENDING`,
+  không tự ghi nhận PASS.
+- Risk: mới là lát cắt nhập liệu; chưa có state mô phỏng thống nhất và các gate
+  SIM/UI/CHEM-06 đầy đủ của Phase 2 chưa thể PASS.
+- Next: review branch/commit này; sau đó triển khai state + `addDrop` trong task riêng.
+
 ## 2026-09-05 — Parallel delivery model approved
 
 - PO/GVHD cho phép Phase 4A chạy song song Phase 2–3.
@@ -135,107 +155,64 @@
 - Production deploy = `NO`.
 - Project ID / Preview URL / SHA = `TBD` tới khi Bắc Hà triển khai thật.
 
-## 2026-09-06 — Phase 2 simulation/UI CLOSED / DONE
+## 2026-09-05 — Phase 2 baseline reconciliation
 
-- Trạng thái: `PASS — Peer Run PASS; Phase 2 PASS`.
-- Branch: `main`; commit SHA kiểm tra: `cf5f2772e51c25b62205c3b2dc18f6272d65075a`.
-- Đã hoàn tất mô phỏng HCl–NaOH nối với chemistry engine thật: thêm giọt
-  0,05/0,10 mL, pH, thể tích, ion, chất dư, stage, indicator và graph pH–V.
-- Đã hoàn tất state/timer `ready/running/paused`, Pause giữ nguyên trạng thái,
-  Reset hủy timer và đưa mô phỏng về ban đầu; không tạo timer đồng thời.
-- Đã sửa lỗi điều phối click: thao tác `Thêm giọt` không còn bị nhận nhầm là
-  tick timer và không tự chuyển sang `running`.
-- Automated evidence: `npm run check` PASS; lint 23 JavaScript files, format
-  PASS, 19/19 tests PASS; `git diff --check` PASS.
-- Peer Run: PASS — `/` và `/simulate` HTTP 200; controls, graph, chemistry
-  state PASS; Playwright click flow `Thêm giọt → Chạy → Tạm dừng → Đặt lại`
-  PASS; không có console/page errors.
-- Preview: `http://127.0.0.1:4173/` và
-  `http://127.0.0.1:4173/simulate` (local only); production deploy: `NO`.
-- Files chính: `src/app.js`, `src/simulation/`, `src/ui/`, `tests/simulation.test.js`,
-  `scripts/peer-run.mjs`, `docs/PEER_RUN_REPORT.md`, `package.json` và
-  `package-lock.json`.
-- Next: Phase 3 — axit yếu, Hướng dẫn và báo cáo. Firebase Phase 4A tiếp tục
-  theo track song song; Phase 4B vẫn chờ interface Phase 2–3 ổn định.
+- Branch `feature/phase-2-input-validation` integrated `main` by merge; documentation conflicts were resolved while retaining Phase 4A/4B management state.
+- Phase 2 input/validation slice: `READY FOR REVIEW`; not merged, no PO PASS or peer PASS.
+- Verification: 22/22 tests, lint, format, HTTP smoke and `git diff --check` PASS.
 
-## 2026-09-06 — Phase 3 implementation checkpoint
+## 2026-09-06 — Phase 2 simulation/UI implementation slice
 
-- Trạng thái: `IN PROGRESS — chemistry/UI slice DEV PASS`; chưa PO PASS và chưa
-  đóng Phase 3.
-- Đã thêm `solveWeakAcidStrongBase` dùng charge-balance và bisection trên
-  `log10([H+])`, không dùng Henderson–Hasselbalch ngoài vùng đệm; có
-  `converged`, `residual`, `iterations` và species HA/A⁻.
-- Đã thêm `generateWeakAcidCurve`, ca chuẩn CH₃COOH–NaOH (`Ka=1.8e-5`), guided
-  prompts theo state và report JSON có input/modelVersion/mốc/history.
-- UI đã cho phép chọn HCl–NaOH hoặc CH₃COOH–NaOH trên cùng state/runner/chart;
-  browser smoke xác nhận pH đầu `2.88`, thêm giọt lên `2.94`, bảng HA/A⁻ và
-  prompt cập nhật theo state.
-- Automated evidence: `npm run check` PASS; lint 28 JavaScript files, format
-  PASS, 24/24 tests PASS; `git diff --check` PASS.
-- Remaining before Phase 3 close: guided answer/feedback workflow đầy đủ,
-  report ảnh đồ thị cục bộ và acceptance/reference review CHEM-03 độc lập.
+- Phase: `Phase 2 — IN PROGRESS / DEV PASS pending browser gate`.
+- Branch/SHA: `feature/phase-2-input-validation` / `ab72937`.
+- Implemented: immutable simulation state with 0.05–0.10 mL drops and reset;
+  timer runner with pause/resume and slow/normal/fast cadence; experiment view;
+  curve view backed by `generateCurve` with current/half-equivalence/equivalence/
+  endpoint markers; phenolphthalein state view; chemistry species table.
+- Boundary: UI still calls `solveStrongStrong` only after validation and keeps
+  mL→L and 25 °C→298.15 K conversion in `src/ui/validation.js`.
+- Verification: 27/27 Node tests PASS, lint/format PASS, `git diff --check` PASS;
+  local browser preview verified submit, add-drop, automatic runner and pause.
+- Remaining gate: full keyboard/mobile/reduced-motion review and peer/PO review;
+  no PR or merge has been created for this slice.
 
-## 2026-09-06 — Phase 3 CLOSED / DONE
+## 2026-09-08 — Phase 2 clean closeout / PR #5
 
-- Trạng thái: `DONE — CHEM-03 PASS; guided PASS; report PASS`.
-- Guided workflow: người học nhập pH, màu chỉ thị và chất dư; submit được chấm
-  theo chemistry state hiện tại, feedback aria-live và reset/đổi model xóa
-  feedback cũ. Browser smoke đạt `3/3` tại CH₃COOH ban đầu.
-- Report: JSON ghi input, `modelVersion`, current state, milestones, history và
-  SVG graph; report HTML duy nhất nhúng trực tiếp SVG graph; nút Xuất báo cáo
-  tải JSON, HTML và file `acid-base-titration-graph.svg` cục bộ. Test xác nhận
-  HTML/SVG đều có polyline dữ liệu thật.
-- CHEM-03 independent review: fixture cố định tại 0%, 50%, 100%, 101% và 200%
-  Veq; pH/stage/excess/residual đều khớp; không sinh expected từ solver trong
-  lúc test.
-- Automated evidence: `npm run check` PASS; lint 29 JavaScript files, format
-  PASS, 26/26 tests PASS; `git diff --check` PASS.
-- Browser evidence: selector CH₃COOH, pH `2.88` → `2.94` sau giọt, guided
-  answer `3/3`, graph SVG có dữ liệu. Browser harness không bắt được download
-  event, nhưng report serialization và SVG artifact đã được test tự động.
-- Phase 3 scope complete: CH₃COOH–NaOH; Hướng dẫn; báo cáo. HCl–NH₃ vẫn là
-  task sau Phase 3; axit yếu–bazơ yếu vẫn `DEFERRED`.
-
-## 2026-09-06 — Phase 4A foundation started
-
-- Trạng thái: `IN PROGRESS — local foundation DEV PASS; Firebase setup pending`.
-- Mục tiêu: Firebase project/Hosting riêng, public web config, Google Auth
-  skeleton, Firestore repository/schema, Rules + Emulator tests và preview/
-  rollback evidence; Firebase không quyết định chemistry hoặc simulation.
-- Đã thêm `.firebaserc` placeholder, `firebase.json`, `firestore.rules`,
-  `firestore.indexes.json`, `.env.example`, config validation, Google Auth
-  adapter và saved-experiment repository contract.
-- Contract giữ `modelVersion`, input/state/summary, giới hạn 50 ca; không lưu
-  curve arrays, ảnh, animation, secret hoặc token.
-- Automated evidence: Firebase foundation tests kiểm tra public config fields,
-  guest-safe auth adapter, schema validation và quota contract; chemistry/UI
-  regression vẫn giữ nguyên.
-- Pending: cần Firebase Project ID thật và deploy owner/credentials để thay
-  placeholder, chạy Emulator Rules tests, tạo preview URL và ghi SHA/rollback.
-  Chưa deploy production.
-
-## 2026-09-06 — Firebase project configured locally
-
-- Project ID: `acid-base-titration-simulator`.
-- Firestore region do owner xác nhận: `asia-southeast1`.
-- Web App public config đã được ghi vào `src/firebase/config.js`; `.firebaserc`
-  đã trỏ về project thật. Không ghi service account/private key/token.
-- `npm run check`: PASS — 29/29 tests; `git diff --check`: PASS.
-- Deploy status: `BLOCKED — Firebase CLI chưa đăng nhập`; `npx firebase-tools
-  projects:list` trả lỗi `Failed to authenticate, have you run firebase login?`.
-- Next: owner chạy `npx firebase-tools login`, sau đó xác nhận để chạy
-  `projects:list`, deploy Rules/Hosting preview và ghi URL/SHA/rollback.
-
-## 2026-09-06 — Schedule correction: Phase 4 reference validation
-
-- Quyết định nhóm: dừng Firebase/Auth/Firestore/deploy ở thời điểm này; các
-  nhiệm vụ đó chuyển sang Phase 6.
-- Phase hiện tại: `Phase 4 — Chemistry reference validation`.
-- Tuấn và Nhật Anh sẽ cung cấp bảng tính tay cho HCl–NaOH, CH₃COOH–NaOH và
-  NH₃–HCl. DEV sẽ chuyển raw tables thành fixtures/tests độc lập, kiểm tra
-  `V_e`, pH/species/stage/excess và hình dạng curve.
-- Template nhận số liệu: `docs/PHASE_4_REFERENCE_TEMPLATE.md`.
-- Các file Firebase foundation đã tạo được giữ ở trạng thái local/parked, không
-  deploy và không dùng để thay đổi chemistry/simulation trong Phase 4.
-- Next: chờ bảng reference đã ghi rõ input, tolerance, nguồn tính tay và người
-  review; sau đó tạo `tests/fixtures/phase4Reference.js` và automated review.
+- Phase: `READY FOR REVIEW / READY TO CLOSE` — implementation complete;
+  not `CLOSED`, `MERGED`, `VERIFIED` or `PO PASS`.
+- Branch/SHA: `fix/phase-2-clean-closeout` /
+  `cc4d41fca0065cb8d5ddab40ad0d0c41e6c023e7`.
+- PR: #5 — `feat: close phase 2 simulation and experiment UI` — OPEN,
+  base `main`, head `fix/phase-2-clean-closeout`.
+- Scope complete at implementation level: SIM-01..03, UI-01..03 and CHEM-06.
+- Verification: Phase 2 tests 15/15 PASS; full suite 41/41 PASS; lint PASS
+  (38 JavaScript files); format PASS (21 files); `git diff --check` PASS.
+- Runtime recorded: local `/simulate` submit, add-drop, speed selection, run,
+  pause, resume, reset and chart flow PASS; final observed state was Paused,
+  0.15 mL, pH 1.01 and 13 chart rows; no new console warnings/errors in the
+  final flow.
+- Responsive evidence recorded in earlier repo evidence: local browser smoke
+  checked 320/375/430/768/1366 px with no horizontal overflow; mobile layout
+  is one column. Historical closeout evidence also records 360/1280 px.
+- Reduced-motion evidence is reusable from `e6ffd10c43e9b2627f640e19a5dec95329ffdaff`
+  (`2026-09-07`, Windows + Edge): Animation effects Off,
+  `matchMedia('(prefers-reduced-motion: reduce)').matches === true`, controls
+  remained functional and motion was reduced to near-zero. `assets/styles.css`
+  is unchanged between that evidence commit and PR #5.
+- Manual keyboard/accessibility review is now **CONFIRMED** on current HEAD
+  `632a08939e08cb63edb502922f1a1390ea87349d` using the Codex In-app Browser on
+  Windows at `http://localhost:4173/simulate` on 2026-09-08. Keyboard-only
+  Tab/Shift+Tab traversal, input editing, Enter/Space activation for submit,
+  add-drop, run, pause, resume and reset, speed selection, focus visibility,
+  validation error, labels, accessible names, text status, chemistry fields and
+  chart data-table alternative all passed. No keyboard trap or mouse-only
+  critical control was observed.
+- Historical peer report at `cf5f2772e51c25b62205c3b2dc18f6272d65075a` was
+  authored by `Noname000-Zero` and reports browser interaction PASS, but is
+  `STALE / RECHECK` for PR #5 because the relevant implementation changed.
+- The clean branch excludes Phase 3, NH3–HCl, Firebase and Admin/auth/save/load.
+- Closeout wiring fix: `src/app.js` previously used the old simulation API;
+  commit `cc4d41f` wires the Phase 2 API and the verification above was run
+  after that fix.
+- Remaining gates: peer review, PO/GVHD acceptance, merge PR #5 and
+  post-merge verification. Do not tick Phase 2 as closed before those gates.
