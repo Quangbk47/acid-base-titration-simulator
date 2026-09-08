@@ -18,8 +18,8 @@ test('CHEM-01/02: hand-calculated HCl-NaOH reference cases match the pure solver
   for (const reference of phase1Reference) {
     const result = solveStrongStrong(inputFor(reference.id));
     assert.equal(result.error, undefined, reference.id);
-    closeTo(result.pH, reference.pH, 1e-10);
-    closeTo(result.pOH, reference.pOH, 1e-10);
+    closeTo(result.pH, reference.pH, reference.pHTolerance ?? 1e-10);
+    closeTo(result.pOH, reference.pOH, reference.pHTolerance ?? 1e-10);
     closeTo(result.totalVolumeL, reference.totalVolumeL, 1e-15);
     closeTo(result.excess.moles, reference.excessMoles, 1e-15);
     assert.equal(result.excess.species, reference.excessSpecies);
@@ -137,7 +137,7 @@ test('CHEM-02: generated volumes are non-empty, sorted, unique, and include chec
     assert.ok(volumes[index] > volumes[index - 1]);
     assert.ok(volumes[index] - volumes[index - 1] > volumes.at(-1) * 1e-12);
   }
-  for (const checkpoint of [0, 6.25, 12.5, 24.75, 25, 25.25, 50]) {
+  for (const checkpoint of [0, 6.25, 12.5, 22.5, 24.75, 25, 25.25, 27.5, 50]) {
     assert.ok(volumes.includes(checkpoint), `missing ${checkpoint} mL checkpoint`);
   }
   assert.equal(generateCurve(input, { volumesMl: [] }).error.code, 'INVALID_CURVE_VOLUMES');
@@ -176,4 +176,51 @@ test('CHEM-05: malformed curve options return coded errors', () => {
     assert.equal(result.error?.code, 'INVALID_CURVE_OPTIONS');
   }
   assert.equal(generateCurve(input, { volumesMl: [0, 'bad'] }).error.code, 'INVALID_CURVE_VOLUMES');
+});
+
+test('CHEM-01: Veq equals n(HCl) / C(NaOH) for the reference case', () => {
+  const reference = referenceFor('hcl-naoh-equivalence');
+  const input = inputFor(reference.id);
+  const expectedVeqMl = (input.Ca * input.Va / input.Cb) * 1000;
+  const result = solveStrongStrong(input);
+  assert.equal(result.error, undefined);
+  closeTo(expectedVeqMl, reference.equivalenceMl, 1e-12);
+  closeTo(result.Veq, expectedVeqMl, 1e-12);
+  closeTo(result.milestones.equivalenceMl, expectedVeqMl, 1e-12);
+});
+
+test('CHEM-02: HCl-NaOH curve matches independent quantitative checkpoints', () => {
+  const input = inputFor('hcl-naoh-equivalence');
+  const curve = generateCurve(input, {
+    volumesMl: phase1Reference.map(({ id }) => inputFor(id).Vb * 1000),
+  });
+  assert.equal(curve.error, undefined);
+  assert.equal(curve.points.length, phase1Reference.length);
+  for (const [index, reference] of phase1Reference.entries()) {
+    const point = curve.points[index];
+    closeTo(point.pH, reference.pH, reference.pHTolerance ?? 1e-10);
+    closeTo(point.pOH, reference.pOH, reference.pHTolerance ?? 1e-10);
+    assert.equal(point.stage, reference.stage);
+    assert.equal(point.excess.species, reference.excessSpecies);
+  }
+});
+
+test('CHEM-02: HCl-NaOH curve has the expected quantitative shape', () => {
+  const input = inputFor('hcl-naoh-equivalence');
+  const curve = generateCurve(input, {
+    volumesMl: [6.25, 12.5, 22.5, 24.75, 25, 25.25, 27.5],
+  });
+  const pointAt = (volumeMl) => curve.points.find((point) => point.volumeMl === volumeMl);
+  const points = [6.25, 12.5, 22.5, 24.75, 25, 25.25, 27.5].map(pointAt);
+  assert.ok(points.every(Boolean));
+  assert.ok(points[0].pH < points[1].pH && points[1].pH < points[2].pH && points[2].pH < points[3].pH);
+  assert.ok(points[3].pH < points[4].pH && points[4].pH < points[5].pH && points[5].pH < points[6].pH);
+  assert.ok(points[2].pH - points[1].pH < points[4].pH - points[3].pH);
+  assert.equal(points[2].stage, 'before-equivalence');
+  assert.equal(points[3].stage, 'before-equivalence');
+  assert.equal(points[4].stage, 'at-equivalence');
+  assert.equal(points[5].stage, 'after-equivalence');
+  assert.equal(points[6].stage, 'after-equivalence');
+  assert.equal(points[5].excess.species, 'OH⁻');
+  assert.equal(points[6].excess.species, 'OH⁻');
 });
