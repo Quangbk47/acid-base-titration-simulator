@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { evaluateTitration, fieldIdFor, solveChemistryInput } from '../src/ui/inputForm.js';
-import { addDrop, createSimulationState } from '../src/simulation/state.js';
+import { addDrop, createSimulationState, resetSimulation } from '../src/simulation/state.js';
+import { createSimulationRunner } from '../src/simulation/runner.js';
+import { promptForState } from '../src/data/guidedPrompts.js';
 import { toChemistryInput, validateTitrationForm } from '../src/ui/validation.js';
 
 const valid = Object.freeze({
@@ -101,6 +103,16 @@ test('Phase 3 weak-acid add-drop keeps the weak-acid solver and species', () => 
   assert.equal(result.species.some(({ id }) => id === 'CH₃COO⁻'), true);
 });
 
+test('Phase 3 invalid Ka never reuses a previous weak-acid result', () => {
+  const validEvaluation = evaluateTitration({ ...valid, systemType: 'weak-acid-strong-base', Ka: '0.000018' });
+  assert.equal(validEvaluation.ok, true);
+  const invalidEvaluation = evaluateTitration({ ...valid, systemType: 'weak-acid-strong-base', Ka: '0' });
+  assert.equal(invalidEvaluation.ok, false);
+  assert.match(invalidEvaluation.errors.Ka, /0 < Ka < 1/);
+  const error = solveChemistryInput({ ...validEvaluation.chemistryInput, Ka: 0 });
+  assert.equal(error.error.code, 'OUT_OF_RANGE');
+});
+
 test('Phase 2 strong-acid add-drop keeps the strong-acid solver', () => {
   const evaluation = evaluateTitration(valid);
   assert.equal(evaluation.ok, true);
@@ -114,4 +126,31 @@ test('Phase 2 strong-acid add-drop keeps the strong-acid solver', () => {
   assert.equal(result.model, 'strong-strong');
   assert.equal(result.dominantReaction, 'H⁺ + OH⁻ → H₂O');
   assert.equal(result.species.some(({ id }) => id === 'Cl⁻'), true);
+});
+
+test('Phase 3 weak-acid lifecycle preserves Ka, solver, and guided state through pause/resume/reset', () => {
+  const evaluation = evaluateTitration({ ...valid, systemType: 'weak-acid-strong-base', Ka: '0.000018' });
+  assert.equal(evaluation.ok, true);
+  let state = createSimulationState(evaluation.chemistryInput).state;
+  const callbacks = new Map(); let id = 0; const results = [];
+  const runner = createSimulationRunner({
+    onStep: () => {
+      const next = addDrop(state); assert.equal(next.ok, true); state = next.state;
+      const result = solveChemistryInput(state.chemistryInput); results.push(result);
+      return state.dropCount < 3;
+    },
+    setTimeoutFn: (callback) => { const timerId = ++id; callbacks.set(timerId, callback); return timerId; },
+    clearTimeoutFn: (timerId) => callbacks.delete(timerId),
+  });
+  const fire = () => { const [timerId, callback] = callbacks.entries().next().value; callbacks.delete(timerId); callback(); };
+  runner.start(); fire(); runner.pause(); assert.equal(callbacks.size, 0); runner.start(); fire(); fire();
+  assert.equal(results.length, 3);
+  for (const result of results) { assert.equal(result.model, 'weak-acid-strong-base'); assert.equal(result.Ka, 0.000018); }
+  const post = solveChemistryInput({ ...evaluation.chemistryInput, Vb: 0.02525 });
+  assert.equal(post.stage, 'after-equivalence');
+  const reset = resetSimulation(state); assert.equal(reset.ok, true);
+  const resetResult = solveChemistryInput(reset.state.chemistryInput);
+  assert.equal(resetResult.model, 'weak-acid-strong-base');
+  assert.equal(promptForState(resetResult, reset.state.addedVolumeMl).milestone, 'initial');
+  assert.equal(reset.state.chemistryInput.Ka, 0.000018);
 });

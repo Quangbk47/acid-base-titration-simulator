@@ -16,6 +16,29 @@ const setText = (root, selector, value) => { const element = root.querySelector(
 const clearErrors = (form) => { for (const output of form.querySelectorAll('[data-error-for]')) output.textContent = ''; for (const control of form.elements) control.removeAttribute?.('aria-invalid'); };
 const showErrors = (form, errors) => { clearErrors(form); for (const [field, message] of Object.entries(errors)) { form.querySelector(`#${fieldIdFor(field)}`)?.setAttribute('aria-invalid', 'true'); const output = form.querySelector(`[data-error-for="${field}"]`); if (output) output.textContent = message; } };
 
+export const clearSimulationView = (root, systemType = 'strong-acid-strong-base') => {
+  const isWeakAcid = systemType === 'weak-acid-strong-base';
+  setText(root, '[data-result="ph"]', '—');
+  setText(root, '[data-result="ph-label"]', 'Chưa tính');
+  setText(root, '[data-result="volume"]', '—');
+  setText(root, '[data-result="system"]', isWeakAcid ? 'CH₃COOH + NaOH' : 'HCl + NaOH');
+  setText(root, '[data-result="species-summary"]', isWeakAcid ? 'CH₃COOH / NaOH' : 'HCl / NaOH');
+  setText(root, '[data-result="excess"]', '—');
+  setText(root, '[data-result="stage"]', '—');
+  setText(root, '[data-result="reaction"]', 'Chưa tính');
+  const chemistryRows = root.querySelector('[data-chemistry-rows]');
+  if (chemistryRows) chemistryRows.innerHTML = `<tr><td>${isWeakAcid ? 'CH₃COOH / NaOH' : 'HCl / NaOH'}</td><td>—</td><td>—</td><td>Chưa tính</td></tr>`;
+  const chart = root.querySelector('[data-chart]');
+  if (chart) chart.innerHTML = '';
+  const chartEmpty = root.querySelector('[data-chart-empty]');
+  if (chartEmpty) { chartEmpty.hidden = false; chartEmpty.textContent = 'Nhập dữ liệu để tạo đường cong'; }
+  const curveRows = root.querySelector('[data-curve-rows]');
+  if (curveRows) curveRows.innerHTML = '<tr><td colspan="3">Chưa có dữ liệu mô phỏng.</td></tr>';
+  renderIndicatorView(root, null);
+  setText(root, '[data-guided-prompt]', isWeakAcid ? 'Tính trạng thái để bắt đầu hướng dẫn.' : 'Chọn ca CH₃COOH–NaOH để bắt đầu hướng dẫn.');
+  setText(root, '[data-guided-feedback]', '');
+};
+
 export function evaluateTitration(values, solve = solveStrongStrong) {
   const validation = validateTitrationForm(values);
   if (!validation.ok) return validation;
@@ -96,7 +119,14 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
       setStateLabel(status === 'running' ? 'Running' : status === 'paused' ? 'Paused' : 'Ready');
     },
   });
+  const invalidateSimulation = () => {
+    if (simulationState) runner.reset();
+    simulationState = null;
+    clearSimulationView(root, systemSelector.value);
+    setStateLabel('Idle');
+  };
   const syncSystem = () => {
+    invalidateSimulation();
     const system = TITRATION_SYSTEMS[systemSelector.value];
     form.querySelector('#analyte').value = system?.analyte ?? '';
     form.querySelector('#titrant').value = system?.titrant ?? '';
@@ -113,7 +143,7 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
   loadCase(); setStateLabel('Idle');
   caseSelector.addEventListener('change', loadCase); systemSelector.addEventListener('change', syncSystem);
   form.addEventListener('submit', (event) => {
-    event.preventDefault(); setStateLabel('Validating'); setText(form, '[data-form-error]', '');
+    event.preventDefault(); invalidateSimulation(); setStateLabel('Validating'); setText(form, '[data-form-error]', '');
     const evaluation = evaluateTitration(valuesFromForm(form), solve);
     if (!evaluation.ok) { if (evaluation.errors) showErrors(form, evaluation.errors); else setText(form, '[data-form-error]', evaluation.solverError.message); setStateLabel(evaluation.errors ? 'Input error' : 'Solver error'); return; }
     clearErrors(form); const created = createSimulationState(evaluation.chemistryInput);
