@@ -175,3 +175,31 @@
   local browser preview verified submit, add-drop, automatic runner and pause.
 - Remaining gate: full keyboard/mobile/reduced-motion review and peer/PO review;
   no PR or merge has been created for this slice.
+
+## 2026-09-08 — Phase 2 clean closeout / PR #5
+
+- Phase: `READY FOR REVIEW / READY TO CLOSE` — implementation complete;
+  not `CLOSED`, `MERGED`, `VERIFIED` or `PO PASS`.
+- Branch/SHA: `fix/phase-2-clean-closeout` /
+  `cc4d41fca0065cb8d5ddab40ad0d0c41e6c023e7`.
+- PR: #5 — `feat: close phase 2 simulation and experiment UI` — OPEN,
+  base `main`, head `fix/phase-2-clean-closeout`.
+- Scope complete at implementation level: SIM-01..03, UI-01..03 and CHEM-06.
+- Verification: Phase 2 tests 15/15 PASS; full suite 41/41 PASS; lint PASS
+  (38 JavaScript files); format PASS (21 files); `git diff --check` PASS.
+- Runtime recorded: local `/simulate` submit, add-drop, speed selection, run,
+  pause, resume, reset and chart flow PASS; final observed state was Paused,
+  0.15 mL, pH 1.01 and 13 chart rows; no new console warnings/errors in the
+  final flow.
+- Responsive evidence recorded in earlier repo evidence: local browser smoke
+  checked 320/375/430/768/1366 px with no horizontal overflow; mobile layout
+  is one column. Keyboard focus, complete accessible-label review and
+  reduced-motion runtime review remain `PENDING REVIEW EVIDENCE`; chart data
+  table/text alternative is implemented and covered by UI-02 test, but still
+  needs reviewer confirmation.
+- The clean branch excludes Phase 3, NH3–HCl, Firebase and Admin/auth/save/load.
+- Closeout wiring fix: `src/app.js` previously used the old simulation API;
+  commit `cc4d41f` wires the Phase 2 API and the verification above was run
+  after that fix.
+- Remaining gates: peer review, PO/GVHD acceptance, merge PR #5 and
+  post-merge verification. Do not tick Phase 2 as closed before those gates.

@@ -2,14 +2,20 @@
 
 ## Baseline
 
-- Current phase: `Phase 2 simulation/UI — IN PROGRESS; DEV PASS pending browser/mobile review`.
+- Current phase: `Phase 2 simulation/UI — READY FOR REVIEW / READY TO CLOSE`.
+- Technical implementation is complete on the clean closeout branch. PR #5 is
+  OPEN; Phase 2 is not yet `CLOSED`, `MERGED`, `VERIFIED` or `PO PASS`.
 - Quyết định sản phẩm/khoa học/Firebase đã chốt trong README và docs.
 - Repo GitHub và code baseline đã được xác nhận; Firebase Project ID và production URL vẫn để trống.
 
 ## Parallel delivery model
 
 - Current main track: `Phase 2 → Phase 3`.
-- Parallel Firebase track: `Phase 4A`.
+- ROADMAP note: this branch retains the older parallel-track wording; the
+  current ROADMAP in this branch places chemistry reference validation in
+  Phase 4 and Firebase in Phase 6. This Phase 2 handover does not change that
+  project-wide roadmap or pull Firebase work into PR #5.
+- Parallel Firebase track: outside PR #5 scope.
 - Firebase/Deployment Owner: **Bắc Hà**.
 - Phase 4B: `BLOCKED` cho tới khi interface Phase 2–3 ổn định.
 - Production deploy: `NO`.
@@ -44,14 +50,15 @@
 
 ## Việc được phép tiếp theo
 
-Review lát cắt form/validation trên `feature/phase-2-input-validation`. Sau khi
-được chấp thuận, tiếp tục Phase 2 bằng state + `addDrop` trong phạm vi riêng;
-không gộp animation/chart/PP vào thay đổi nhập liệu này.
+Phase 2 implementation and clean closeout are now isolated on
+`fix/phase-2-clean-closeout` and reviewed through PR #5. Không cần làm thêm
+feature Phase 2 nếu reviewer không phát hiện lỗi.
 
-Lát cắt tiếp theo đã thêm state/drop runner, chart, experiment view và
-phenolphthalein vào cùng branch. Các thành phần đã được kiểm tra bằng 27/27 test
-và browser preview cục bộ; vẫn cần review keyboard/mobile/reduced-motion trước
-khi ghi `DEV PASS` hoặc mở PR.
+Lát cắt state/drop runner, chart, experiment view và phenolphthalein đã được
+đưa vào clean branch; Phase 2 tests 15/15 và full suite 41/41 PASS. Responsive
+evidence 320/375/430/768/1366 và local runtime evidence đã được ghi trong
+`PROGRESS.md`. Keyboard focus, complete accessibility review và reduced-motion
+runtime evidence vẫn `PENDING REVIEW EVIDENCE`.
 
 ## Phase 2 input/validation handover
 
@@ -88,4 +95,6 @@ simulation, và không dùng Firebase/URL/config của dự án khác.
 
 ## Báo cáo bàn giao
 
-`Phase | Done | Files | Tests | Preview | SHA | Risks | Next`. Cập nhật PROGRESS và TODO trước khi chuyển người/phiên.
+`Phase | Done | Files | Tests | Preview | SHA | Risks | Next`. Hiện còn lại:
+review chéo → PO/GVHD acceptance → merge PR #5 → post-merge smoke và cập nhật
+final closeout. Không ghi Phase 2 là closed trước khi merge.

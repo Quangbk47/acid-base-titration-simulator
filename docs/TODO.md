@@ -48,7 +48,13 @@ deploy `NO`; Phase 2 `NOT STARTED`.
 
 ## Main track
 
-- [ ] Phase 2 simulation/UI/phenolphthalein (implementation slice present; review pending).
+- [x] Phase 2 simulation/UI/phenolphthalein implementation (SIM-01..03,
+  UI-01..03, CHEM-06) — DEV PASS; PR #5 opened from clean branch.
+- [ ] Phase 2 peer review, including keyboard/accessibility/reduced-motion
+  evidence confirmation.
+- [ ] Phase 2 PO/GVHD acceptance.
+- [ ] Merge PR #5 after review and acceptance.
+- [ ] Post-merge verification and final Phase 2 closeout update.
 - [ ] Phase 3 weak acid/Guided/report.
 
 ## Firebase track — Phase 4A — có thể làm ngay
@@ -73,7 +79,9 @@ Phase 4B bị chặn cho tới khi interface Phase 2–3 ổn định.
 ## Later
 
 - [x] P2 input form + validation + Phase 1 engine boundary (READY FOR REVIEW; PO/peer review pending).
-- [ ] P2 simulation state/drop/runner, chart, experiment view và PP (implementation present; PR/PO/peer review pending).
+- [x] P2 simulation state/drop/runner, chart, experiment view và PP
+  (implementation complete; PR #5 open; technical verification PASS).
+- [ ] P2 peer/PO review and merge gates (see Main track above).
 - [ ] P3 weak acid/Guided/report; P4 Firebase learner; P5 Admin; P6 release.
 
 ## Quy tắc cập nhật
