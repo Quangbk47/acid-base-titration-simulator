@@ -213,3 +213,20 @@
 - Phase 3 remains `DEV PASS; PO review pending` and is not declared complete.
 - Next: review Phase 3 independently; do not re-open Phase 2 unless a new
   regression is found.
+
+## 2026-09-09 — Phase 2 closeout
+
+- Phase: `DONE / CLOSED`.
+- Acceptance: SIM-01..03, UI-01..03 and CHEM-06 PASS; responsive runtime at
+  320/360/375/430/768/1280/1366 px PASS; reduced-motion runtime evidence PASS.
+- Verification: 15 Phase 2 tests PASS (9 simulation/UI tests plus 6 Phase 2
+  validation/boundary tests); 12 Phase 1 chemistry regression tests PASS; full
+  suite 43/43 PASS; lint, format and `git diff --check` PASS.
+- Evidence locations: this closeout record and the preceding Phase 2 evidence
+  in this file; browser/manual evidence is also recorded in `docs/HANDOVER.md`.
+- Closeout basis: implementation and acceptance were already present at
+  `e6ffd10c43e9b2627f640e19a5dec95329ffdaff`; this entry records the explicit
+  close decision after re-verification on the current branch.
+- Scope: this closeout changes documentation only. Uncommitted Firebase files
+  remain separate and are not part of Phase 2.
+- Next: Phase 3 CHEM-03 independent reference validation.

@@ -32,9 +32,9 @@ Website mô phỏng tương tác phục vụ đề tài NCKH: **xây dựng, ki�
 
 ## Trạng thái
 
-**Phase 2 — READY TO CLOSE (acceptance PASS).** Phase 2 simulation/UI đã hoàn
-tất implementation và acceptance: SIM-01..03, UI-01..03, CHEM-06, responsive
-runtime và reduced-motion runtime đều PASS; automated suite 36/36 PASS. Phase 2
-closeout commit là `e6ffd10c43e9b2627f640e19a5dec95329ffdaff`. Phase 3
-CH₃COOH–NaOH/Guided/report đã có implementation nhưng vẫn cần review riêng.
-Firebase và production chưa deploy.
+**Phase 2 — DONE / CLOSED.** SIM-01..03, UI-01..03, CHEM-06, responsive
+runtime và reduced-motion runtime đều PASS. Verification hiện tại gồm 15 test
+trực tiếp cho Phase 2, 12 test regression chemistry Phase 1 và full suite 43/43
+PASS. Closeout evidence và SHA được ghi trong
+`docs/PROGRESS.md`; Phase 3 CH₃COOH–NaOH/Guided/report vẫn là công việc riêng
+chưa được close. Firebase working-tree changes cũng không thuộc closeout này.

@@ -48,9 +48,10 @@ deploy `NO`; Phase 2 `NOT STARTED`.
 
 ## Main track
 
-- [x] Phase 2 simulation/UI/phenolphthalein (READY TO CLOSE; acceptance PASS;
-  closeout `e6ffd10c43e9b2627f640e19a5dec95329ffdaff`; 36/36 tests, responsive
-  and reduced-motion runtime evidence PASS).
+- [x] Phase 2 simulation/UI/phenolphthalein (DONE / CLOSED; acceptance PASS;
+  implementation closeout `e6ffd10c43e9b2627f640e19a5dec95329ffdaff`; 15
+  Phase 2 tests plus 12 Phase 1 chemistry regression tests, full suite 43/43,
+  responsive and reduced-motion runtime evidence PASS).
 - [ ] Phase 3 weak acid/Guided/report.
 
 ## Firebase track — Phase 4A — có thể làm ngay

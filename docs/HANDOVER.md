@@ -2,13 +2,14 @@
 
 ## Baseline
 
-- Current phase: `Phase 2 simulation/UI — implementation + acceptance PASS; READY TO CLOSE`.
-- Current branch: `feature/phase-3-weak-acid-guided-report`.
-- Current HEAD: `e6ffd10c43e9b2627f640e19a5dec95329ffdaff`.
+- Current phase: `Phase 2 simulation/UI — DONE / CLOSED; Phase 3 is next`.
+- Current branch: `feature/phase-4a-firebase-foundation`.
+- Current HEAD: `f5a12ce26ce4d4cfca3e50ca32d7809832ea3ebd`.
 - Quyết định sản phẩm/khoa học/Firebase đã chốt trong README và docs.
 - Repo GitHub và code baseline đã được xác nhận; Firebase Project ID và production URL vẫn để trống.
 - `origin/main` đang diverge với branch hiện tại; không tự động merge/rebase.
-- Firebase/main competing implementation chưa được tích hợp vào branch hiện tại.
+- Firebase foundation files are present as uncommitted working-tree changes and
+  are outside the Phase 2 closeout scope.
 
 ## Parallel delivery model
 
@@ -49,12 +50,15 @@
 ## Phase 2 closeout
 
 - Implementation và acceptance của Phase 2 đã hoàn tất; trạng thái hiện tại là
-  `READY TO CLOSE`, chưa tự đánh dấu `DONE` trong tài liệu roadmap.
+  `DONE / CLOSED`.
 - Evidence: SIM-01..03, UI-01..03 và CHEM-06 PASS; responsive runtime PASS;
   reduced-motion runtime manual PASS trên Windows + Microsoft Edge.
-- Automated: `node --test` 36/36 PASS; lint PASS; format PASS;
+- Automated: `node --test` 43/43 PASS on the current working tree; lint PASS;
+  format PASS;
   `git diff --check` PASS.
-- Closeout commit: `e6ffd10c43e9b2627f640e19a5dec95329ffdaff`.
+- Implementation closeout SHA: `e6ffd10c43e9b2627f640e19a5dec95329ffdaff`.
+- Documentation closeout is recorded in `docs/PROGRESS.md`; no Firebase file is
+  included in the closeout.
 - Solver dispatch regression fix: `aac830341c32dbbf720713a2221d41a2af6ad6e8`.
 - Không có thay đổi Firebase, chemistry formula, Ka/Kw convention hoặc đơn vị.
 
@@ -65,8 +69,10 @@ CH₃COOH–NaOH tại initial/half-equivalence/equivalence/post-equivalence,
 guided prompts và local report. Không quay lại Phase 2 trừ khi phát hiện
 regression mới.
 
-Lát cắt Phase 2 đã được kiểm tra bằng automated suite 36/36, browser responsive
-smoke và manual reduced-motion evidence; đã có closeout commit nêu trên.
+Phase 2 đã được kiểm tra bằng 15 Phase 2 tests, 12 Phase 1 chemistry regression
+tests, full suite 43/43, browser
+responsive smoke và manual reduced-motion evidence; đã được đóng ở trạng thái
+`DONE / CLOSED`.
 
 ## Phase 2 input/validation handover
 
