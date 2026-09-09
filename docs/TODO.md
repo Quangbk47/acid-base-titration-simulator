@@ -79,7 +79,8 @@ Phase 4B bị chặn cho tới khi interface Phase 2–3 ổn định.
   closeout; acceptance PASS).
 - [x] P2 simulation state/drop/runner, chart, experiment view và PP (acceptance
   PASS; responsive and reduced-motion runtime verified).
-- [ ] P3 weak acid/Guided/report (DEV PASS; PO review pending).
+- [ ] P3 weak acid/Guided/report (CHEM-03 independent reference automated PASS;
+  browser/manual, peer and PO review pending).
 - [ ] P4 Firebase learner; P5 Admin; P6 release.
 - [ ] Phase 5 Admin.
 - [ ] Phase 6 release.

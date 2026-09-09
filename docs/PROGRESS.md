@@ -230,3 +230,26 @@
 - Scope: this closeout changes documentation only. Uncommitted Firebase files
   remain separate and are not part of Phase 2.
 - Next: Phase 3 CHEM-03 independent reference validation.
+
+## 2026-09-09 — Phase 3 CHEM-03 independent reference validation
+
+- Branch: `feature/phase-3-chem03-reference-validation`, based on Phase 2
+  closeout `0411382b8e7e0d1fbf7c5ce92bfcec498120ab04`.
+- Added independent fixture `tests/fixtures/chem03IndependentReference.js`
+  and comparison tests in `tests/chem03-reference.test.js`.
+- Reference method is outside the production path and imports no production
+  solver: weak-acid dissociation quadratic, Henderson–Hasselbalch only in the
+  buffer region, acetate hydrolysis quadratic at equivalence, and excess-OH
+  stoichiometry after equivalence.
+- Coverage: initial, 20% buffer, half-equivalence, 90% buffer, 99% pre-eq,
+  equivalence, 101% post-eq and large excess.
+- CHEM-03 comparison: 2/2 tests PASS; all 8 reference records match pH,
+  stoichiometric `Veq`, stage and excess species within documented tolerances.
+  Curve validation also PASS; mandatory production checkpoints are accepted.
+- Regression: full suite 41/41 PASS; existing weak-acid tests 3/3 PASS;
+  Phase 1 chemistry regression PASS; lint, format and `git diff --check` PASS.
+- No unresolved CHEM-03 discrepancy found.
+- Manual/browser: `MANUAL / PO REVIEW PENDING`. Peer: `PENDING`. PO: `PENDING`.
+  Phase 3 is not closed.
+- Next: browser/manual review of initial, half-equivalence, equivalence and
+  post-equivalence, then peer and PO acceptance.

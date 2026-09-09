@@ -117,8 +117,11 @@ simulation, và không dùng Firebase/URL/config của dự án khác.
 
 ## Phase 3 handover
 
-`DEV PASS` implementation is on `feature/phase-3-weak-acid-guided-report`. Key files are
-`src/chemistry/weakAcidStrongBase.js`, `src/data/guidedPrompts.js`, `src/ui/report.js` and
-`tests/weak-acid.test.js`. Run `node scripts/lint.mjs`, `node scripts/check-format.mjs` and
-`node --test`. Before merge, review the CH₃COOH–NaOH UI at initial, half-equivalence,
-equivalence and post-equivalence, then obtain peer/PO acceptance. Firebase is out of scope.
+`DEV PASS` implementation remains on `feature/phase-3-weak-acid-guided-report`;
+independent CHEM-03 validation is on `feature/phase-3-chem03-reference-validation`.
+Reference files are `tests/fixtures/chem03IndependentReference.js` and
+`tests/chem03-reference.test.js`. CHEM-03 automated comparison is PASS; run
+`node scripts/lint.mjs`, `node scripts/check-format.mjs` and `node --test` before
+merge. Browser/manual review at initial, half-equivalence, equivalence and
+post-equivalence, followed by peer/PO acceptance, is still pending. Firebase is
+out of scope.
