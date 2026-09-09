@@ -253,3 +253,35 @@
   Phase 3 is not closed.
 - Next: browser/manual review of initial, half-equivalence, equivalence and
   post-equivalence, then peer and PO acceptance.
+
+## 2026-09-09 — CHEM-03 browser/manual technical review
+
+- Runtime: `node scripts/serve.mjs`, preview `http://localhost:4173/`; both `/`
+  and `/simulate` loaded in the Codex in-app browser.
+- Input: CH₃COOH 0.100 M, 25.00 mL; NaOH 0.100 M; `Ka=1.8e-5`; 25 °C;
+  independent `Veq=25.00 mL`.
+- Initial, 0.00 mL: raw solver pH `2.87527706`, displayed `2.88`, stage
+  `before-equivalence`, excess CH₃COOH — PASS.
+- Half-equivalence, 12.50 mL: raw solver pH `4.74519601`, displayed `4.75`,
+  stage `before-equivalence`, CH₃COOH/CH₃COO⁻ buffer species, guided pH/pKa
+  explanation — PASS.
+- Equivalence, 25.00 mL: raw solver pH `8.72190403`, displayed `8.72`, stage
+  `at-equivalence`, no excess, acetate species, CH₃COOH–NaOH wording — PASS;
+  UI did not show pH 7.
+- Post-equivalence, 25.25 mL: raw solver pH `10.69685245`, displayed `10.70`,
+  stage `after-equivalence`, excess OH⁻, persistent pink indicator and guided
+  explanation — PASS.
+- Display rounding is acceptable: all displayed values round to the expected
+  reference values and raw values are within ±0.005 pH.
+- Interaction regression: submit, add-drop to 25.30 mL, run, pause, resume and
+  reset remained functional; weak-acid wording/species/solver state remained
+  active. Report control was present and guided/report automated tests remain
+  PASS; download file contents were not directly exposed by the browser runtime.
+- Console/runtime: no console errors or warnings; no observed NaN/Infinity,
+  uncaught exception or chart failure.
+- Screenshot evidence: four full-page captures were obtained inline in the
+  browser runtime; named PNG files are unavailable because this runtime exposes
+  screenshots in memory only.
+- Status: `BROWSER/MANUAL TECHNICAL REVIEW PASS`; Peer `PENDING`; PO `PENDING`;
+  Phase 3 `NOT CLOSED`.
+- Next: request independent peer review, then PO acceptance for Phase 3.

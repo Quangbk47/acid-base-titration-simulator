@@ -120,8 +120,7 @@ simulation, và không dùng Firebase/URL/config của dự án khác.
 `DEV PASS` implementation remains on `feature/phase-3-weak-acid-guided-report`;
 independent CHEM-03 validation is on `feature/phase-3-chem03-reference-validation`.
 Reference files are `tests/fixtures/chem03IndependentReference.js` and
-`tests/chem03-reference.test.js`. CHEM-03 automated comparison is PASS; run
-`node scripts/lint.mjs`, `node scripts/check-format.mjs` and `node --test` before
-merge. Browser/manual review at initial, half-equivalence, equivalence and
-post-equivalence, followed by peer/PO acceptance, is still pending. Firebase is
-out of scope.
+`tests/chem03-reference.test.js`. CHEM-03 automated comparison and browser/manual
+technical review are PASS at initial, half-equivalence, equivalence and
+post-equivalence. Peer and PO acceptance are still pending; Phase 3 is not
+closed. Firebase is out of scope.
