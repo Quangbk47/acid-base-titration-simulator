@@ -285,3 +285,24 @@
 - Status: `BROWSER/MANUAL TECHNICAL REVIEW PASS`; Peer `PENDING`; PO `PENDING`;
   Phase 3 `NOT CLOSED`.
 - Next: request independent peer review, then PO acceptance for Phase 3.
+
+## 2026-09-09 — CHEM-03 responsive verification
+
+- Preview command: `node scripts/serve.mjs`; URL: `http://localhost:4173/simulate`.
+- Browser runtime desktop smoke at `1280×720`: PASS. No horizontal overflow;
+  form controls, pH/status, chart/table, guided prompt and report control were
+  visible and usable. DOM geometry reported `scrollWidth=1265` and
+  `clientWidth=1265`.
+- CHEM-03 smoke at desktop: initial `2.88`, half-equivalence `4.75`,
+  equivalence `8.72`, post-equivalence `10.70`; stages and excess species
+  matched the prior browser review.
+- CSS breakpoint definitions for `<=1023`, `<=767` and `<=430` were inspected
+  and include the documented one-column/mobile adaptations.
+- Exact `1366`, `1024`, `430` and `375` viewport execution was unavailable in
+  the current browser runtime because no reliable resize/emulation API was
+  exposed. These widths are not claimed as directly verified here.
+- Console errors/warnings: none observed. Test/lint/format/diff checks remain
+  PASS. Risk: exact multi-viewport browser evidence remains pending.
+- Status remains: CHEM-03 automated reference `PASS`; browser/manual technical
+  review `PASS`; responsive verification `PARTIAL`; Peer `PENDING`; PO
+  `PENDING`; Phase 3 `NOT CLOSED`.

@@ -124,3 +124,9 @@ Reference files are `tests/fixtures/chem03IndependentReference.js` and
 technical review are PASS at initial, half-equivalence, equivalence and
 post-equivalence. Peer and PO acceptance are still pending; Phase 3 is not
 closed. Firebase is out of scope.
+
+Responsive evidence: local preview at `http://localhost:4173/simulate` was
+checked at the available `1280×720` desktop viewport with no horizontal
+overflow and usable form/chart/guided/report controls. The current browser
+runtime did not expose reliable viewport emulation, so exact 1366/1024/430/375
+browser runs remain pending; do not treat them as completed evidence.
