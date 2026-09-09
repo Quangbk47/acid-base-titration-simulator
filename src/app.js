@@ -6,10 +6,12 @@ import { addDropState, createSimulationState, resetSimulationState } from './sim
 import { createRunner, speedDelayMs } from './simulation/runner.js';
 import { renderChart } from './ui/chartView.js';
 import { renderExperiment } from './ui/experimentView.js';
+import { renderKnowledge } from './ui/knowledgeView.js';
 import { initNavigation } from './ui/navigation.js';
 import { createSimulationReport, downloadSimulationReport } from './ui/report.js';
 
 const route = initNavigation({ links: document.querySelectorAll('[data-route]'), views: document.querySelectorAll('[data-view]') });
+renderKnowledge(document.querySelector('[data-learning-content]'));
 const status = document.querySelector('#app-status');
 const controls = Object.fromEntries([...document.querySelectorAll('[data-action]')].map((button) => [button.dataset.action, button]));
 let activeModel = 'strong';

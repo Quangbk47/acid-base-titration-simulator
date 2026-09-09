@@ -239,3 +239,20 @@
   deploy và không dùng để thay đổi chemistry/simulation trong Phase 4.
 - Next: chờ bảng reference đã ghi rõ input, tolerance, nguồn tính tay và người
   review; sau đó tạo `tests/fixtures/phase4Reference.js` và automated review.
+
+## 2026-09-09 — Phase 5 knowledge slice
+
+- Trạng thái: `DEV PASS — knowledge slice`; chưa phải PO PASS và chưa đóng toàn
+  bộ Phase 5.
+- Thêm route `/knowledge` và bài học phân biệt điểm tương đương, điểm kết thúc,
+  cách đọc các vùng trên đường cong pH–V, lựa chọn chỉ thị và câu hỏi tự kiểm tra.
+- Nội dung giữ đúng boundary: equivalence lấy từ stoichiometry/solver; endpoint
+  phụ thuộc vùng chuyển màu; không khẳng định pH = 7 cho mọi hệ.
+- Files: `index.html`, `assets/styles.css`, `src/app.js`,
+  `src/data/learningContent.js`, `src/ui/knowledgeView.js`,
+  `src/ui/navigation.js`, `tests/learningContent.test.js` và docs checkpoint.
+- Tests: `npm.cmd run check` PASS — lint 36 JavaScript files, format PASS,
+  32/32 tests PASS; `git diff --check` PASS.
+- Preview/deploy: chưa deploy; production `NO`.
+- Risk/next: cần browser review responsive/accessibility và review khoa học của
+  GVHD/PO trước khi xem nội dung là release candidate.

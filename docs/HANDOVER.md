@@ -49,6 +49,15 @@ Phase 2 → Phase 3; Firebase track Phase 4A có thể chạy song song dưới 
 của Bắc Hà. Trước khi code phải đọc lại ROADMAP, PROJECT_RULES,
 CHEMISTRY_MODEL, UI_UX_SPEC và TEST_CASES.
 
+## Phase 5 knowledge handover — 2026-09-09
+
+- Route `/knowledge` đã có nội dung học tập về equivalence, endpoint và đường
+  cong chuẩn độ; dữ liệu nội dung tách khỏi renderer trong `src/data/`.
+- Automated tests: `npm.cmd run check` PASS, 32/32 tests.
+- Trạng thái: `DEV PASS — knowledge slice`; chưa PO PASS, chưa production deploy.
+- Tiếp theo: review khoa học, kiểm tra bàn phím và responsive ở các viewport bắt
+  buộc; tiếp tục tổng hợp giới hạn mô hình/nguồn cho release readiness.
+
 ## Cấm mở rộng
 
 Trong Phase 2–3, không làm Auth/Firestore/Rules/Admin ngoài contract đã duyệt

@@ -113,11 +113,31 @@ td[colspan] { color: var(--ink-soft); text-align: center; }
 .metric-card { padding: 15px; border: 1px solid var(--line); border-radius: 12px; background: #fbfdfc; }
 .metric-card span, .metric-card small { display: block; color: var(--ink-soft); font-size: 11px; }
 .metric-card strong { display: block; margin: 10px 0 3px; font-size: 1.4rem; }
+.knowledge-heading { margin-bottom: 42px; }
+.knowledge-heading h1 { max-width: 860px; }
+.knowledge-section { margin-bottom: 28px; }
+.knowledge-section-title { margin-bottom: 18px; }
+.knowledge-card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.knowledge-card { padding: 22px; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); box-shadow: var(--shadow); }
+.knowledge-card p { color: var(--ink-soft); line-height: 1.65; }
+.knowledge-card p:last-child { margin-bottom: 0; }
+.knowledge-emphasis { color: var(--teal-dark) !important; font-size: 0.9rem; font-weight: 750; }
+.knowledge-callout { margin: 28px 0; padding: 25px; border: 1px solid #b7ded2; border-radius: 18px; background: var(--mint); }
+.knowledge-callout h2 { margin-bottom: 12px; }
+.knowledge-callout p { max-width: 900px; color: var(--ink-soft); line-height: 1.65; }
+.knowledge-callout-secondary { border-color: #f0d5b5; background: #fff8ed; }
+.knowledge-note { margin-bottom: 0; color: var(--ink) !important; font-weight: 650; }
+.knowledge-region-list, .knowledge-check-list { display: grid; gap: 12px; margin: 0; padding-left: 24px; }
+.knowledge-region-list li, .knowledge-check-list li { padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); line-height: 1.6; }
+.knowledge-check-list p { margin-bottom: 8px; }
+.knowledge-check-list p:last-child { margin-bottom: 0; }
+.knowledge-answer { color: var(--teal-dark); font-weight: 700; }
 .site-footer { border-top: 1px solid var(--line); color: var(--ink-soft); font-size: 11px; }
 .footer-inner { justify-content: space-between; min-height: 64px; }
 
 @media (max-width: 1023px) {
   .simulation-layout { grid-template-columns: 1fr; }
+  .knowledge-card-grid { grid-template-columns: 1fr; }
   .graph-panel { order: 2; }
   .chemistry-panel { order: 3; }
 }

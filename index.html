@@ -25,6 +25,7 @@
         <nav class="primary-nav" aria-label="Điều hướng chính">
           <a data-route="home" href="/">Thư viện ca</a>
           <a data-route="simulate" href="/simulate">Mô phỏng</a>
+          <a data-route="knowledge" href="/knowledge">Kiến thức</a>
         </nav>
         <div id="app-status" class="status-pill" role="status" aria-live="polite">
           Đang tải ứng dụng…
@@ -240,6 +241,10 @@
           </form>
           <p class="notice" data-guided-feedback aria-live="polite">Nhập dự đoán rồi gửi để nhận phản hồi từ state thật.</p>
         </section>
+      </section>
+
+      <section data-view="knowledge" aria-label="Kiến thức chuẩn độ" hidden>
+        <div data-learning-content></div>
       </section>
     </main>
 

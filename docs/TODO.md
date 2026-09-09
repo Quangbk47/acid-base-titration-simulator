@@ -72,7 +72,9 @@ Phase 4B bị chặn cho tới khi interface Phase 2–3 ổn định.
 
 ## Later
 
-- [ ] Phase 5 Admin.
+- [x] Phase 5 knowledge slice: nội dung điểm tương đương, điểm kết thúc và đường cong chuẩn độ; route `/knowledge`; responsive/accessibility baseline; automated tests.
+- [ ] Phase 5: hoàn tất model limits/sources, browser review 320/375/430/768/1366 px và GVHD/PO acceptance.
+- [ ] Phase 6 Admin draft → published theo lịch trình hiện tại trong `ROADMAP.md`.
 - [ ] Phase 6 release.
 
 ## Quy tắc cập nhật
