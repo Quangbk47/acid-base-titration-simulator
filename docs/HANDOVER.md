@@ -111,7 +111,8 @@ final closeout. Không ghi Phase 2 là closed trước khi merge.
 - Detailed peer-run artifact: not stored in the repository; evidence is based
   on the team's direct confirmation.
 - PO acceptance: PENDING.
-- Phase status: READY FOR PO ACCEPTANCE.
-- PR #6 was synchronized with `origin/main` using a merge-based resolution.
-  No rebase, force-push, or PR merge was performed.
-- Re-run verification and push the branch before asking for PO acceptance.
+- Phase status: MERGED / AWAITING PO ACCEPTANCE.
+- PR #6 was merged at `e602ac84b4d87b9bfaba1004016c22af874ffcfd` using a
+  merge commit; no rebase or force-push was used.
+- CI on the merge commit is PASS. PO/GVHD acceptance remains PENDING and is
+  required before Phase 3 can be marked DONE/CLOSED.

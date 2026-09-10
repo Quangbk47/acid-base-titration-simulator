@@ -228,6 +228,8 @@
   command log, screenshot, or PR review artifact was not stored in the repo at
   the time of the run; detailed repository evidence remains pending.
 - PO acceptance: `PENDING`; Phase 3 is `READY FOR PO ACCEPTANCE`, not CLOSED.
-- PR #6 remains open. CI was PASS before synchronization; the branch must be
-  pushed and GitHub status rechecked after this merge resolution.
+- PR #6: `MERGED` at merge SHA `e602ac84b4d87b9bfaba1004016c22af874ffcfd`.
+- CI on the merge commit: `PASS`.
+- Phase 3 status: `MERGED / AWAITING PO ACCEPTANCE`; PO/GVHD acceptance remains
+  `PENDING`, so Phase 3 is not `DONE` or `CLOSED`.
 - No chemistry behavior, Firebase, or NH₃–HCl scope was changed.

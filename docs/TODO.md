@@ -58,7 +58,9 @@ deploy `NO`; Phase 2 `NOT STARTED`.
 - [ ] Phase 2 PO/GVHD acceptance.
 - [ ] Merge PR #5 after review and acceptance.
 - [ ] Post-merge verification and final Phase 2 closeout update.
-- [ ] Phase 3 weak acid/Guided/report.
+- [x] Phase 3 technical implementation, independent reference and peer run.
+- [x] Phase 3 PR #6 merged; merge SHA recorded in PROGRESS/HANDOVER.
+- [ ] Phase 3 PO/GVHD acceptance before DONE/CLOSED.
 
 ## Firebase track — Phase 4A — có thể làm ngay
 
@@ -89,7 +91,8 @@ Phase 4B bị chặn cho tới khi interface Phase 2–3 ổn định.
   reference, browser/manual and responsive technical review PASS.
 - [x] Phase 3 peer run — PASS, performed by Nhật Anh on 2026-09-09; detailed
   repository evidence pending.
-- [ ] Phase 3 PO acceptance and PR #6 merge closeout.
+- [x] Phase 3 PR #6 merge closeout.
+- [ ] Phase 3 PO acceptance before DONE/CLOSED.
 - [ ] P4 Firebase learner; P5 Admin; P6 release.
 
 ## Quy tắc cập nhật
