@@ -103,3 +103,15 @@ simulation, và không dùng Firebase/URL/config của dự án khác.
 `Phase | Done | Files | Tests | Preview | SHA | Risks | Next`. Hiện còn lại:
 review chéo → PO/GVHD acceptance → merge PR #5 → post-merge smoke và cập nhật
 final closeout. Không ghi Phase 2 là closed trước khi merge.
+
+## Phase 3 closeout handover — 2026-09-10
+
+- Technical gates: PASS.
+- Peer run: PASS — performed by Nhật Anh on 2026-09-09.
+- Detailed peer-run artifact: not stored in the repository; evidence is based
+  on the team's direct confirmation.
+- PO acceptance: PENDING.
+- Phase status: READY FOR PO ACCEPTANCE.
+- PR #6 was synchronized with `origin/main` using a merge-based resolution.
+  No rebase, force-push, or PR merge was performed.
+- Re-run verification and push the branch before asking for PO acceptance.

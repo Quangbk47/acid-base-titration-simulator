@@ -37,6 +37,17 @@ Không được sử dụng Firebase project của dự án khác.
 5. Tạo preview cho task lớn; ghi URL/SHA/test/rủi ro.
 6. Sau review nội bộ, bất kỳ thành viên nào merge/deploy; smoke đúng URL rồi cập nhật checkpoint.
 
+### Phase gate convention from Phase 3 onward
+
+- **Pre-merge gate:** technical validation/checks phải PASS và required peer
+  review hoặc peer run phải PASS.
+- Khi hai điều kiện trên đạt, PR có thể merge; PO/GVHD acceptance không phải là
+  pre-merge gate.
+- **Post-merge phase acceptance:** PO/GVHD PASS vẫn bắt buộc trước khi phase
+  được đánh dấu `DONE` hoặc `CLOSED`.
+- **Production:** PO approval vẫn bắt buộc trước production deploy, theo quy tắc
+  deploy của project này.
+
 Việc nhỏ/khẩn cấp có thể vào main sau tự test/ghi lý do, nhưng không được đổi Rules/data Firebase.
 
 ## Quy ước

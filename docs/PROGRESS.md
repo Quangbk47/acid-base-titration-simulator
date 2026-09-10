@@ -216,3 +216,18 @@
   after that fix.
 - Remaining gates: peer review, PO/GVHD acceptance, merge PR #5 and
   post-merge verification. Do not tick Phase 2 as closed before those gates.
+
+## 2026-09-10 — Phase 3 closeout evidence after main synchronization
+
+- Branch: `feature/phase-3-chem03-reference-validation`.
+- Phase 3 technical gates: PASS — CH₃COOH–NaOH solver, CHEM-03 independent
+  reference comparison, curve checkpoints, guided prompts, local report,
+  browser/manual review and responsive review.
+- Peer run: `PASS` — performed by **Nhật Anh** on `2026-09-09`.
+- The peer-run result is recorded from the team's direct confirmation. Detailed
+  command log, screenshot, or PR review artifact was not stored in the repo at
+  the time of the run; detailed repository evidence remains pending.
+- PO acceptance: `PENDING`; Phase 3 is `READY FOR PO ACCEPTANCE`, not CLOSED.
+- PR #6 remains open. CI was PASS before synchronization; the branch must be
+  pushed and GitHub status rechecked after this merge resolution.
+- No chemistry behavior, Firebase, or NH₃–HCl scope was changed.

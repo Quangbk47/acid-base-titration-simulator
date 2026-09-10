@@ -85,7 +85,12 @@ Phase 4B bị chặn cho tới khi interface Phase 2–3 ổn định.
 - [x] P2 simulation state/drop/runner, chart, experiment view và PP
   (implementation complete; PR #5 open; technical verification PASS).
 - [ ] P2 peer/PO review and merge gates (see Main track above).
-- [ ] P3 weak acid/Guided/report; P4 Firebase learner; P5 Admin; P6 release.
+- [x] P3 weak acid/Guided/report technical work — CHEM-03 independent
+  reference, browser/manual and responsive technical review PASS.
+- [x] Phase 3 peer run — PASS, performed by Nhật Anh on 2026-09-09; detailed
+  repository evidence pending.
+- [ ] Phase 3 PO acceptance and PR #6 merge closeout.
+- [ ] P4 Firebase learner; P5 Admin; P6 release.
 
 ## Quy tắc cập nhật
 
