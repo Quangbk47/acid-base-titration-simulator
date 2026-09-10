@@ -32,9 +32,6 @@ Website mô phỏng tương tác phục vụ đề tài NCKH: **xây dựng, ki�
 
 ## Trạng thái
 
-**Phase 2 — DONE / CLOSED.** SIM-01..03, UI-01..03, CHEM-06, responsive
-runtime và reduced-motion runtime đều PASS. Verification hiện tại gồm 15 test
-trực tiếp cho Phase 2, 12 test regression chemistry Phase 1 và full suite 43/43
-PASS. Closeout evidence và SHA được ghi trong
-`docs/PROGRESS.md`; Phase 3 CH₃COOH–NaOH/Guided/report vẫn là công việc riêng
-chưa được close. Firebase working-tree changes cũng không thuộc closeout này.
+**Phase 1 — DONE (PO PASS).** Baseline Phase 0 đã được PO PASS;
+chemistry engine HCl–NaOH thuần, fixture tính tay và test CHEM-01/02/05 đã hoàn
+tất. Firebase và production chưa deploy.

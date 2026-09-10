@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { generateCurve, solveWeakAcidStrongBase } from '../src/chemistry/index.js';
+import { generateWeakAcidCurve, solveWeakAcidStrongBase } from '../src/chemistry/index.js';
 import { chem03Reference, CHEM03_REFERENCE_CONVENTION } from './fixtures/chem03IndependentReference.js';
 
 const closeTo = (actual, expected, tolerance, label) => {
@@ -25,7 +25,7 @@ test('CHEM-03: production solver matches independent reference records', () => {
 test('CHEM-03: curve includes every independent reference milestone in order', () => {
   const input = chem03Reference[0].input;
   const requestedVolumes = chem03Reference.map(({ volumeMl }) => volumeMl);
-  const curve = generateCurve(input, { volumesMl: requestedVolumes });
+  const curve = generateWeakAcidCurve(input, { volumesMl: requestedVolumes });
   assert.equal(curve.error, undefined);
   const curveVolumes = curve.points.map(({ volumeMl }) => volumeMl);
   assert.deepEqual(
