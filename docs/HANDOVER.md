@@ -122,11 +122,25 @@ independent CHEM-03 validation is on `feature/phase-3-chem03-reference-validatio
 Reference files are `tests/fixtures/chem03IndependentReference.js` and
 `tests/chem03-reference.test.js`. CHEM-03 automated comparison and browser/manual
 technical review are PASS at initial, half-equivalence, equivalence and
-post-equivalence. Peer and PO acceptance are still pending; Phase 3 is not
-closed. Firebase is out of scope.
+post-equivalence. Responsive technical review is recorded as PASS with the
+runtime limitations documented below. Peer run: `PASS` — performed by Nhật Anh
+on `2026-09-09`; detailed repository evidence pending. PO acceptance is still
+pending, so Phase 3 is `READY FOR PO ACCEPTANCE`, not closed. Firebase is out
+of scope.
 
 Responsive evidence: local preview at `http://localhost:4173/simulate` was
 checked at the available `1280×720` desktop viewport with no horizontal
 overflow and usable form/chart/guided/report controls. The current browser
 runtime did not expose reliable viewport emulation, so exact 1366/1024/430/375
 browser runs remain pending; do not treat them as completed evidence.
+
+## Phase 3 closeout handover — 2026-09-10
+
+- Technical gates: PASS.
+- Peer run: PASS — performed by Nhật Anh on 2026-09-09.
+- Detailed peer-run artifact: not stored in the repository; evidence is based
+  on the team's direct confirmation.
+- PO acceptance: PENDING.
+- Phase status: READY FOR PO ACCEPTANCE.
+- PR #6: OPEN; CI PASS; GitHub merge state DIRTY. Do not merge until PO
+  acceptance and the PR merge state are resolved.

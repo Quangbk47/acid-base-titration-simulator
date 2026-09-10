@@ -306,3 +306,19 @@
 - Status remains: CHEM-03 automated reference `PASS`; browser/manual technical
   review `PASS`; responsive verification `PARTIAL`; Peer `PENDING`; PO
   `PENDING`; Phase 3 `NOT CLOSED`.
+
+## 2026-09-10 — Phase 3 peer-run closeout evidence
+
+- Phase 3 technical gates remain PASS: CH₃COOH–NaOH solver, CHEM-03
+  independent reference comparison, curve checkpoints, guided prompts, local
+  report, browser/manual review and responsive review.
+- Peer run: `PASS` — performed by **Nhật Anh** on `2026-09-09`.
+- The peer-run result is recorded from the team's direct confirmation. Detailed
+  command log, screenshot, or PR review artifact was not stored in the repo at
+  the time of the run; therefore: `detailed repository evidence pending`.
+- PO acceptance: `PENDING`; Phase 3 is `READY FOR PO ACCEPTANCE`, not CLOSED.
+- PR #6 remains open. CI check is PASS; GitHub reports merge state `DIRTY`.
+  No rebase, merge, or conflict resolution is performed in this closeout.
+- No technical blocker remains in the Phase 3 implementation/reference scope.
+- Next: PO review/acceptance and PR closeout. Firebase and NH₃–HCl remain out
+  of scope for this closeout.
