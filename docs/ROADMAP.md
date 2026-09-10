@@ -4,15 +4,13 @@
 
 Roadmap là hợp đồng giao việc. Không nhảy phase: mỗi phase chỉ bắt đầu sau khi đọc các tài liệu liên quan và chỉ `DONE` khi toàn bộ gate PASS. Trạng thái: `PLANNED → IN PROGRESS → DEV PASS → PO TESTING → PO PASS → DONE`. Mọi phase phải ghi branch/SHA, file sửa, test, preview, rủi ro và bước sau vào `PROGRESS.md`.
 
-## Mô hình delivery sau Phase 1
+## Lịch trình hiện tại sau Phase 3
 
-Từ sau khi Phase 1 đạt PO PASS, dự án có hai track:
+* Phase 4: kiểm chứng chemistry bằng bảng tham chiếu tính tay của nhóm.
+* Phase 5: hoàn thiện kiểm chứng khoa học, UX và phạm vi phát hành trước hạ tầng.
+* Phase 6: Firebase, tài khoản người dùng, Rules và deploy.
 
-* Main track: `Phase 2 → Phase 3`
-* Firebase track: `Phase 4A`
-
-Phase 4A được phép chạy song song với Phase 2–3; Phase 4B chỉ mở sau khi
-interface cần thiết của Phase 2–3 đã ổn định.
+Firebase/Auth/Firestore/deploy đang **tạm dừng**, không phải nhiệm vụ Phase 4.
 
 ## Kiến trúc bắt buộc
 
@@ -87,68 +85,62 @@ Không để UI tự tính pH, Firebase quyết định hóa học, hoặc hoạ
 
 **PASS:** CHEM-03 PASS với bảng tham chiếu độc lập; không giữ gợi ý cũ sau reset; báo cáo ghi đúng input/modelVersion/mốc.
 
-## Phase 4A — Firebase Foundation / Infrastructure
+## Phase 4 — Chemistry reference validation
 
-Phase 4A được phép chạy **song song với Phase 2–3** sau khi:
+**Mục tiêu:** biến bảng tham chiếu tính tay do Tuấn và Nhật Anh cung cấp thành
+automated tests độc lập, đồng thời kiểm tra lại $V_e$ và hình dạng đường cong.
 
-* Phase 1 đạt PO PASS;
-* có Firebase Project ID riêng;
-* có người phụ trách.
+**Đầu vào bắt buộc từ nhóm:**
 
-**Owner:** **Bắc Hà — Firebase/Deployment Owner**
+1. Tuấn/Nhật Anh cung cấp bảng cho HCl–NaOH, CH₃COOH–NaOH và NH₃–HCl.
+2. Mỗi bảng ghi rõ nồng độ, thể tích ban đầu, $K_a$ hoặc $K_b$ nếu có, nhiệt độ,
+	thể tích chất chuẩn, pH/pOH, species/mol dư, stage và nguồn tính tay.
+3. Nhóm xác nhận tolerance số và quy ước endpoint/indicator nếu bảng có màu.
+
+**Công việc của DEV:**
+
+1. Lưu raw reference không chỉnh sửa vào `tests/fixtures/phase4Reference.js`.
+2. Tạo automated tests đối chiếu input/output từng dòng, không sinh expected
+	từ solver trong lúc test.
+3. Kiểm tra $V_e$ độc lập từ stoichiometry và so với bảng.
+4. Sinh curve từ engine, kiểm tra tăng dần, checkpoint, shape và sai lệch so với
+	reference; không hard-code pH hoặc curve để làm test pass.
+5. Ghi nguồn, phép tính, tolerance, reviewer và discrepancy vào report.
+
+**PASS:** ba hệ có fixture độc lập; CHEM-01/03/04 và $V_e$/curve review PASS;
+mọi discrepancy được giải thích hoặc trả lại nhóm; `npm run check` PASS.
+
+**Không làm trong Phase 4:** Firebase, Google Sign-In, Firestore, Rules,
+Hosting/deploy, lưu tài khoản hoặc thay đổi chemistry theo expected chưa được
+nhóm xác nhận.
+
+## Phase 5 — Scientific/UX release readiness
+
+**Làm:** tổng hợp sai số/giới hạn mô hình, review UX/accessibility/responsive,
+regression toàn hệ, test nội bộ và chuẩn bị release checklist. Chưa bật tài
+khoản hay deploy Firebase; mọi thay đổi chemistry phải có reference đã review.
+
+**PASS:** chemistry/UI tests PASS, mobile/accessibility review PASS, model limits
+và nguồn được ghi rõ, GVHD/PO duyệt release candidate.
+
+## Phase 6 — Firebase, accounts and deployment
 
 **Làm:**
 
-1. Firebase project riêng của repo và Firebase Hosting.
-2. `.firebaserc`, `firebase.json`, `src/firebase/config.js` và `src/firebase/auth.js`.
-3. Repository skeleton cho profile/experiments.
-4. Google Auth skeleton và Firestore schema/repository skeleton.
-5. Firestore Rules và emulator tests.
-6. Preview channel, deploy/rollback documentation.
-7. Cập nhật Project ID, Hosting Site, Preview URL và SHA.
+1. Firebase project/Hosting riêng và public Web config đã được PO xác nhận.
+2. Google Sign-In; guest vẫn mô phỏng, login chỉ khi Lưu/Mở/Xóa ca.
+3. Firestore profile/saved experiments, `modelVersion`, quota 50 ca và delete
+	account/data.
+4. Admin draft → published, Rules, Emulator tests và ownership tests.
+5. Preview channel, deploy/rollback, production Hosting và smoke release.
 
-**Boundary bắt buộc:**
+**Boundary bắt buộc:** Firebase không quyết định pH, equivalence, endpoint,
+stage hay curve; không lưu secret/token/curve arrays/ảnh/animation; không
+production deploy nếu chưa có PO approval.
 
-* Không sửa hoặc quyết định logic trong `src/chemistry/**`.
-* Firebase không quyết định pH, equivalence, endpoint hay stage.
-* Không tự ý thay đổi lõi `src/simulation/**`.
-* Firebase chỉ lưu/đọc state do application layer cung cấp.
-* Nếu cần đổi interface app ↔ Firebase phải ghi contract rõ.
-* Không production deploy nếu chưa có PO approval.
-
-**PASS:**
-
-* Đúng Firebase project riêng.
-* Hosting/config skeleton hoạt động.
-* Rules/emulator baseline PASS.
-* Có preview URL + SHA + rollback record.
-* Chemistry regression vẫn PASS.
-
-## Phase 4B — Firebase Learner Integration
-
-Chỉ bắt đầu tích hợp sâu khi interface cần thiết của Phase 2–3 đã ổn định.
-
-**Làm:**
-
-1. Guest vẫn mô phỏng không login; Google Sign-In chỉ khi Lưu/Mở.
-2. Lưu `input + modelVersion + volume/state + summary`.
-3. Giới hạn 50 ca, không auto-delete.
-4. Xóa account/data.
-5. Hoàn thiện FB-01..05.
-
-Chỉ khi **4A + 4B cùng PASS** mới được đánh dấu toàn bộ Phase 4 DONE.
-
-## Phase 5 — Admin Nháp → Xuất bản
-
-**Làm:** bootstrap Admin thủ công sau khi UID tồn tại; CRUD chất/Ka/Kb/chỉ thị/ca/prompt có validation; Admin thấy nháp, Guest/Learner chỉ published; lưu `updatedAt/updatedBy`; sửa thư viện không làm hỏng ca đã lưu/modelVersion.
-
-**PASS:** FB-06 và test âm quyền nội dung PASS; URL trực tiếp không lộ nháp; nội dung trước publish có review khoa học ghi bằng chứng.
-
-## Phase 6 — Kiểm chứng NCKH và phát hành
-
-**Làm:** hoàn thiện bảng sai số/nguồn/giới hạn mô hình; accessibility/performance/error states; regression; preview; test nội bộ; deploy `--only hosting`; smoke production; ghi SHA/Project ID/URL/rollback vào PROGRESS/HANDOVER.
-
-**PASS:** toàn bộ chemical/UI/Firebase tests PASS; đúng project/commit; Guest simulation, pH–màu–graph, mobile và login-save (nếu đã có) smoke PASS; GVHD/PO nghiệm thu thực.
+**PASS:** FB-01..06, Rules/Emulator PASS; đúng Project ID/commit; login-save,
+guest simulation, chemistry regression, mobile và production smoke PASS; ghi
+SHA/URL/rollback vào `PROGRESS.md` và `HANDOVER.md`.
 
 ## Backlog có chủ ý
 

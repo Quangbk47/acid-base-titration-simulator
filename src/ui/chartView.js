@@ -19,7 +19,7 @@ export const renderChartView = (root, input, currentVolumeMl) => {
   chart.setAttribute('viewBox', `0 0 ${width} ${height}`);
   const xAt = (volume) => pad.l + (volume / maxX) * (width - pad.l - pad.r);
   const markers = [['halfEqMl', 'curve-half'], ['equivalenceMl', 'curve-equivalence'], ['endpointMl', 'curve-endpoint']]
-    .filter(([key]) => Number.isFinite(model.milestones[key]) && model.milestones[key] <= maxX)
+    .filter(([key]) => model.milestones[key] <= maxX)
     .map(([key, cls]) => `<line class="${cls}" x1="${xAt(model.milestones[key])}" x2="${xAt(model.milestones[key])}" y1="${pad.t}" y2="${height - pad.b}" />`).join('');
   const current = model.points.filter((p) => Math.abs(p.volumeMl - currentVolumeMl) < 1e-9).map((p) => { const [cx, cy] = point(p).split(','); return `<circle class="curve-current" cx="${cx}" cy="${cy}" r="5" />`; }).join('');
   chart.innerHTML = `${markers}<polyline class="curve-line" points="${model.points.map(point).join(' ')}" />${current}`;

@@ -6,7 +6,6 @@ export const TITRATION_SYSTEMS = Object.freeze({
     titrant: 'NaOH',
     solver: 'strong-strong',
   }),
-  'weak-acid-strong-base': Object.freeze({ analyte: 'CH₃COOH', titrant: 'NaOH', solver: 'weak-acid-strong-base' }),
 });
 
 const REQUIRED_FIELDS = Object.freeze([
@@ -74,7 +73,6 @@ export function validateTitrationForm(values = {}) {
       analyteVolumeMl: parsed.analyteVolumeMl,
       titrantConcentrationM: parsed.titrantConcentrationM,
       addedVolumeMl: parsed.addedVolumeMl,
-      Ka: values.systemType === 'weak-acid-strong-base' ? parseNumber(values.Ka) : undefined,
     },
   };
 }
@@ -86,6 +84,5 @@ export function toChemistryInput(value) {
     Cb: value.titrantConcentrationM,
     Vb: mlToL(value.addedVolumeMl),
     temperature: celsiusToKelvin(25),
-    ...(value.Ka ? { Ka: value.Ka } : {}),
   });
 }

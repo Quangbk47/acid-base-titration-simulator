@@ -5,9 +5,6 @@ export const renderExperimentView = (root, result, state) => {
   text(root, '[data-result="ph"]', result.pH.toFixed(2));
   text(root, '[data-result="ph-label"]', result.pH < 7 ? 'Axit' : result.pH > 7 ? 'Bazơ' : 'Trung tính');
   text(root, '[data-result="volume"]', `${result.totalVolumeMl.toFixed(2)} mL`);
-  const isWeakAcid = result.model === 'weak-acid-strong-base';
-  text(root, '[data-result="system"]', isWeakAcid ? 'CH₃COOH + NaOH' : 'HCl + NaOH');
-  text(root, '[data-result="species-summary"]', isWeakAcid ? 'CH₃COOH / NaOH' : 'HCl / NaOH');
   text(root, '[data-result="excess"]', result.excess.species ?? 'Không');
   text(root, '[data-result="stage"]', result.stage);
   text(root, '[data-result="reaction"]', result.dominantReaction);

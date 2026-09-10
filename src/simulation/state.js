@@ -14,11 +14,10 @@ const invalid = (code, message) => ({ ok: false, error: { code, message } });
 
 const validateChemistryInput = (input) => {
   if (!input || typeof input !== 'object' || Array.isArray(input)) return invalid('INVALID_CHEMISTRY_INPUT', 'chemistryInput phải là một object.');
-  const { Ca, Va, Cb, Vb, temperature, Ka } = input;
+  const { Ca, Va, Cb, Vb, temperature } = input;
   if (![Ca, Va, Cb, Vb, temperature].every(isFiniteNumber) || Ca <= 0 || Va <= 0 || Cb <= 0 || Vb < 0) {
     return invalid('INVALID_CHEMISTRY_INPUT', 'Nồng độ/thể tích chemistryInput không hợp lệ.');
   }
-  if (Ka !== undefined && (!isFiniteNumber(Ka) || !(Ka > 0 && Ka < 1))) return invalid('INVALID_CHEMISTRY_INPUT', 'Ka không hợp lệ.');
   return { ok: true };
 };
 

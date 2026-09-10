@@ -38,7 +38,7 @@ test('Phase 1 exposes chemistry without coupling it to DOM or Firebase', () => {
     assert.doesNotMatch(source, /document|window|firebase|firestore/i, file);
   }
   assert.match(read('src/data/standardCases.js'), /hcl-naoh-equivalence/);
-  assert.match(read('src/firebase/index.js'), /deferred-to-phase-4/);
+  assert.match(read('src/firebase/index.js'), /phase-4a-foundation-skeleton/);
 });
 
 test('Preview path guard is cross-platform and blocks traversal', () => {

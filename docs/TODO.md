@@ -48,10 +48,16 @@ deploy `NO`; Phase 2 `NOT STARTED`.
 
 ## Main track
 
-- [x] Phase 2 simulation/UI/phenolphthalein (DONE / CLOSED; acceptance PASS;
-  implementation closeout `e6ffd10c43e9b2627f640e19a5dec95329ffdaff`; 15
-  Phase 2 tests plus 12 Phase 1 chemistry regression tests, full suite 43/43,
-  responsive and reduced-motion runtime evidence PASS).
+- [x] Phase 2 simulation/UI/phenolphthalein implementation (SIM-01..03,
+  UI-01..03, CHEM-06) — DEV PASS; PR #5 opened from clean branch.
+- [ ] Phase 2 peer review/recheck on current PR #5 implementation; historical
+  peer report is stale for the current branch.
+- [x] Phase 2 keyboard and manual accessibility review at HEAD `632a089`.
+- [x] Phase 2 reduced-motion runtime evidence reused from historical Windows +
+  Edge verification at `e6ffd10`.
+- [ ] Phase 2 PO/GVHD acceptance.
+- [ ] Merge PR #5 after review and acceptance.
+- [ ] Post-merge verification and final Phase 2 closeout update.
 - [ ] Phase 3 weak acid/Guided/report.
 
 ## Firebase track — Phase 4A — có thể làm ngay
@@ -75,18 +81,16 @@ Phase 4B bị chặn cho tới khi interface Phase 2–3 ổn định.
 
 ## Later
 
-- [x] P2 input form + validation + Phase 1 engine boundary (included in Phase 2
-  closeout; acceptance PASS).
-- [x] P2 simulation state/drop/runner, chart, experiment view và PP (acceptance
-  PASS; responsive and reduced-motion runtime verified).
-- [x] P3 weak acid/Guided/report technical work (CHEM-03 independent reference,
-  browser/manual and responsive technical review PASS).
+- [x] P2 input form + validation + Phase 1 engine boundary (READY FOR REVIEW; PO/peer review pending).
+- [x] P2 simulation state/drop/runner, chart, experiment view và PP
+  (implementation complete; PR #5 open; technical verification PASS).
+- [ ] P2 peer/PO review and merge gates (see Main track above).
+- [x] P3 weak acid/Guided/report technical work — CHEM-03 independent
+  reference, browser/manual and responsive technical review PASS.
 - [x] Phase 3 peer run — PASS, performed by Nhật Anh on 2026-09-09; detailed
   repository evidence pending.
 - [ ] Phase 3 PO acceptance and PR #6 merge closeout.
 - [ ] P4 Firebase learner; P5 Admin; P6 release.
-- [ ] Phase 5 Admin.
-- [ ] Phase 6 release.
 
 ## Quy tắc cập nhật
 

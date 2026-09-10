@@ -176,149 +176,58 @@
 - Remaining gate: full keyboard/mobile/reduced-motion review and peer/PO review;
   no PR or merge has been created for this slice.
 
-## 2026-09-06 — Phase 3 weak acid, guided learning and local report
+## 2026-09-08 — Phase 2 clean closeout / PR #5
 
-- Status: `DEV PASS; PO review pending` on `feature/phase-3-weak-acid-guided-report`.
-- Implemented CH₃COOH–NaOH only: charge-balance bisection on log[H⁺], curve checkpoints,
-  half-equivalence guidance driven by solver state, and a local text report that keeps solver
-  input, model version, milestones and an SVG chart data URL. No Firebase, HCl–NH₃ or
-  weak-acid/weak-base model was added.
-- Evidence: lint and formatting checks PASS; Node test suite 31/31 PASS; `git diff --check` PASS.
-- Scientific references in tests: 0.100 M CH₃COOH 25.00 mL, Ka 1.8e-5, titrated by 0.100 M
-  NaOH: initial pH ≈ 2.88, half-equivalence pH ≈ pKa, equivalence pH ≈ 8.72.
-- Preview/deploy: not created; production deploy `NO`.
-- Risk: the Phase 3 slice is built above the unmerged Phase 2 branch and still needs browser,
-  peer and PO review before merge.
+- Phase: `READY FOR REVIEW / READY TO CLOSE` — implementation complete;
+  not `CLOSED`, `MERGED`, `VERIFIED` or `PO PASS`.
+- Branch/SHA: `fix/phase-2-clean-closeout` /
+  `cc4d41fca0065cb8d5ddab40ad0d0c41e6c023e7`.
+- PR: #5 — `feat: close phase 2 simulation and experiment UI` — OPEN,
+  base `main`, head `fix/phase-2-clean-closeout`.
+- Scope complete at implementation level: SIM-01..03, UI-01..03 and CHEM-06.
+- Verification: Phase 2 tests 15/15 PASS; full suite 41/41 PASS; lint PASS
+  (38 JavaScript files); format PASS (21 files); `git diff --check` PASS.
+- Runtime recorded: local `/simulate` submit, add-drop, speed selection, run,
+  pause, resume, reset and chart flow PASS; final observed state was Paused,
+  0.15 mL, pH 1.01 and 13 chart rows; no new console warnings/errors in the
+  final flow.
+- Responsive evidence recorded in earlier repo evidence: local browser smoke
+  checked 320/375/430/768/1366 px with no horizontal overflow; mobile layout
+  is one column. Historical closeout evidence also records 360/1280 px.
+- Reduced-motion evidence is reusable from `e6ffd10c43e9b2627f640e19a5dec95329ffdaff`
+  (`2026-09-07`, Windows + Edge): Animation effects Off,
+  `matchMedia('(prefers-reduced-motion: reduce)').matches === true`, controls
+  remained functional and motion was reduced to near-zero. `assets/styles.css`
+  is unchanged between that evidence commit and PR #5.
+- Manual keyboard/accessibility review is now **CONFIRMED** on current HEAD
+  `632a08939e08cb63edb502922f1a1390ea87349d` using the Codex In-app Browser on
+  Windows at `http://localhost:4173/simulate` on 2026-09-08. Keyboard-only
+  Tab/Shift+Tab traversal, input editing, Enter/Space activation for submit,
+  add-drop, run, pause, resume and reset, speed selection, focus visibility,
+  validation error, labels, accessible names, text status, chemistry fields and
+  chart data-table alternative all passed. No keyboard trap or mouse-only
+  critical control was observed.
+- Historical peer report at `cf5f2772e51c25b62205c3b2dc18f6272d65075a` was
+  authored by `Noname000-Zero` and reports browser interaction PASS, but is
+  `STALE / RECHECK` for PR #5 because the relevant implementation changed.
+- The clean branch excludes Phase 3, NH3–HCl, Firebase and Admin/auth/save/load.
+- Closeout wiring fix: `src/app.js` previously used the old simulation API;
+  commit `cc4d41f` wires the Phase 2 API and the verification above was run
+  after that fix.
+- Remaining gates: peer review, PO/GVHD acceptance, merge PR #5 and
+  post-merge verification. Do not tick Phase 2 as closed before those gates.
 
-## 2026-09-07 — Phase 2 implementation and acceptance closeout
+## 2026-09-10 — Phase 3 closeout evidence after main synchronization
 
-- Phase: `Phase 2 — READY TO CLOSE / acceptance PASS`.
-- Branch/SHA: `feature/phase-3-weak-acid-guided-report` /
-  `e6ffd10c43e9b2627f640e19a5dec95329ffdaff`.
-- Code closeout: Ka accessibility mapping, simulation control states, dynamic
-  HCl/CH₃COOH labels, SIM-02 speed invariance regression and CHEM-06 indicator
-  regression were committed in `e6ffd10`.
-- Regression fix evidence: `aac830341c32dbbf720713a2221d41a2af6ad6e8`
-  (`fix: preserve titration solver during simulation`) preserves the selected
-  weak-acid/strong-acid solver during add-drop and subsequent simulation steps.
-- Acceptance: SIM-01, SIM-02, SIM-03, UI-01, UI-02, UI-03 and CHEM-06 PASS;
-  responsive runtime PASS at 320/360/375/430/768/1280/1366 px.
-- Reduced motion: manual Windows + Edge evidence PASS. Windows Animation effects
-  were Off; `window.matchMedia('(prefers-reduced-motion: reduce)').matches`
-  returned `true`; submit/add-drop/run/pause/resume/reset remained functional and
-  buret/drop animation was reduced to near-zero motion.
-- Automated evidence: `node --test` 36/36 PASS; lint PASS; format PASS;
-  `git diff --check` PASS.
-- Scope: no chemistry formula, unit convention, Firebase or Phase 4 change.
-- Phase 3 remains `DEV PASS; PO review pending` and is not declared complete.
-- Next: review Phase 3 independently; do not re-open Phase 2 unless a new
-  regression is found.
-
-## 2026-09-09 — Phase 2 closeout
-
-- Phase: `DONE / CLOSED`.
-- Acceptance: SIM-01..03, UI-01..03 and CHEM-06 PASS; responsive runtime at
-  320/360/375/430/768/1280/1366 px PASS; reduced-motion runtime evidence PASS.
-- Verification: 15 Phase 2 tests PASS (9 simulation/UI tests plus 6 Phase 2
-  validation/boundary tests); 12 Phase 1 chemistry regression tests PASS; full
-  suite 43/43 PASS; lint, format and `git diff --check` PASS.
-- Evidence locations: this closeout record and the preceding Phase 2 evidence
-  in this file; browser/manual evidence is also recorded in `docs/HANDOVER.md`.
-- Closeout basis: implementation and acceptance were already present at
-  `e6ffd10c43e9b2627f640e19a5dec95329ffdaff`; this entry records the explicit
-  close decision after re-verification on the current branch.
-- Scope: this closeout changes documentation only. Uncommitted Firebase files
-  remain separate and are not part of Phase 2.
-- Next: Phase 3 CHEM-03 independent reference validation.
-
-## 2026-09-09 — Phase 3 CHEM-03 independent reference validation
-
-- Branch: `feature/phase-3-chem03-reference-validation`, based on Phase 2
-  closeout `0411382b8e7e0d1fbf7c5ce92bfcec498120ab04`.
-- Added independent fixture `tests/fixtures/chem03IndependentReference.js`
-  and comparison tests in `tests/chem03-reference.test.js`.
-- Reference method is outside the production path and imports no production
-  solver: weak-acid dissociation quadratic, Henderson–Hasselbalch only in the
-  buffer region, acetate hydrolysis quadratic at equivalence, and excess-OH
-  stoichiometry after equivalence.
-- Coverage: initial, 20% buffer, half-equivalence, 90% buffer, 99% pre-eq,
-  equivalence, 101% post-eq and large excess.
-- CHEM-03 comparison: 2/2 tests PASS; all 8 reference records match pH,
-  stoichiometric `Veq`, stage and excess species within documented tolerances.
-  Curve validation also PASS; mandatory production checkpoints are accepted.
-- Regression: full suite 41/41 PASS; existing weak-acid tests 3/3 PASS;
-  Phase 1 chemistry regression PASS; lint, format and `git diff --check` PASS.
-- No unresolved CHEM-03 discrepancy found.
-- Manual/browser: `MANUAL / PO REVIEW PENDING`. Peer: `PENDING`. PO: `PENDING`.
-  Phase 3 is not closed.
-- Next: browser/manual review of initial, half-equivalence, equivalence and
-  post-equivalence, then peer and PO acceptance.
-
-## 2026-09-09 — CHEM-03 browser/manual technical review
-
-- Runtime: `node scripts/serve.mjs`, preview `http://localhost:4173/`; both `/`
-  and `/simulate` loaded in the Codex in-app browser.
-- Input: CH₃COOH 0.100 M, 25.00 mL; NaOH 0.100 M; `Ka=1.8e-5`; 25 °C;
-  independent `Veq=25.00 mL`.
-- Initial, 0.00 mL: raw solver pH `2.87527706`, displayed `2.88`, stage
-  `before-equivalence`, excess CH₃COOH — PASS.
-- Half-equivalence, 12.50 mL: raw solver pH `4.74519601`, displayed `4.75`,
-  stage `before-equivalence`, CH₃COOH/CH₃COO⁻ buffer species, guided pH/pKa
-  explanation — PASS.
-- Equivalence, 25.00 mL: raw solver pH `8.72190403`, displayed `8.72`, stage
-  `at-equivalence`, no excess, acetate species, CH₃COOH–NaOH wording — PASS;
-  UI did not show pH 7.
-- Post-equivalence, 25.25 mL: raw solver pH `10.69685245`, displayed `10.70`,
-  stage `after-equivalence`, excess OH⁻, persistent pink indicator and guided
-  explanation — PASS.
-- Display rounding is acceptable: all displayed values round to the expected
-  reference values and raw values are within ±0.005 pH.
-- Interaction regression: submit, add-drop to 25.30 mL, run, pause, resume and
-  reset remained functional; weak-acid wording/species/solver state remained
-  active. Report control was present and guided/report automated tests remain
-  PASS; download file contents were not directly exposed by the browser runtime.
-- Console/runtime: no console errors or warnings; no observed NaN/Infinity,
-  uncaught exception or chart failure.
-- Screenshot evidence: four full-page captures were obtained inline in the
-  browser runtime; named PNG files are unavailable because this runtime exposes
-  screenshots in memory only.
-- Status: `BROWSER/MANUAL TECHNICAL REVIEW PASS`; Peer `PENDING`; PO `PENDING`;
-  Phase 3 `NOT CLOSED`.
-- Next: request independent peer review, then PO acceptance for Phase 3.
-
-## 2026-09-09 — CHEM-03 responsive verification
-
-- Preview command: `node scripts/serve.mjs`; URL: `http://localhost:4173/simulate`.
-- Browser runtime desktop smoke at `1280×720`: PASS. No horizontal overflow;
-  form controls, pH/status, chart/table, guided prompt and report control were
-  visible and usable. DOM geometry reported `scrollWidth=1265` and
-  `clientWidth=1265`.
-- CHEM-03 smoke at desktop: initial `2.88`, half-equivalence `4.75`,
-  equivalence `8.72`, post-equivalence `10.70`; stages and excess species
-  matched the prior browser review.
-- CSS breakpoint definitions for `<=1023`, `<=767` and `<=430` were inspected
-  and include the documented one-column/mobile adaptations.
-- Exact `1366`, `1024`, `430` and `375` viewport execution was unavailable in
-  the current browser runtime because no reliable resize/emulation API was
-  exposed. These widths are not claimed as directly verified here.
-- Console errors/warnings: none observed. Test/lint/format/diff checks remain
-  PASS. Risk: exact multi-viewport browser evidence remains pending.
-- Status remains: CHEM-03 automated reference `PASS`; browser/manual technical
-  review `PASS`; responsive verification `PARTIAL`; Peer `PENDING`; PO
-  `PENDING`; Phase 3 `NOT CLOSED`.
-
-## 2026-09-10 — Phase 3 peer-run closeout evidence
-
-- Phase 3 technical gates remain PASS: CH₃COOH–NaOH solver, CHEM-03
-  independent reference comparison, curve checkpoints, guided prompts, local
-  report, browser/manual review and responsive review.
+- Branch: `feature/phase-3-chem03-reference-validation`.
+- Phase 3 technical gates: PASS — CH₃COOH–NaOH solver, CHEM-03 independent
+  reference comparison, curve checkpoints, guided prompts, local report,
+  browser/manual review and responsive review.
 - Peer run: `PASS` — performed by **Nhật Anh** on `2026-09-09`.
 - The peer-run result is recorded from the team's direct confirmation. Detailed
   command log, screenshot, or PR review artifact was not stored in the repo at
-  the time of the run; therefore: `detailed repository evidence pending`.
+  the time of the run; detailed repository evidence remains pending.
 - PO acceptance: `PENDING`; Phase 3 is `READY FOR PO ACCEPTANCE`, not CLOSED.
-- PR #6 remains open. CI check is PASS; GitHub reports merge state `DIRTY`.
-  No rebase, merge, or conflict resolution is performed in this closeout.
-- No technical blocker remains in the Phase 3 implementation/reference scope.
-- Next: PO review/acceptance and PR closeout. Firebase and NH₃–HCl remain out
-  of scope for this closeout.
+- PR #6 remains open. CI was PASS before synchronization; the branch must be
+  pushed and GitHub status rechecked after this merge resolution.
+- No chemistry behavior, Firebase, or NH₃–HCl scope was changed.

@@ -25,4 +25,3 @@ window.__acidBaseBaseline = Object.freeze({
   firebase: firebaseModuleStatus,
   standardCaseCount: standardCases.length,
 });
-

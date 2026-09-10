@@ -1,4 +1,4 @@
-import { solveStrongStrong, solveWeakAcidStrongBase } from '../chemistry/index.js';
+import { solveStrongStrong } from '../chemistry/index.js';
 import { standardCases } from '../data/standardCases.js';
 import { TITRATION_SYSTEMS, toChemistryInput, validateTitrationForm } from './validation.js';
 import { addDrop, createSimulationState, resetSimulation, setSimulationSpeed, setSimulationStatus, withSimulationResult } from '../simulation/state.js';
@@ -6,64 +6,21 @@ import { createSimulationRunner } from '../simulation/runner.js';
 import { renderExperimentView } from './experimentView.js';
 import { renderChartView } from './chartView.js';
 import { renderIndicatorView } from './indicatorView.js';
-import { promptForState } from '../data/guidedPrompts.js';
-import { createReport, downloadReport } from './report.js';
 
-export const FIELD_IDS = Object.freeze({ systemType: 'system-type', analyteConcentrationM: 'analyte-concentration', analyteVolumeMl: 'analyte-volume', titrantConcentrationM: 'titrant-concentration', addedVolumeMl: 'added-volume', Ka: 'ka' });
-export const fieldIdFor = (field) => FIELD_IDS[field] ?? field;
+const FIELD_IDS = Object.freeze({ systemType: 'system-type', analyteConcentrationM: 'analyte-concentration', analyteVolumeMl: 'analyte-volume', titrantConcentrationM: 'titrant-concentration', addedVolumeMl: 'added-volume' });
 const valuesFromForm = (form) => Object.fromEntries(new FormData(form).entries());
 const setText = (root, selector, value) => { const element = root.querySelector(selector); if (element) element.textContent = value; };
 const clearErrors = (form) => { for (const output of form.querySelectorAll('[data-error-for]')) output.textContent = ''; for (const control of form.elements) control.removeAttribute?.('aria-invalid'); };
-const showErrors = (form, errors) => { clearErrors(form); for (const [field, message] of Object.entries(errors)) { form.querySelector(`#${fieldIdFor(field)}`)?.setAttribute('aria-invalid', 'true'); const output = form.querySelector(`[data-error-for="${field}"]`); if (output) output.textContent = message; } };
-
-export const clearSimulationView = (root, systemType = 'strong-acid-strong-base') => {
-  const isWeakAcid = systemType === 'weak-acid-strong-base';
-  setText(root, '[data-result="ph"]', '—');
-  setText(root, '[data-result="ph-label"]', 'Chưa tính');
-  setText(root, '[data-result="volume"]', '—');
-  setText(root, '[data-result="system"]', isWeakAcid ? 'CH₃COOH + NaOH' : 'HCl + NaOH');
-  setText(root, '[data-result="species-summary"]', isWeakAcid ? 'CH₃COOH / NaOH' : 'HCl / NaOH');
-  setText(root, '[data-result="excess"]', '—');
-  setText(root, '[data-result="stage"]', '—');
-  setText(root, '[data-result="reaction"]', 'Chưa tính');
-  const chemistryRows = root.querySelector('[data-chemistry-rows]');
-  if (chemistryRows) chemistryRows.innerHTML = `<tr><td>${isWeakAcid ? 'CH₃COOH / NaOH' : 'HCl / NaOH'}</td><td>—</td><td>—</td><td>Chưa tính</td></tr>`;
-  const chart = root.querySelector('[data-chart]');
-  if (chart) chart.innerHTML = '';
-  const chartEmpty = root.querySelector('[data-chart-empty]');
-  if (chartEmpty) { chartEmpty.hidden = false; chartEmpty.textContent = 'Nhập dữ liệu để tạo đường cong'; }
-  const curveRows = root.querySelector('[data-curve-rows]');
-  if (curveRows) curveRows.innerHTML = '<tr><td colspan="3">Chưa có dữ liệu mô phỏng.</td></tr>';
-  renderIndicatorView(root, null);
-  setText(root, '[data-guided-prompt]', isWeakAcid ? 'Tính trạng thái để bắt đầu hướng dẫn.' : 'Chọn ca CH₃COOH–NaOH để bắt đầu hướng dẫn.');
-  setText(root, '[data-guided-feedback]', '');
-};
+const showErrors = (form, errors) => { clearErrors(form); for (const [field, message] of Object.entries(errors)) { form.querySelector(`#${FIELD_IDS[field] ?? field}`)?.setAttribute('aria-invalid', 'true'); const output = form.querySelector(`[data-error-for="${field}"]`); if (output) output.textContent = message; } };
 
 export function evaluateTitration(values, solve = solveStrongStrong) {
   const validation = validateTitrationForm(values);
   if (!validation.ok) return validation;
   const chemistryInput = toChemistryInput(validation.value);
-  const result = solveChemistryInput(chemistryInput, solve);
+  const result = solve(chemistryInput);
   if (result.error) return { ok: false, solverError: result.error };
   return { ok: true, chemistryInput, result };
 }
-
-export function solveChemistryInput(chemistryInput, strongSolver = solveStrongStrong) {
-  return chemistryInput?.Ka !== undefined
-    ? solveWeakAcidStrongBase(chemistryInput)
-    : strongSolver(chemistryInput);
-}
-
-export const simulationControlState = ({ hasSimulation = false, state = 'Idle' } = {}) => {
-  const canSimulate = hasSimulation && ['Ready', 'Running', 'Paused'].includes(state);
-  return {
-    submitDisabled: state === 'Validating' || state === 'Running',
-    addDropDisabled: !canSimulate || state === 'Running',
-    runDisabled: !canSimulate || state === 'Running',
-    pauseDisabled: !canSimulate || state !== 'Running',
-    resetDisabled: !hasSimulation || state === 'Validating',
-  };
-};
 
 export function initInputForm({ form, root = document, solve = solveStrongStrong } = {}) {
   if (!form) return null;
@@ -76,28 +33,16 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
   const speedSelector = form.querySelector('#simulation-speed');
   const stateBadge = root.querySelector('[data-simulation-state]');
   let simulationState = null;
-  const applyControlState = (value) => {
-    const controls = simulationControlState({ hasSimulation: Boolean(simulationState), state: value });
-    const submitButton = form.querySelector('button[type="submit"]');
-    if (submitButton) submitButton.disabled = controls.submitDisabled;
-    if (addDropButton) addDropButton.disabled = controls.addDropDisabled;
-    if (runButton) runButton.disabled = controls.runDisabled;
-    if (pauseButton) pauseButton.disabled = controls.pauseDisabled;
-    if (resetButton) resetButton.disabled = controls.resetDisabled;
-  };
-  const setStateLabel = (value) => { if (stateBadge) stateBadge.textContent = value; const vessel = root.querySelector('.vessel-stage'); if (vessel) vessel.dataset.state = value.toLowerCase(); const vesselStatus = root.querySelector('[data-vessel-status]'); if (vesselStatus) vesselStatus.textContent = value === 'Running' ? 'Đang nhỏ giọt tự động' : value === 'Paused' ? 'Đã tạm dừng' : value === 'Ready' ? 'Sẵn sàng mô phỏng' : 'Chưa có mô phỏng'; applyControlState(value); };
+  const setStateLabel = (value) => { if (stateBadge) stateBadge.textContent = value; const vessel = root.querySelector('.vessel-stage'); if (vessel) vessel.dataset.state = value.toLowerCase(); const vesselStatus = root.querySelector('[data-vessel-status]'); if (vesselStatus) vesselStatus.textContent = value === 'Running' ? 'Đang nhỏ giọt tự động' : value === 'Paused' ? 'Đã tạm dừng' : value === 'Ready' ? 'Sẵn sàng mô phỏng' : 'Chưa có mô phỏng'; };
   const render = (result = simulationState?.result) => {
     if (!simulationState || !result) return;
     renderExperimentView(root, result, simulationState);
     renderIndicatorView(root, result, { transient: simulationState.dropCount > 0 && result.stage === 'before-equivalence' });
     renderChartView(root, simulationState.chemistryInput, simulationState.addedVolumeMl);
-    const prompt = result.model === 'weak-acid-strong-base' ? promptForState(result, simulationState.addedVolumeMl) : null;
-    const promptRoot = root.querySelector('[data-guided-prompt]'); if (promptRoot) promptRoot.textContent = prompt?.question ?? 'Thêm NaOH để đến mốc học tập kế tiếp.';
-    const feedback = root.querySelector('[data-guided-feedback]'); if (feedback) feedback.textContent = prompt?.feedback ?? '';
     if (form.elements.addedVolumeMl) form.elements.addedVolumeMl.value = simulationState.addedVolumeMl.toFixed(2);
   };
   const evaluateCurrent = () => {
-    const result = solveChemistryInput(simulationState.chemistryInput, solve);
+    const result = solve(simulationState.chemistryInput);
     if (result.error) return result;
     simulationState = withSimulationResult(simulationState, result).state;
     render(result);
@@ -119,31 +64,13 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
       setStateLabel(status === 'running' ? 'Running' : status === 'paused' ? 'Paused' : 'Ready');
     },
   });
-  const invalidateSimulation = () => {
-    if (simulationState) runner.reset();
-    simulationState = null;
-    clearSimulationView(root, systemSelector.value);
-    setStateLabel('Idle');
-  };
-  const syncSystem = () => {
-    invalidateSimulation();
-    const system = TITRATION_SYSTEMS[systemSelector.value];
-    form.querySelector('#analyte').value = system?.analyte ?? '';
-    form.querySelector('#titrant').value = system?.titrant ?? '';
-    for (const element of root.querySelectorAll('[data-analyte-label]')) element.textContent = system?.analyte ?? '';
-    const description = systemSelector.value === 'weak-acid-strong-base'
-      ? 'CH₃COOH–NaOH ở 25 °C · thể tích nhập bằng mL, chemistry engine dùng L/K.'
-      : 'HCl–NaOH ở 25 °C · thể tích nhập bằng mL, chemistry engine dùng L/K.';
-    for (const element of root.querySelectorAll('[data-system-description]')) element.textContent = description;
-    const ka = form.querySelector('[data-ka-field]');
-    if (ka) ka.hidden = systemSelector.value !== 'weak-acid-strong-base';
-  };
-  const loadCase = () => { const selected = standardCases.find(({ id }) => id === caseSelector.value) ?? standardCases[0]; systemSelector.value = selected.systemType ?? 'strong-acid-strong-base'; syncSystem(); form.elements.analyteConcentrationM.value = selected.CaM; form.elements.analyteVolumeMl.value = selected.VaMl; form.elements.titrantConcentrationM.value = selected.CbM; form.elements.addedVolumeMl.value = selected.VbMl; if (form.elements.Ka) form.elements.Ka.value = selected.Ka ?? ''; clearErrors(form); };
+  const syncSystem = () => { const system = TITRATION_SYSTEMS[systemSelector.value]; form.querySelector('#analyte').value = system?.analyte ?? ''; form.querySelector('#titrant').value = system?.titrant ?? ''; };
+  const loadCase = () => { const selected = standardCases.find(({ id }) => id === caseSelector.value) ?? standardCases[0]; systemSelector.value = 'strong-acid-strong-base'; syncSystem(); form.elements.analyteConcentrationM.value = selected.CaM; form.elements.analyteVolumeMl.value = selected.VaMl; form.elements.titrantConcentrationM.value = selected.CbM; form.elements.addedVolumeMl.value = selected.VbMl; clearErrors(form); };
   for (const item of standardCases) caseSelector.add(new Option(item.label, item.id));
-  loadCase(); setStateLabel('Idle');
+  loadCase();
   caseSelector.addEventListener('change', loadCase); systemSelector.addEventListener('change', syncSystem);
   form.addEventListener('submit', (event) => {
-    event.preventDefault(); invalidateSimulation(); setStateLabel('Validating'); setText(form, '[data-form-error]', '');
+    event.preventDefault(); setStateLabel('Validating'); setText(form, '[data-form-error]', '');
     const evaluation = evaluateTitration(valuesFromForm(form), solve);
     if (!evaluation.ok) { if (evaluation.errors) showErrors(form, evaluation.errors); else setText(form, '[data-form-error]', evaluation.solverError.message); setStateLabel(evaluation.errors ? 'Input error' : 'Solver error'); return; }
     clearErrors(form); const created = createSimulationState(evaluation.chemistryInput);
@@ -155,6 +82,5 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
   pauseButton?.addEventListener('click', () => runner.pause());
   speedSelector?.addEventListener('change', () => { runner.setSpeed(speedSelector.value); if (simulationState) { const next = setSimulationSpeed(simulationState, speedSelector.value); if (next.ok) simulationState = next.state; } });
   resetButton?.addEventListener('click', () => { if (!simulationState) return; runner.reset(); const reset = resetSimulation(simulationState); if (reset.ok) { simulationState = reset.state; evaluateCurrent(); setStateLabel('Ready'); } });
-  root.querySelector('[data-download-report]')?.addEventListener('click', () => { if (simulationState?.result) downloadReport(createReport({ result: simulationState.result, input: simulationState.chemistryInput, addedVolumeMl: simulationState.addedVolumeMl, chart: root.querySelector('[data-chart]') })); });
   return { loadCase, getState: () => simulationState, dispose: () => runner.dispose() };
 }

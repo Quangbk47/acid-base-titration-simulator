@@ -1,65 +1,127 @@
-import { calculateMilestones, classifyStage } from './milestones.js';
-import { createInputError, isFiniteNumber, lToMl, STANDARD_KW, STANDARD_TEMPERATURE_K } from './units.js';
+import {
+  createInputError,
+  isFiniteNumber,
+  lToMl,
+  STANDARD_KW,
+  isSupportedTemperatureK,
+} from './units.js';
+import { calculateMilestones, calculateEquivalenceMolTolerance, classifyStage } from './milestones.js';
 
-export const WEAK_ACID_STRONG_BASE_MODEL_VERSION = 'weak-acid-strong-base-v1';
-const MAX_ITERATIONS = 200;
+const MODEL_VERSION = 'weak-acid-strong-base-v1';
+const DOMINANT_REACTION = 'HA + OH⁻ → A⁻ + H₂O';
 const LOG_H_MIN = -14;
 const LOG_H_MAX = 0;
+const MAX_ITERATIONS = 160;
+const LOG_TOLERANCE = 1e-12;
+const RESIDUAL_TOLERANCE = 1e-14;
 
-const validate = (input) => {
-  if (!input || typeof input !== 'object' || Array.isArray(input)) return { error: createInputError('INVALID_INPUT', 'Input phải là một object.') };
+const invalid = (code, message, fields = {}) => ({ error: createInputError(code, message, fields) });
+
+const validateInput = (input) => {
+  if (!input || typeof input !== 'object') return invalid('INVALID_INPUT', 'Input phải là một object.');
   const { Ca, Va, Cb, Vb, Ka, temperature } = input;
   const fields = {};
-  for (const [key, value] of Object.entries({ Ca, Va, Cb, Vb, Ka, temperature })) if (!isFiniteNumber(value)) fields[key] = `${key} phải là số hữu hạn.`;
-  if (Object.keys(fields).length) return { error: createInputError('NON_FINITE_INPUT', 'Input chứa giá trị không hữu hạn.', fields) };
+  for (const [name, value] of Object.entries({ Ca, Va, Cb, Vb, Ka, temperature })) {
+    if (!isFiniteNumber(value)) fields[name] = `${name} phải là số hữu hạn.`;
+  }
   if (Ca <= 0) fields.Ca = 'Ca phải lớn hơn 0 M.';
   if (Va <= 0) fields.Va = 'Va phải lớn hơn 0 L.';
   if (Cb <= 0) fields.Cb = 'Cb phải lớn hơn 0 M.';
   if (Vb < 0) fields.Vb = 'Vb không được âm.';
-  if (!(Ka > 0 && Ka < 1)) fields.Ka = 'Ka phải thỏa mãn 0 < Ka < 1.';
-  if (Math.abs(temperature - STANDARD_TEMPERATURE_K) > 1e-9) fields.temperature = 'Model chỉ hỗ trợ 298.15 K (25 °C).';
-  return Object.keys(fields).length ? { error: createInputError('OUT_OF_RANGE', 'Input nằm ngoài miền hợp lệ.', fields) } : { value: { Ca, Va, Cb, Vb, Ka } };
-};
-
-const chargeBalance = (h, sodium, total, ka) => h + sodium - STANDARD_KW / h - total * ka / (ka + h);
-
-export const solveWeakAcidStrongBase = (input) => {
-  const checked = validate(input);
-  if (checked.error) return { error: checked.error };
-  const { Ca, Va, Cb, Vb, Ka } = checked.value;
+  if (!(Ka > 0 && Ka < 1)) fields.Ka = 'Ka phải lớn hơn 0 và nhỏ hơn 1.';
+  if (!isSupportedTemperatureK(temperature)) fields.temperature = 'Phase 3 chỉ hỗ trợ 298.15 K (25 °C).';
+  if (Object.keys(fields).length) return invalid('OUT_OF_RANGE', 'Input nằm ngoài miền hợp lệ.', fields);
   const totalVolumeL = Va + Vb;
   const acidMoles = Ca * Va;
   const baseMoles = Cb * Vb;
-  const total = acidMoles / totalVolumeL;
-  const sodium = baseMoles / totalVolumeL;
-  let low = LOG_H_MIN; let high = LOG_H_MAX;
-  let iterations = 0; let h = 10 ** ((low + high) / 2); let residual = chargeBalance(h, sodium, total, Ka);
-  while (iterations < MAX_ITERATIONS && Math.abs(residual) > 1e-13) {
-    const mid = (low + high) / 2;
-    h = 10 ** mid; residual = chargeBalance(h, sodium, total, Ka);
-    if (residual > 0) high = mid; else low = mid;
-    iterations += 1;
+  if (!(totalVolumeL > 0) || !isFiniteNumber(totalVolumeL)) return invalid('ZERO_TOTAL_VOLUME', 'Tổng thể tích phải lớn hơn 0.');
+  if (!(acidMoles > 0) || !isFiniteNumber(acidMoles) || !isFiniteNumber(baseMoles)) {
+    return invalid('MOLE_CALCULATION_OUT_OF_RANGE', 'Input tạo số mol không hữu hạn.');
   }
-  if (!Number.isFinite(h) || !Number.isFinite(residual) || Math.abs(residual) > 1e-10) return { error: createInputError('SOLVER_NOT_CONVERGED', 'Solver cân bằng điện tích không hội tụ.', { residual, iterations }) };
+  return { value: { Ca, Va, Cb, Vb, Ka, temperature, totalVolumeL, acidMoles, baseMoles } };
+};
+
+const solveHydrogen = ({ acidConcentration, sodiumConcentration, Ka }) => {
+  const chargeBalance = (logH) => {
+    const h = 10 ** logH;
+    return h + sodiumConcentration - STANDARD_KW / h - acidConcentration * Ka / (Ka + h);
+  };
+  let low = LOG_H_MIN;
+  let high = LOG_H_MAX;
+  let residual = Number.POSITIVE_INFINITY;
+  let logH = (low + high) / 2;
+  for (let iteration = 1; iteration <= MAX_ITERATIONS; iteration += 1) {
+    logH = (low + high) / 2;
+    residual = chargeBalance(logH);
+    if (Math.abs(residual) <= RESIDUAL_TOLERANCE || high - low <= LOG_TOLERANCE) {
+      return { h: 10 ** logH, residual, iterations: iteration, converged: true };
+    }
+    if (residual > 0) high = logH;
+    else low = logH;
+  }
+  return { h: 10 ** logH, residual, iterations: MAX_ITERATIONS, converged: false };
+};
+
+export const solveWeakAcidStrongBase = (input) => {
+  const validation = validateInput(input);
+  if (validation.error) return validation;
+  const { Ca, Va, Cb, Vb, Ka, temperature, totalVolumeL, acidMoles, baseMoles } = validation.value;
+  const acidConcentration = acidMoles / totalVolumeL;
+  const sodiumConcentration = baseMoles / totalVolumeL;
+  const solved = solveHydrogen({ acidConcentration, sodiumConcentration, Ka });
+  if (!solved.converged) return invalid('SOLVER_NOT_CONVERGED', 'Không hội tụ cân bằng điện tích.', { residual: solved.residual });
+
+  const h = solved.h;
   const oh = STANDARD_KW / h;
-  const ha = total * h / (Ka + h);
-  const a = total * Ka / (Ka + h);
+  const conjugateBaseConcentration = acidConcentration * Ka / (Ka + h);
+  const acidConcentrationAtEquilibrium = acidConcentration - conjugateBaseConcentration;
+  const pH = -Math.log10(h);
+  const pOH = -Math.log10(oh);
+  const toleranceMol = calculateEquivalenceMolTolerance(acidMoles, baseMoles);
   const equivalenceMl = lToMl(acidMoles / Cb);
-  const toleranceMol = Math.max(acidMoles, baseMoles) * 1e-12;
-  const stage = classifyStage({ addedVolumeMl: lToMl(Vb), equivalenceMl, acidMoles, baseMoles, toleranceMol });
-  const milestones = { ...calculateMilestones({ Ca, Va, Cb }), endpointMl: null };
-  const delta = acidMoles - baseMoles;
-  const excess = Math.abs(delta) <= toleranceMol ? { species: null, moles: 0, concentration: 0 } : delta > 0 ? { species: 'CH₃COOH', moles: delta, concentration: delta / totalVolumeL } : { species: 'OH⁻', moles: -delta, concentration: -delta / totalVolumeL };
+  const stage = classifyStage({
+    addedVolumeMl: lToMl(Vb),
+    equivalenceMl,
+    acidMoles,
+    baseMoles,
+    toleranceMol,
+  });
+  const milestones = calculateMilestones({ Ca, Va, Cb });
+  if (milestones.error) return milestones;
+  const residualH = Math.max(0, acidMoles - baseMoles);
+  const residualOH = Math.max(0, baseMoles - acidMoles);
+  const excess = residualH > toleranceMol
+    ? { species: 'HA', moles: residualH, concentration: residualH / totalVolumeL }
+    : residualOH > toleranceMol
+      ? { species: 'OH⁻', moles: residualOH, concentration: residualOH / totalVolumeL }
+      : { species: null, moles: 0, concentration: 0 };
   return {
-    model: 'weak-acid-strong-base', modelVersion: WEAK_ACID_STRONG_BASE_MODEL_VERSION, temperatureK: STANDARD_TEMPERATURE_K, kw: STANDARD_KW, Ka,
-    pH: -Math.log10(h), pOH: -Math.log10(oh), totalVolumeL, totalVolumeMl: lToMl(totalVolumeL), Veq: equivalenceMl,
-    moles: { ch3coohInitial: acidMoles, naohAdded: baseMoles, neutralized: Math.min(acidMoles, baseMoles) },
-    concentrations: { HPlus: h, OHMinus: oh, CH3COOH: ha, CH3COO: a, NaPlus: sodium },
+    model: 'weak-acid-strong-base',
+    modelVersion: MODEL_VERSION,
+    temperatureK: temperature,
+    kw: STANDARD_KW,
+    Ka,
+    pKa: -Math.log10(Ka),
+    pH,
+    pOH,
+    Veq: equivalenceMl,
+    totalVolumeL,
+    totalVolumeMl: lToMl(totalVolumeL),
+    moles: { acidInitial: acidMoles, naohAdded: baseMoles, residualHA: residualH, residualOH },
+    excess,
+    concentrations: { HPlus: h, OHMinus: oh, NaPlus: sodiumConcentration, AMinus: conjugateBaseConcentration, HA: acidConcentrationAtEquilibrium },
     species: [
-      { id: 'H⁺', moles: h * totalVolumeL, concentration: h }, { id: 'OH⁻', moles: oh * totalVolumeL, concentration: oh },
-      { id: 'CH₃COOH', moles: ha * totalVolumeL, concentration: ha }, { id: 'CH₃COO⁻', moles: a * totalVolumeL, concentration: a }, { id: 'Na⁺', moles: baseMoles, concentration: sodium },
+      { id: 'H⁺', moles: h * totalVolumeL, concentration: h },
+      { id: 'OH⁻', moles: oh * totalVolumeL, concentration: oh },
+      { id: 'Na⁺', moles: baseMoles, concentration: sodiumConcentration },
+      { id: 'HA', moles: acidConcentrationAtEquilibrium * totalVolumeL, concentration: acidConcentrationAtEquilibrium },
+      { id: 'A⁻', moles: conjugateBaseConcentration * totalVolumeL, concentration: conjugateBaseConcentration },
     ],
-    excess, stage, dominantReaction: 'CH₃COOH + OH⁻ → CH₃COO⁻ + H₂O', milestones,
-    diagnostics: { solver: WEAK_ACID_STRONG_BASE_MODEL_VERSION, converged: true, residual: Math.abs(residual), iterations },
+    stage,
+    dominantReaction: DOMINANT_REACTION,
+    milestones,
+    diagnostics: { solver: MODEL_VERSION, converged: true, residual: solved.residual, iterations: solved.iterations },
   };
 };
+
+export { DOMINANT_REACTION, MODEL_VERSION };

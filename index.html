@@ -80,7 +80,7 @@
             <p class="eyebrow">Guest workspace · Phase 2 input</p>
             <h1 id="simulate-title">Không gian mô phỏng</h1>
             <p class="lead">
-              Nhập dữ liệu chuẩn độ để tính trạng thái cân bằng bằng chemistry engine
+              Nhập dữ liệu HCl–NaOH để tính trạng thái cân bằng bằng chemistry engine
               đã được kiểm chứng ở Phase 1.
             </p>
           </div>
@@ -98,14 +98,13 @@
             </div>
 
             <form id="titration-form" class="control-form" novalidate>
-              <p class="notice" data-system-description role="note">HCl–NaOH ở 25 °C · thể tích nhập bằng mL, chemistry engine dùng L/K.</p>
+              <p class="notice" role="note">HCl–NaOH ở 25 °C · thể tích nhập bằng mL, chemistry engine dùng L/K.</p>
               <label for="case-selector">Ca chuẩn</label>
               <select id="case-selector" aria-label="Khôi phục ca chuẩn"></select>
 
               <label for="system-type">Loại chuẩn độ</label>
               <select id="system-type" name="systemType" aria-describedby="system-type-error">
                 <option value="strong-acid-strong-base">Axit mạnh – bazơ mạnh</option>
-                <option value="weak-acid-strong-base">Axit yếu – bazơ mạnh</option>
               </select>
               <span id="system-type-error" class="field-error" data-error-for="systemType" aria-live="polite"></span>
 
@@ -137,11 +136,6 @@
                   <label for="added-volume">Thể tích NaOH đã thêm (mL)</label>
                   <input id="added-volume" name="addedVolumeMl" type="text" inputmode="decimal" aria-describedby="added-volume-error" />
                   <span id="added-volume-error" class="field-error" data-error-for="addedVolumeMl" aria-live="polite"></span>
-                </div>
-                <div data-ka-field hidden>
-                  <label for="ka">Ka của CH₃COOH</label>
-                  <input id="ka" name="Ka" type="text" inputmode="decimal" aria-describedby="ka-error" />
-                  <span id="ka-error" class="field-error" data-error-for="Ka" aria-live="polite"></span>
                 </div>
               </div>
 
@@ -215,7 +209,7 @@
           </div>
           <div class="chemistry-summary">
             <div class="metric-card"><span>pH hiện tại</span><strong data-result="ph">—</strong><small data-result="ph-label">Chưa tính</small></div>
-            <div class="metric-card"><span>Tổng thể tích</span><strong data-result="volume">—</strong><small data-result="system">HCl + NaOH</small></div>
+            <div class="metric-card"><span>Tổng thể tích</span><strong data-result="volume">—</strong><small>HCl + NaOH</small></div>
             <div class="metric-card"><span>Chất dư</span><strong data-result="excess">—</strong><small>Ion quyết định pH</small></div>
             <div class="metric-card"><span>Giai đoạn</span><strong data-result="stage">—</strong><small>So với tương đương</small></div>
           </div>
@@ -223,15 +217,46 @@
             <table>
               <caption>Chi tiết trạng thái hóa học</caption>
               <thead><tr><th scope="col">Ion / chất</th><th scope="col">Số mol</th><th scope="col">Nồng độ</th><th scope="col">Phản ứng</th></tr></thead>
-              <tbody data-chemistry-rows><tr><td data-result="species-summary">HCl / NaOH</td><td>—</td><td>—</td><td data-result="reaction">Chưa tính</td></tr></tbody>
+              <tbody data-chemistry-rows><tr><td>HCl / NaOH</td><td>—</td><td>—</td><td data-result="reaction">Chưa tính</td></tr></tbody>
             </table>
           </div>
         </section>
-        <section class="panel learning-panel" aria-labelledby="guided-title">
-          <div class="panel-heading"><div><p class="eyebrow">Guided learning</p><h2 id="guided-title">Khám phá theo mốc</h2></div><span class="panel-index">04</span></div>
-          <p data-guided-prompt>Chọn ca CH₃COOH–NaOH để bắt đầu hướng dẫn.</p>
-          <p class="notice" data-guided-feedback aria-live="polite"></p>
-          <button class="button button-secondary" type="button" data-download-report>Tải báo cáo cục bộ</button>
+
+        <section class="panel guided-panel" aria-labelledby="guided-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Guided learning</p>
+              <h2 id="guided-title">Dự đoán và phản hồi</h2>
+            </div>
+            <span class="panel-index">04</span>
+          </div>
+          <p data-guided-prompt aria-live="polite">Bắt đầu mô phỏng để nhận câu hỏi.</p>
+          <form data-guided-form>
+            <div class="form-grid">
+              <div>
+                <label for="guided-ph">Dự đoán pH</label>
+                <input id="guided-ph" name="pH" type="number" min="0" max="14" step="0.01" required />
+              </div>
+              <div>
+                <label for="guided-color">Màu chỉ thị</label>
+                <select id="guided-color" name="color">
+                  <option value="clear">Không màu</option>
+                  <option value="pink-transition">Đang chuyển hồng</option>
+                  <option value="pink">Hồng bền</option>
+                </select>
+              </div>
+              <div>
+                <label for="guided-excess">Chất dư</label>
+                <select id="guided-excess" name="excess">
+                  <option value="HA">HA</option>
+                  <option value="OH⁻">OH⁻</option>
+                  <option value="none">Không có chất dư</option>
+                </select>
+              </div>
+            </div>
+            <button class="button button-secondary" type="submit">Kiểm tra dự đoán</button>
+          </form>
+          <p class="notice" data-guided-feedback aria-live="polite">Nhập dự đoán rồi gửi để nhận phản hồi từ state thật.</p>
         </section>
       </section>
     </main>
