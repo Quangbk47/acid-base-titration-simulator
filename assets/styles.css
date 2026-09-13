@@ -127,6 +127,12 @@ th, td { padding: 11px 8px; border-bottom: 1px solid var(--line); }
 th { color: var(--ink-soft); font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
 td[colspan] { color: var(--ink-soft); text-align: center; }
 .chemistry-panel { margin-top: 20px; }
+.knowledge-section, .knowledge-callout { margin-top: 20px; padding: 24px; border: 1px solid var(--line); border-radius: 20px; background: var(--paper); box-shadow: var(--shadow); }
+.knowledge-card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 20px; }
+.knowledge-card { padding: 18px; border: 1px solid var(--line); border-radius: 14px; background: #fbfdfc; }
+.knowledge-card p, .knowledge-callout p, .knowledge-region-list { color: var(--ink-soft); line-height: 1.65; }
+.knowledge-emphasis { color: var(--teal-dark) !important; font-weight: 700; }
+.knowledge-region-list { display: grid; gap: 10px; padding-left: 22px; }
 .chemistry-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 20px; }
 .metric-card { padding: 15px; border: 1px solid var(--line); border-radius: 12px; background: #fbfdfc; }
 .metric-card span, .metric-card small { display: block; color: var(--ink-soft); font-size: 11px; }
@@ -155,6 +161,7 @@ td[colspan] { color: var(--ink-soft); text-align: center; }
   .vessel-stage { min-height: 185px; }
   .buret { margin-right: 32px; }
   .footer-inner { align-items: flex-start; flex-direction: column; justify-content: center; gap: 7px; }
+  .knowledge-card-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 430px) {
   .container { width: min(100% - 24px, 680px); }

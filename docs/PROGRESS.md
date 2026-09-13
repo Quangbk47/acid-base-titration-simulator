@@ -233,3 +233,27 @@
 - Phase 3 status: `MERGED / AWAITING PO ACCEPTANCE`; PO/GVHD acceptance remains
   `PENDING`, so Phase 3 is not `DONE` or `CLOSED`.
 - No chemistry behavior, Firebase, or NH₃–HCl scope was changed.
+
+## 2026-09-13 — Phase 4/5 roadmap implementation and peer rerun
+
+- Branch/base SHA: local worktree on `main` at `e375c689ee04ae6e23a812bd4cd9bca5cf695658`.
+- Phase 4 technical scope: added NH₃–HCl charge-balance solver and deterministic
+  curve; stored 15 fixed reference rows; verified pH, pOH, stage, excess,
+  convergence, independently calculated `Veq`, and ordered curve checkpoints
+  for all three supported systems.
+- Phase 5 technical scope: added `/knowledge`, explained equivalence/endpoint,
+  curve regions, indicator range and model limitations; retained Phase 2/3 UI
+  and tests instead of replacing them with divergent branch prototypes.
+- Automated evidence: `npm run check` PASS — lint 47 JavaScript files, format
+  baseline 28 files, 49/49 tests PASS.
+- Peer evidence: `npm run peer-run` PASS — home/simulate/knowledge HTTP 200,
+  form initialization, add drop, run, pause, reset, chart/chemistry rendering,
+  console/runtime and knowledge view checks PASS. Responsive overflow check is
+  included at 320/375/430/768/1366 px.
+- Report: `docs/PEER_RUN_REPORT.md`; reference method and limitations:
+  `docs/PHASE_4_REFERENCE_REPORT.md`.
+- Status: Phase 4/5 `TECHNICAL PASS / AWAITING PO-GVHD ACCEPTANCE`; do not mark
+  `DONE/CLOSED` until that external gate is recorded.
+- Risk/blocked scope: Phase 6 remains blocked by missing confirmed Firebase
+  Project ID and explicit production-deploy approval. No Firebase or deployment
+  action was performed.

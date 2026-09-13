@@ -1,5 +1,19 @@
 # TODO — BACKLOG CÓ THỂ GIAO NGAY
 
+## Current roadmap — Phase 4 → Phase 6
+
+- [x] Phase 4: lưu reference độc lập cho ba hệ, thêm CHEM-04 NH₃–HCl,
+  kiểm tra `Veq`, checkpoint và thứ tự curve.
+- [x] Phase 4: ghi tolerance, nguồn, giới hạn và discrepancy report.
+- [x] Phase 5 technical: regression chemistry/UI, trang kiến thức, model limits,
+  responsive 320/375/430/768/1366 px và peer-run.
+- [ ] Phase 4/5 PO/GVHD acceptance trước khi ghi `DONE/CLOSED`.
+- [ ] Phase 6 Firebase/Auth/Firestore/Rules/deploy — chỉ mở khi có Project ID
+  riêng và PO phê duyệt theo ROADMAP hiện hành.
+
+Các mục Phase 4A/4B bên dưới là lịch sử của roadmap cũ và không còn là thứ tự
+triển khai hiện hành.
+
 ## Phase 0 / Now
 
 - [x] P0-01 Tạo repo public, thêm docs, `.gitignore`, LICENSE/attribution phù hợp.
@@ -62,7 +76,7 @@ deploy `NO`; Phase 2 `NOT STARTED`.
 - [x] Phase 3 PR #6 merged; merge SHA recorded in PROGRESS/HANDOVER.
 - [ ] Phase 3 PO/GVHD acceptance before DONE/CLOSED.
 
-## Firebase track — Phase 4A — có thể làm ngay
+## Legacy Firebase track — Phase 4A — superseded by current Phase 6
 
 **Owner: Bắc Hà — Firebase/Deployment Owner**
 
@@ -77,7 +91,7 @@ deploy `NO`; Phase 2 `NOT STARTED`.
 - [ ] P4A-09 Chemistry regression PASS.
 - [ ] P4A-10 PO acceptance Phase 4A.
 
-## Phase 4B — BLOCKED
+## Legacy Phase 4B — superseded by current Phase 6
 
 Phase 4B bị chặn cho tới khi interface Phase 2–3 ổn định.
 
@@ -93,7 +107,10 @@ Phase 4B bị chặn cho tới khi interface Phase 2–3 ổn định.
   repository evidence pending.
 - [x] Phase 3 PR #6 merge closeout.
 - [ ] Phase 3 PO acceptance before DONE/CLOSED.
-- [ ] P4 Firebase learner; P5 Admin; P6 release.
+- [x] P4 chemistry reference validation — technical PASS.
+- [x] P5 scientific/UX release readiness — technical PASS.
+- [ ] P4/P5 PO/GVHD acceptance.
+- [ ] P6 Firebase/accounts/deploy after Project ID and explicit approval.
 
 ## Quy tắc cập nhật
 

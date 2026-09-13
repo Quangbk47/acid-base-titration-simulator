@@ -25,6 +25,7 @@
         <nav class="primary-nav" aria-label="Điều hướng chính">
           <a data-route="home" href="/">Thư viện ca</a>
           <a data-route="simulate" href="/simulate">Mô phỏng</a>
+          <a data-route="knowledge" href="/knowledge">Kiến thức</a>
         </nav>
         <div id="app-status" class="status-pill" role="status" aria-live="polite">
           Đang tải ứng dụng…
@@ -84,7 +85,7 @@
               đã được kiểm chứng ở Phase 1.
             </p>
           </div>
-          <span class="state-badge" data-simulation-state>Idle</span>
+          <span class="state-badge" data-simulation-state role="status" aria-live="polite">Idle</span>
         </div>
 
         <div class="simulation-layout">
@@ -259,6 +260,8 @@
           <p class="notice" data-guided-feedback aria-live="polite">Nhập dự đoán rồi gửi để nhận phản hồi từ state thật.</p>
         </section>
       </section>
+
+      <section data-view="knowledge" aria-label="Kiến thức chuẩn độ" hidden></section>
     </main>
 
     <footer class="site-footer">

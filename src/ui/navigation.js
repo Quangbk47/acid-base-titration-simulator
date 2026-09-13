@@ -1,6 +1,8 @@
 const normalisePath = (pathname) => {
   const path = pathname.replace(/\/+$/, '');
-  return path === '/simulate' ? 'simulate' : 'home';
+  if (path === '/simulate') return 'simulate';
+  if (path === '/knowledge') return 'knowledge';
+  return 'home';
 };
 
 export function initNavigation({ links, views, pathname = window.location.pathname } = {}) {

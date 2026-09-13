@@ -11,12 +11,16 @@ const requiredFiles = [
   'src/chemistry/milestones.js',
   'src/chemistry/curve.js',
   'src/chemistry/index.js',
+  'src/chemistry/strongAcidWeakBase.js',
+  'src/chemistry/strongAcidWeakBaseCurve.js',
   'src/data/standardCases.js',
+  'src/data/learningContent.js',
   'src/firebase/index.js',
   'src/simulation/state.js',
   'src/ui/navigation.js',
   'src/ui/validation.js',
   'src/ui/inputForm.js',
+  'src/ui/knowledgeView.js',
   'scripts/lint.mjs',
   'scripts/path-security.mjs',
   'scripts/serve.mjs',
@@ -24,6 +28,9 @@ const requiredFiles = [
   'tests/chemistry.test.js',
   'tests/validation.test.js',
   'tests/fixtures/phase1Reference.js',
+  'tests/fixtures/phase4Reference.js',
+  'tests/phase4-reference.test.js',
+  'tests/learning-content.test.js',
 ];
 let failed = false;
 

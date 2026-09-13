@@ -4,6 +4,7 @@ import { firebaseModuleStatus } from './firebase/index.js';
 import { baselineState } from './simulation/state.js';
 import { initNavigation } from './ui/navigation.js';
 import { initInputForm } from './ui/inputForm.js';
+import { renderKnowledge } from './ui/knowledgeView.js';
 
 const route = initNavigation({
   links: document.querySelectorAll('[data-route]'),
@@ -17,6 +18,7 @@ if (status) {
 }
 
 initInputForm({ form: document.querySelector('#titration-form') });
+renderKnowledge(document.querySelector('[data-view="knowledge"]'));
 
 document.documentElement.dataset.appReady = 'true';
 window.__acidBaseBaseline = Object.freeze({

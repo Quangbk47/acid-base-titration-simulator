@@ -32,6 +32,7 @@ Website mô phỏng tương tác phục vụ đề tài NCKH: **xây dựng, ki�
 
 ## Trạng thái
 
-**Phase 1 — DONE (PO PASS).** Baseline Phase 0 đã được PO PASS;
-chemistry engine HCl–NaOH thuần, fixture tính tay và test CHEM-01/02/05 đã hoàn
-tất. Firebase và production chưa deploy.
+**Phase 4/5 — TECHNICAL PASS, AWAITING PO/GVHD ACCEPTANCE.** Ba hệ
+HCl–NaOH, CH₃COOH–NaOH và NH₃–HCl có reference regression; trang kiến thức,
+responsive smoke và peer-run tự động đã PASS. Firebase/production thuộc Phase 6
+và chưa được triển khai.

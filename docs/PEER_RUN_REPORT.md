@@ -1,32 +1,25 @@
 # Peer Run Report
 
-- Date: 2026-09-06T10:34:51.913Z
-- Commit SHA: cf5f2772e51c25b62205c3b2dc18f6272d65075a
+- Date: 2026-09-13T07:55:32.834Z
+- Commit SHA: e375c689ee04ae6e23a812bd4cd9bca5cf695658
 - Local URL: http://127.0.0.1:4173
 
 ## Results
 
 | Check | Result | Evidence |
 | --- | --- | --- |
-| / loads | PASS | 200 OK |
-| /simulate loads | PASS | 200 OK |
-| Required controls exist | PASS | Thêm giọt, Chạy, Tạm dừng, Đặt lại |
-| Controls enabled | PASS | Actionable controls enabled; pause disabled while idle: true |
-| Graph has real data | PASS | Graph data present |
-| Chemistry state connected | PASS | Chemistry state present |
-| Browser interaction | PASS | add=Đã thêm 0.10 mL; running=Đã thêm 0.20 mL; pausedStable=true; reset=ready/Chưa có giọt đang rơi |
-| Console/runtime errors | PASS | No console or page errors observed by Playwright |
-
-## Manual verification
-
-- [ ] Open /simulate at desktop width; record visual layout result: ____________________
-- [ ] Verify keyboard focus and accessible labels: ____________________
-- [ ] Verify Add drop / Run / Pause / Reset behavior: ____________________
-- [ ] Verify graph data and chemistry state after interaction: ____________________
+| Routes load | PASS | home=200; simulate=200; knowledge=200 |
+| Required controls exist | PASS | titration-form, add-drop, run-simulation, pause-simulation, reset-simulation |
+| Graph and chemistry structures exist | PASS | Checked semantic runtime targets |
+| Knowledge route exists | PASS | Phase 5 knowledge view is present |
+| Browser interaction | PASS | pH=1.00; add=0.05 mL; running=0.15 mL; pausedStable=true; reset=Ready/0.00 mL |
+| Console/runtime errors | PASS | No console or page errors observed |
+| Responsive overflow | PASS | No horizontal overflow at 320/375/430/768/1366 px |
+| Accessible labels and controls | PASS | Input label, button semantics, and live simulation status checked |
+| Knowledge view renders | PASS | heading=true; modelLimits=true |
 
 ## Final result
 
 - Peer Run: PASS
-- Phase 1: PASS
-- Phase 2: PASS
+- Phase 1–5 technical regression: PASS
 - Outstanding issues: None
