@@ -2,7 +2,8 @@
   "hosting": {
     "public": "dist",
     "ignore": ["firebase.json", "firestore.rules", "firestore.indexes.json", "**/.*", "**/node_modules/**"],
-    "cleanUrls": true
+    "cleanUrls": true,
+    "rewrites": [{ "source": "/simulate", "destination": "/index.html" }]
   },
   "firestore": {
     "rules": "firestore.rules",
