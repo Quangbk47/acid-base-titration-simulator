@@ -48,18 +48,27 @@ const solveHydrogen = ({ acidConcentration, sodiumConcentration, Ka }) => {
   };
   let low = LOG_H_MIN;
   let high = LOG_H_MAX;
+  const lowResidual = chargeBalance(low);
+  const highResidual = chargeBalance(high);
+  if (![lowResidual, highResidual].every(isFiniteNumber) || lowResidual > 0 || highResidual < 0) {
+    return { h: null, residual: null, iterations: 0, converged: false };
+  }
   let residual = Number.POSITIVE_INFINITY;
   let logH = (low + high) / 2;
   for (let iteration = 1; iteration <= MAX_ITERATIONS; iteration += 1) {
     logH = (low + high) / 2;
     residual = chargeBalance(logH);
-    if (Math.abs(residual) <= RESIDUAL_TOLERANCE || high - low <= LOG_TOLERANCE) {
+    if (!isFiniteNumber(residual)) {
+      return { h: null, residual: null, iterations: iteration, converged: false };
+    }
+    if (Math.abs(residual) <= RESIDUAL_TOLERANCE) {
       return { h: 10 ** logH, residual, iterations: iteration, converged: true };
     }
+    if (high - low <= LOG_TOLERANCE) break;
     if (residual > 0) high = logH;
     else low = logH;
   }
-  return { h: 10 ** logH, residual, iterations: MAX_ITERATIONS, converged: false };
+  return { h: 10 ** logH, residual, iterations: MAX_ITERATIONS, converged: Math.abs(residual) <= RESIDUAL_TOLERANCE };
 };
 
 export const solveWeakAcidStrongBase = (input) => {

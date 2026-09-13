@@ -7,6 +7,7 @@ import {
   mlToL,
   solveStrongStrong,
   solveWeakAcidStrongBase,
+  solveWeakBaseStrongAcid,
 } from '../src/chemistry/index.js';
 import { standardCases, standardCaseToSolverInput } from '../src/data/standardCases.js';
 import { phase1Reference } from './fixtures/phase1Reference.js';
@@ -238,4 +239,28 @@ test('CHEM-03 independent review: solver matches external weak-acid reference ta
     assert.equal(result.diagnostics.converged, true);
     assert.ok(Math.abs(result.diagnostics.residual) < 1e-12);
   }
+});
+
+test('CHEM-03/04: weak solvers reject unbracketed or non-finite bisection states safely', () => {
+  const unbracketed = solveWeakAcidStrongBase({
+    Ca: 1e308,
+    Va: 1,
+    Cb: 0.1,
+    Vb: 0,
+    Ka: 1e-5,
+    temperature: 298.15,
+  });
+  assert.equal(unbracketed.error?.code, 'SOLVER_NOT_CONVERGED');
+  assert.doesNotMatch(JSON.stringify(unbracketed), /NaN|Infinity/);
+
+  const derivedConstantOverflow = solveWeakBaseStrongAcid({
+    Cb: 0.1,
+    Vb: 0.025,
+    Ca: 0.1,
+    Va: 0,
+    Kb: Number.MIN_VALUE,
+    temperature: 298.15,
+  });
+  assert.equal(derivedConstantOverflow.error?.code, 'INVALID_DERIVED_CONSTANT');
+  assert.doesNotMatch(JSON.stringify(derivedConstantOverflow), /NaN|Infinity/);
 });

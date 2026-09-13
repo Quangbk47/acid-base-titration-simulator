@@ -9,6 +9,8 @@ import { calculateEquivalenceMolTolerance, calculateMilestones, classifyStage } 
 
 const MODEL_VERSION = 'weak-base-strong-acid-v1';
 const DOMINANT_REACTION = 'NH₃ + H⁺ → NH₄⁺';
+const LOG_H_MIN = -14;
+const LOG_H_MAX = 0;
 const MAX_ITERATIONS = 180;
 const LOG_TOLERANCE = 1e-12;
 const RESIDUAL_TOLERANCE = 1e-14;
@@ -43,18 +45,25 @@ const solveHydrogen = ({ ammoniaConcentration, chlorideConcentration, Ka }) => {
     const ammonium = ammoniaConcentration * h / (Ka + h);
     return h + ammonium - STANDARD_KW / h - chlorideConcentration;
   };
-  let low = -14;
-  let high = 0;
+  let low = LOG_H_MIN;
+  let high = LOG_H_MAX;
+  const lowResidual = chargeBalance(low);
+  const highResidual = chargeBalance(high);
+  if (![lowResidual, highResidual].every(isFiniteNumber) || lowResidual > 0 || highResidual < 0) {
+    return { h: null, residual: null, iterations: 0, converged: false };
+  }
   let residual = Number.POSITIVE_INFINITY;
   let logH = -7;
   for (let iteration = 1; iteration <= MAX_ITERATIONS; iteration += 1) {
     logH = (low + high) / 2;
     residual = chargeBalance(logH);
-    if (Math.abs(residual) <= RESIDUAL_TOLERANCE || high - low <= LOG_TOLERANCE) return { h: 10 ** logH, residual, iterations: iteration, converged: true };
+    if (!isFiniteNumber(residual)) return { h: null, residual: null, iterations: iteration, converged: false };
+    if (Math.abs(residual) <= RESIDUAL_TOLERANCE) return { h: 10 ** logH, residual, iterations: iteration, converged: true };
+    if (high - low <= LOG_TOLERANCE) break;
     if (residual > 0) high = logH;
     else low = logH;
   }
-  return { h: 10 ** logH, residual, iterations: MAX_ITERATIONS, converged: false };
+  return { h: 10 ** logH, residual, iterations: MAX_ITERATIONS, converged: Math.abs(residual) <= RESIDUAL_TOLERANCE };
 };
 
 export const solveWeakBaseStrongAcid = (input) => {
@@ -62,6 +71,7 @@ export const solveWeakBaseStrongAcid = (input) => {
   if (validation.error) return validation;
   const { Cb, Vb, Ca, Va, Kb, temperature, totalVolumeL, baseMoles, acidMoles } = validation.value;
   const Ka = STANDARD_KW / Kb;
+  if (!isFiniteNumber(Ka) || Ka <= 0) return invalid('INVALID_DERIVED_CONSTANT', 'Kb tạo Ka không hữu hạn.', { Kb, Ka: isFiniteNumber(Ka) ? Ka : null });
   const ammoniaConcentration = baseMoles / totalVolumeL;
   const chlorideConcentration = acidMoles / totalVolumeL;
   const solved = solveHydrogen({ ammoniaConcentration, chlorideConcentration, Ka });
