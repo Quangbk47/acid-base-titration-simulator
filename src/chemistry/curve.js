@@ -63,6 +63,9 @@ export const generateCurve = (input, options = {}) => {
       ),
     };
   }
+  if (requestedVolumes !== undefined && requestedVolumes.some((volume) => !isFiniteNumber(volume) || volume < 0)) {
+    return { error: createInputError('INVALID_CURVE_VOLUMES', 'volumesMl chứa thể tích không hợp lệ.', {}) };
+  }
   const defaultMaxVolumeMl = Math.max(
     lToMl(input.Vb),
     initial.milestones.equivalenceMl * 2,
@@ -76,6 +79,9 @@ export const generateCurve = (input, options = {}) => {
   }
   if (!isFiniteNumber(stepMl) || stepMl <= 0) {
     return { error: createInputError('INVALID_CURVE_STEP', 'stepMl phải lớn hơn 0.', {}) };
+  }
+  if (requestedVolumes !== undefined && requestedVolumes.some((volume) => volume - maxVolumeMl > 0)) {
+    return { error: createInputError('INVALID_CURVE_VOLUMES', 'volumesMl không được vượt quá maxVolumeMl.', {}) };
   }
   const volumeToleranceMl = curveVolumeToleranceMl(maxVolumeMl);
   const milestoneVolumesMl = [

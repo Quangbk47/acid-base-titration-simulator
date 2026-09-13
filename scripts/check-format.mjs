@@ -15,11 +15,14 @@ const requiredFiles = [
   'src/firebase/index.js',
   'src/simulation/state.js',
   'src/ui/navigation.js',
+  'src/ui/validation.js',
+  'src/ui/inputForm.js',
   'scripts/lint.mjs',
   'scripts/path-security.mjs',
   'scripts/serve.mjs',
   'tests/smoke.test.js',
   'tests/chemistry.test.js',
+  'tests/validation.test.js',
   'tests/fixtures/phase1Reference.js',
 ];
 let failed = false;

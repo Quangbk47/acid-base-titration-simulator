@@ -1,28 +1,14 @@
-const text = (selector, value) => { const element = document.querySelector(selector); if (element) element.textContent = value; };
+const text = (root, selector, value) => { const node = root.querySelector(selector); if (node) node.textContent = value; };
 
-export const renderExperiment = (state) => {
-  const result = state.current;
-  text('[data-field="volume"]', `${state.addedVolumeMl.toFixed(2)} mL`);
-  text('[data-field="drop"]', `${state.dropSizeMl.toFixed(2)} mL`);
-  text('[data-field="status"]', state.screen);
-  text('[data-field="ph"]', result ? result.pH.toFixed(2) : '—');
-  text('[data-field="ph-label"]', result ? (result.pH < 7 ? 'Axit' : result.pH > 7 ? 'Bazơ' : 'Trung tính') : 'Chưa tính');
-  text('[data-field="total-volume"]', result ? `${result.totalVolumeMl.toFixed(2)} mL` : '—');
-  text('[data-field="excess"]', result?.excess?.species ?? '—');
-  text('[data-field="stage"]', result?.stage ?? '—');
-  text('[data-field="vessel"]', result ? `Đã thêm ${state.addedVolumeMl.toFixed(2)} mL` : 'Chưa có giọt đang rơi');
-  const indicator = document.querySelector('[data-indicator]');
-  if (indicator) {
-    const label = !result ? 'Chưa quan sát' : result.pH < 8.2 ? 'Không màu' : result.pH < 10 ? 'Đang chuyển hồng' : 'Hồng bền';
-    indicator.textContent = `Phenolphthalein: ${label}`;
-  }
-  const table = document.querySelector('[data-chemistry-body]');
-  if (!table) return;
-  table.replaceChildren();
-  if (!result) { const row = document.createElement('tr'); row.innerHTML = '<td colspan="4">Chưa tính</td>'; table.append(row); return; }
-  for (const species of result.species) {
-    const row = document.createElement('tr');
-    row.innerHTML = `<td>${species.id}</td><td>${species.moles.toExponential(3)}</td><td>${species.concentration.toExponential(3)} M</td><td>${result.dominantReaction}</td>`;
-    table.append(row);
-  }
+export const renderExperimentView = (root, result, state) => {
+  if (!root || !result) return;
+  text(root, '[data-result="ph"]', result.pH.toFixed(2));
+  text(root, '[data-result="ph-label"]', result.pH < 7 ? 'Axit' : result.pH > 7 ? 'Bazơ' : 'Trung tính');
+  text(root, '[data-result="volume"]', `${result.totalVolumeMl.toFixed(2)} mL`);
+  text(root, '[data-result="excess"]', result.excess.species ?? 'Không');
+  text(root, '[data-result="stage"]', result.stage);
+  text(root, '[data-result="reaction"]', result.dominantReaction);
+  text(root, '[data-result="added-volume"]', `${state?.addedVolumeMl?.toFixed(2) ?? '0.00'} mL`);
+  const tbody = root.querySelector('[data-chemistry-rows]');
+  if (tbody) tbody.innerHTML = result.species.map((item) => `<tr><th scope="row">${item.id}</th><td>${item.moles.toExponential(3)}</td><td>${item.concentration.toExponential(3)} M</td><td>${result.dominantReaction}</td></tr>`).join('');
 };

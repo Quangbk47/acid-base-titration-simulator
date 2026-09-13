@@ -4,6 +4,16 @@
 
 Roadmap là hợp đồng giao việc. Không nhảy phase: mỗi phase chỉ bắt đầu sau khi đọc các tài liệu liên quan và chỉ `DONE` khi toàn bộ gate PASS. Trạng thái: `PLANNED → IN PROGRESS → DEV PASS → PO TESTING → PO PASS → DONE`. Mọi phase phải ghi branch/SHA, file sửa, test, preview, rủi ro và bước sau vào `PROGRESS.md`.
 
+## Gate convention from Phase 3 onward
+
+- **Before merge:** technical validation/checks và required peer review hoặc
+  peer run phải PASS. Khi đạt hai điều kiện này, PR được phép merge.
+- PO/GVHD acceptance **không bắt buộc trước merge**.
+- **Before `DONE`/`CLOSED`:** PO/GVHD acceptance PASS vẫn bắt buộc. Sau merge,
+  phase có thể ở trạng thái `MERGED / AWAITING PO ACCEPTANCE` cho tới khi gate
+  này đạt.
+- **Production deploy:** PO approval vẫn bắt buộc theo `PROJECT_RULES.md`.
+
 ## Lịch trình hiện tại sau Phase 3
 
 * Phase 4: kiểm chứng chemistry bằng bảng tham chiếu tính tay của nhóm.
