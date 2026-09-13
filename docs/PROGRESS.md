@@ -261,3 +261,26 @@
 - Production deploy/PO acceptance: `NO` / `PENDING`. This working tree has
   not been committed or deployed, so no production-ready or final Phase 6
   completion claim is made.
+
+## 2026-09-14 — Final status and live Hosting verification
+
+- Live Hosting URL: https://acid-base-titration-simulator.web.app
+- Live check: PASS — Hosting responded and the deployed home/simulator pages
+  were reachable. This URL is recorded as the current preview/production
+  candidate, not as proof that every release gate is complete.
+- Repository HEAD and `origin/main`: `8a2fa9c6acc2856066d68ea1a2e188384c946871`.
+- Phase 0: technical baseline complete.
+- Phase 1: chemistry engine and regression tests complete.
+- Phase 2: implementation and peer-review evidence complete.
+- Phase 3: implementation evidence complete; PO acceptance status must remain
+  based on the recorded gate, not inferred from the live URL.
+- Phase 4: chemistry reference implementation is present; NH3-HCl and the
+  reference/tolerance evidence must remain tied to the actual test results.
+- Phase 5: release-readiness evidence is present in the deployed UI, but the
+  full production acceptance gate is not independently re-established here.
+- Phase 6: **NOT 100% complete**. Firestore emulator/Rules integration,
+  production smoke, and explicit PO acceptance remain required before claiming
+  final project completion. The latest audit records Playwright/emulator or
+  deploy limitations where applicable.
+- Final assessment: do not label Phases 0–6 as `100% DONE` yet. The live URL
+  is recorded for traceability; remaining gates are explicitly preserved.
