@@ -1,9 +1,15 @@
-// tests/fixtures/phase4Reference.js
-
 export const phase4References = {
   "HCl-NaOH": {
+    metadata: {
+      contributors: ["Tuấn", "Nhật Anh"],
+      reviewer: "pending",
+      source: "Bảng tính tay Phase 4 — chờ nhóm xác nhận bản gốc",
+      temperatureC: 25,
+      tolerances: { pH: 0.02, volumeMl: 1e-9 },
+    },
     analyte: { name: "HCl", concentration: 0.1, volume: 100 },
     titrant: { name: "NaOH", concentration: 1.0 },
+    expectedVeqMl: 10,
     points: [
       { vAdded: 0, expectedPh: 1.00, stage: "before-equivalence" },
       { vAdded: 2.5, expectedPh: 1.14, stage: "before-equivalence" },
@@ -16,8 +22,16 @@ export const phase4References = {
     ]
   },
   "CH3COOH-NaOH": {
+    metadata: {
+      contributors: ["Tuấn", "Nhật Anh"],
+      reviewer: "pending",
+      source: "Bảng tính tay Phase 4 — chờ nhóm xác nhận bản gốc",
+      temperatureC: 25,
+      tolerances: { pH: 0.02, volumeMl: 1e-9 },
+    },
     analyte: { name: "CH3COOH", concentration: 0.1, volume: 100, pKa: 4.74 },
     titrant: { name: "NaOH", concentration: 1.0 },
+    expectedVeqMl: 10,
     points: [
       { vAdded: 0, expectedPh: 2.87, stage: "initial" },
       { vAdded: 2.5, expectedPh: 4.27, stage: "before-equivalence" },
@@ -29,8 +43,16 @@ export const phase4References = {
     ]
   },
   "NH3-HCl": {
+    metadata: {
+      contributors: ["Tuấn", "Nhật Anh"],
+      reviewer: "pending",
+      source: "Bảng tính tay Phase 4 — chờ nhóm xác nhận bản gốc",
+      temperatureC: 25,
+      tolerances: { pH: 0.02, volumeMl: 1e-9 },
+    },
     analyte: { name: "NH3", concentration: 0.1, volume: 100, pKb: 4.74 },
     titrant: { name: "HCl", concentration: 1.0 },
+    expectedVeqMl: 10,
     points: [
       { vAdded: 0, expectedPh: 11.13, stage: "initial" },
       { vAdded: 2.5, expectedPh: 9.73, stage: "before-equivalence" },
