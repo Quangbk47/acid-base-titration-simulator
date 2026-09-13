@@ -32,7 +32,7 @@ Website mô phỏng tương tác phục vụ đề tài NCKH: **xây dựng, ki�
 
 ## Trạng thái
 
-**Phase 4/5 — TECHNICAL PASS, AWAITING PO/GVHD ACCEPTANCE.** Ba hệ
-HCl–NaOH, CH₃COOH–NaOH và NH₃–HCl có reference regression; trang kiến thức,
-responsive smoke và peer-run tự động đã PASS. Firebase/production thuộc Phase 6
-và chưa được triển khai.
+**Phase 4 — AUTOMATED AUDIT PASS / REVIEW REQUIRED; Phase 5 — TECHNICAL PASS.**
+Workbook của nhóm cho ba hệ đã được nhập nguyên trạng và đối chiếu tự động; các
+sai lệch/tolerance/reviewer còn thiếu được ghi trong báo cáo Phase 4. Responsive
+smoke và peer-run PASS. Firebase/production thuộc Phase 6 và chưa triển khai.

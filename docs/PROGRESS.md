@@ -257,3 +257,19 @@
 - Risk/blocked scope: Phase 6 remains blocked by missing confirmed Firebase
   Project ID and explicit production-deploy approval. No Firebase or deployment
   action was performed.
+
+## 2026-09-13 — Import and audit team Phase 4 workbook
+
+- Source: `Phase4_reference_tinh_tay_nhom Tuan va Nhat Anh.xlsx`, SHA-256
+  `9B53E2BFAABF4145847BDFA9E9FF4686A853D3DFF32889C3D0E20947DC567CCC`.
+- Imported all completed rows for HCl–NaOH, CH₃COOH–NaOH and NH₃–HCl without
+  modifying raw expected values. The actual workbook basis is 0.100 M × 100 mL
+  analyte titrated by 1.000 M titrant (`Veq = 10.00 mL`).
+- Audit detects one numerical discrepancy: HCl–NaOH at 25% `Veq` is pH 1.31 in
+  the workbook versus 1.13566 from the stated formula with total-volume
+  dilution. It also records ten stage-vocabulary differences.
+- Incomplete gates: tolerances, reviewer names/dates and conclusions are blank;
+  excess rows are incomplete; CH₃COOH calculation date resolves to 2026-11-09
+  and requires confirmation.
+- Status correction: Phase 4 is `AUTOMATED AUDIT PASS / REVIEW REQUIRED`, not
+  accepted or closed. See `docs/PHASE_4_REFERENCE_REPORT.md`.

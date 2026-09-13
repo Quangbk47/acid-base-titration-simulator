@@ -2,12 +2,15 @@
 
 ## Current roadmap — Phase 4 → Phase 6
 
-- [x] Phase 4: lưu reference độc lập cho ba hệ, thêm CHEM-04 NH₃–HCl,
-  kiểm tra `Veq`, checkpoint và thứ tự curve.
-- [x] Phase 4: ghi tolerance, nguồn, giới hạn và discrepancy report.
+- [x] Phase 4: nhập nguyên trạng workbook của Tuấn và Nhật Anh, xác minh SHA-256,
+  `Veq`, checkpoint và thứ tự curve cho ba hệ.
+- [x] Phase 4: ghi nguồn, giới hạn và discrepancy report.
+- [ ] Nhóm xác nhận/sửa pH HCl–NaOH tại 25% `Veq` (`1,31` so với `1,13566`).
+- [ ] Nhóm thống nhất stage milestone với stage contract của engine.
+- [ ] Điền tolerance, reviewer/ngày review, kết luận review và các dòng dư còn trống.
 - [x] Phase 5 technical: regression chemistry/UI, trang kiến thức, model limits,
   responsive 320/375/430/768/1366 px và peer-run.
-- [ ] Phase 4/5 PO/GVHD acceptance trước khi ghi `DONE/CLOSED`.
+- [ ] Phase 4 review/acceptance và Phase 5 PO/GVHD acceptance trước `DONE/CLOSED`.
 - [ ] Phase 6 Firebase/Auth/Firestore/Rules/deploy — chỉ mở khi có Project ID
   riêng và PO phê duyệt theo ROADMAP hiện hành.
 

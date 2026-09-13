@@ -1,29 +1,81 @@
-export const PHASE_4_PH_TOLERANCE = 0.02;
+const freezeRows = (rows) => Object.freeze(rows.map((row) => Object.freeze(row)));
 
-// Fixed values transcribed from the Phase 4 hand-calculation sheet. Tests must
-// never generate these expected values from production solvers.
-export const phase4Nh3HclReference = Object.freeze([
-  Object.freeze({ id: 'NH3-HCl-standard-initial', Ca: 0.1, Va: 0, Cb: 0.1, Vb: 0.025, Kb: 1.8e-5, temperature: 298.15, expectedPH: 11.1247, expectedVeqMl: 25, expectedStage: 'before-equivalence', expectedExcessSpecies: 'NH₃' }),
-  Object.freeze({ id: 'NH3-HCl-standard-half', Ca: 0.1, Va: 0.0125, Cb: 0.1, Vb: 0.025, Kb: 1.8e-5, temperature: 298.15, expectedPH: 9.2548, expectedVeqMl: 25, expectedStage: 'before-equivalence', expectedExcessSpecies: 'NH₃' }),
-  Object.freeze({ id: 'NH3-HCl-standard-equivalence', Ca: 0.1, Va: 0.025, Cb: 0.1, Vb: 0.025, Kb: 1.8e-5, temperature: 298.15, expectedPH: 5.2781, expectedVeqMl: 25, expectedStage: 'at-equivalence', expectedExcessSpecies: null }),
-  Object.freeze({ id: 'NH3-HCl-standard-after', Ca: 0.1, Va: 0.02525, Cb: 0.1, Vb: 0.025, Kb: 1.8e-5, temperature: 298.15, expectedPH: 3.3031, expectedVeqMl: 25, expectedStage: 'after-equivalence', expectedExcessSpecies: 'H⁺' }),
-  Object.freeze({ id: 'NH3-HCl-standard-excess', Ca: 0.1, Va: 0.05, Cb: 0.1, Vb: 0.025, Kb: 1.8e-5, temperature: 298.15, expectedPH: 1.4771, expectedVeqMl: 25, expectedStage: 'after-equivalence', expectedExcessSpecies: 'H⁺' }),
-  Object.freeze({ id: 'NH3-HCl-different-initial', Ca: 0.02, Va: 0, Cb: 0.01, Vb: 0.025, Kb: 1.8e-5, temperature: 298.15, expectedPH: 10.6184, expectedVeqMl: 12.5, expectedStage: 'before-equivalence', expectedExcessSpecies: 'NH₃' }),
-  Object.freeze({ id: 'NH3-HCl-different-half', Ca: 0.02, Va: 0.00625, Cb: 0.01, Vb: 0.025, Kb: 1.8e-5, temperature: 298.15, expectedPH: 9.2514, expectedVeqMl: 12.5, expectedStage: 'before-equivalence', expectedExcessSpecies: 'NH₃' }),
-  Object.freeze({ id: 'NH3-HCl-different-equivalence', Ca: 0.02, Va: 0.0125, Cb: 0.01, Vb: 0.025, Kb: 1.8e-5, temperature: 298.15, expectedPH: 5.7152, expectedVeqMl: 12.5, expectedStage: 'at-equivalence', expectedExcessSpecies: null }),
-  Object.freeze({ id: 'NH3-HCl-different-after', Ca: 0.02, Va: 0.01275, Cb: 0.01, Vb: 0.025, Kb: 1.8e-5, temperature: 298.15, expectedPH: 3.8779, expectedVeqMl: 12.5, expectedStage: 'after-equivalence', expectedExcessSpecies: 'H⁺' }),
-  Object.freeze({ id: 'NH3-HCl-different-excess', Ca: 0.02, Va: 0.025, Cb: 0.01, Vb: 0.025, Kb: 1.8e-5, temperature: 298.15, expectedPH: 2.301, expectedVeqMl: 12.5, expectedStage: 'after-equivalence', expectedExcessSpecies: 'H⁺' }),
-  Object.freeze({ id: 'NH3-HCl-dilute-initial', Ca: 1e-6, Va: 0, Cb: 1e-6, Vb: 0.025, Kb: 1.8e-5, temperature: 298.15, expectedPH: 7.9822, expectedVeqMl: 25, expectedStage: 'before-equivalence', expectedExcessSpecies: 'NH₃' }),
-  Object.freeze({ id: 'NH3-HCl-dilute-half', Ca: 1e-6, Va: 0.0125, Cb: 1e-6, Vb: 0.025, Kb: 1.8e-5, temperature: 298.15, expectedPH: 7.5432, expectedVeqMl: 25, expectedStage: 'before-equivalence', expectedExcessSpecies: 'NH₃' }),
-  Object.freeze({ id: 'NH3-HCl-dilute-equivalence', Ca: 1e-6, Va: 0.025, Cb: 1e-6, Vb: 0.025, Kb: 1.8e-5, temperature: 298.15, expectedPH: 6.9941, expectedVeqMl: 25, expectedStage: 'at-equivalence', expectedExcessSpecies: null }),
-  Object.freeze({ id: 'NH3-HCl-dilute-after', Ca: 1e-6, Va: 0.02525, Cb: 1e-6, Vb: 0.025, Kb: 1.8e-5, temperature: 298.15, expectedPH: 6.9835, expectedVeqMl: 25, expectedStage: 'after-equivalence', expectedExcessSpecies: 'H⁺' }),
-  Object.freeze({ id: 'NH3-HCl-dilute-excess', Ca: 1e-6, Va: 0.05, Cb: 1e-6, Vb: 0.025, Kb: 1.8e-5, temperature: 298.15, expectedPH: 6.4419, expectedVeqMl: 25, expectedStage: 'after-equivalence', expectedExcessSpecies: 'H⁺' }),
-]);
+export const PHASE_4_PROVISIONAL_PH_TOLERANCE = 0.02;
 
-export const PHASE_4_REFERENCE_METADATA = Object.freeze({
-  source: 'Independent hand calculation documented in docs/PHASE_4_REFERENCE_REPORT.md',
-  reviewer: 'Pending group/PO sign-off',
-  temperatureK: 298.15,
-  kw: 1e-14,
-  endpointConvention: 'Endpoint is indicator-derived and is not treated as Veq.',
+export const phase4WorkbookMetadata = Object.freeze({
+  sourceFile: 'Phase4_reference_tinh_tay_nhom Tuan va Nhat Anh.xlsx',
+  sha256: '9B53E2BFAABF4145847BDFA9E9FF4686A853D3DFF32889C3D0E20947DC567CCC',
+  importedAt: '2026-09-13',
+  declaredPHTolerance: null,
+  declaredVolumeToleranceMl: null,
+  reviewer: null,
+  reviewStatus: 'PENDING',
+  note: 'Raw values are transcribed without correcting discrepancies.',
 });
+
+export const phase4WorkbookSystems = Object.freeze([
+  Object.freeze({
+    id: 'HCl-NaOH',
+    author: 'Nguyễn Đình Tuấn',
+    calculationDate: '2026-09-13',
+    analyteConcentrationM: 0.1,
+    analyteVolumeMl: 100,
+    titrantConcentrationM: 1,
+    equilibriumConstant: null,
+    temperatureC: 25,
+    expectedVeqMl: 10,
+    source: 'Giáo trình hóa phân tích',
+    rows: freezeRows([
+      { milestone: 'initial', volumeMl: 0, percentVeq: 0, excessSpecies: 'H⁺', excessMoles: 0.01, expectedPH: 1, expectedPOH: 13, expectedStage: 'before-equivalence' },
+      { milestone: '25-percent', volumeMl: 2.5, percentVeq: 25, excessSpecies: 'H⁺', excessMoles: 0.0075, expectedPH: 1.31, expectedPOH: 12.69, expectedStage: 'before-equivalence' },
+      { milestone: '50-percent', volumeMl: 5, percentVeq: 50, excessSpecies: 'H⁺', excessMoles: 0.005, expectedPH: 1.32, expectedPOH: 12.68, expectedStage: 'before-equivalence' },
+      { milestone: '90-percent', volumeMl: 9, percentVeq: 90, excessSpecies: 'H⁺', excessMoles: 0.001, expectedPH: 2.04, expectedPOH: 11.96, expectedStage: 'near-equivalence' },
+      { milestone: '99-percent', volumeMl: 9.9, percentVeq: 99, excessSpecies: 'H⁺', excessMoles: 0.0001, expectedPH: 3.04, expectedPOH: 10.96, expectedStage: 'near-equivalence' },
+      { milestone: 'equivalence', volumeMl: 10, percentVeq: 100, excessSpecies: null, excessMoles: 0, expectedPH: 7, expectedPOH: 7, expectedStage: 'at-equivalence' },
+      { milestone: '101-percent', volumeMl: 10.1, percentVeq: 101, excessSpecies: 'OH⁻', excessMoles: 0.0001, expectedPH: 10.96, expectedPOH: 3.04, expectedStage: 'after-equivalence' },
+      { milestone: '110-percent', volumeMl: 11, percentVeq: 110, excessSpecies: 'OH⁻', excessMoles: 0.001, expectedPH: 11.95, expectedPOH: 2.05, expectedStage: 'after-equivalence' },
+    ]),
+  }),
+  Object.freeze({
+    id: 'CH3COOH-NaOH',
+    author: 'Nguyễn Đình Tuấn',
+    calculationDate: '2026-11-09',
+    analyteConcentrationM: 0.1,
+    analyteVolumeMl: 100,
+    titrantConcentrationM: 1,
+    equilibriumConstant: 1.8e-5,
+    temperatureC: 25,
+    expectedVeqMl: 10,
+    source: 'Giáo trình hóa phân tích',
+    rows: freezeRows([
+      { milestone: 'initial', volumeMl: 0, percentVeq: 0, excessSpecies: 'HA', excessMoles: 0.01, expectedPH: 2.87, expectedPOH: 11.13, expectedStage: 'initial' },
+      { milestone: '25-percent', volumeMl: 2.5, percentVeq: 25, excessSpecies: 'HA', excessMoles: 0.0075, expectedPH: 4.27, expectedPOH: 9.73, expectedStage: 'before-equivalence' },
+      { milestone: 'half-equivalence', volumeMl: 5, percentVeq: 50, excessSpecies: 'HA', excessMoles: 0.005, expectedPH: 4.74, expectedPOH: 9.26, expectedStage: 'half-equivalence' },
+      { milestone: '90-percent', volumeMl: 9, percentVeq: 90, excessSpecies: 'HA', excessMoles: 0.001, expectedPH: 5.69, expectedPOH: 8.31, expectedStage: 'near-equivalence' },
+      { milestone: '99-percent', volumeMl: 9.9, percentVeq: 99, excessSpecies: 'HA', excessMoles: 0.0001, expectedPH: 6.74, expectedPOH: 7.26, expectedStage: 'near-equivalence' },
+      { milestone: 'equivalence', volumeMl: 10, percentVeq: 100, excessSpecies: null, excessMoles: 0, expectedPH: 8.85, expectedPOH: 5.15, expectedStage: 'at-equivalence' },
+      { milestone: '101-percent', volumeMl: 10.1, percentVeq: 101, excessSpecies: 'OH⁻', excessMoles: 0.0001, expectedPH: 10.96, expectedPOH: 3.04, expectedStage: 'after-equivalence' },
+    ]),
+  }),
+  Object.freeze({
+    id: 'NH3-HCl',
+    author: 'Đồng Nhật Anh',
+    calculationDate: '2026-09-10',
+    analyteConcentrationM: 0.1,
+    analyteVolumeMl: 100,
+    titrantConcentrationM: 1,
+    equilibriumConstant: 1.8e-5,
+    temperatureC: 25,
+    expectedVeqMl: 10,
+    source: 'Giáo trình hóa phân tích',
+    rows: freezeRows([
+      { milestone: 'initial', volumeMl: 0, percentVeq: 0, excessSpecies: 'NH₃', excessMoles: 0.01, expectedPH: 11.13, expectedPOH: 2.87, expectedStage: 'initial' },
+      { milestone: '25-percent', volumeMl: 2.5, percentVeq: 25, excessSpecies: 'NH₃', excessMoles: 0.0075, expectedPH: 9.73, expectedPOH: 4.27, expectedStage: 'before-equivalence' },
+      { milestone: 'half-equivalence', volumeMl: 5, percentVeq: 50, excessSpecies: 'NH₃', excessMoles: 0.005, expectedPH: 9.25, expectedPOH: 4.75, expectedStage: 'half-equivalence' },
+      { milestone: '90-percent', volumeMl: 9, percentVeq: 90, excessSpecies: 'NH₃', excessMoles: 0.001, expectedPH: 8.3, expectedPOH: 5.7, expectedStage: 'near-equivalence' },
+      { milestone: '99-percent', volumeMl: 9.9, percentVeq: 99, excessSpecies: 'NH₃', excessMoles: 0.0001, expectedPH: 7.25, expectedPOH: 6.75, expectedStage: 'near-equivalence' },
+      { milestone: 'equivalence', volumeMl: 10, percentVeq: 100, excessSpecies: null, excessMoles: 0, expectedPH: 5.15, expectedPOH: 8.85, expectedStage: 'at-equivalence' },
+      { milestone: '101-percent', volumeMl: 10.1, percentVeq: 101, excessSpecies: 'H⁺', excessMoles: 0.0001, expectedPH: 3.04, expectedPOH: 10.96, expectedStage: 'after-equivalence' },
+    ]),
+  }),
+]);
