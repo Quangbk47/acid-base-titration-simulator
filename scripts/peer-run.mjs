@@ -16,6 +16,12 @@ const record = (check, pass, evidence) => {
 
 const sha = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: rootPath, encoding: 'utf8' }).stdout.trim();
 let server;
+const chemistryCheck = spawnSync(process.execPath, ['--test', 'tests/chemistry.test.js', 'tests/phase4.test.js'], {
+  cwd: rootPath,
+  encoding: 'utf8',
+});
+const chemistryPass = chemistryCheck.status === 0;
+record('Chemistry automated suite', chemistryPass, `exit=${chemistryCheck.status}; 0 skip expected for Phase 4`);
 
 const get = async (path) => {
   const response = await fetch(`${baseUrl}${path}`);
@@ -50,21 +56,8 @@ try {
   record('/simulate loads', simulate.response.ok, `${simulate.response.status} ${simulate.response.statusText}`);
 
   const controls = ['Thêm giọt', 'Chạy', 'Tạm dừng', 'Đặt lại'];
-  const missing = controls.filter((label) => !has(simulate.body, `>${label}<`));
-  record('Required controls exist', missing.length === 0, missing.length ? `Missing: ${missing.join(', ')}` : controls.join(', '));
-
-  const actionable = controls.filter((label) => label !== 'Tạm dừng');
-  const disabled = actionable.filter((label) => new RegExp(`<button[^>]*disabled[^>]*>${label}<`).test(simulate.body));
-  const pauseDisabled = new RegExp('<button[^>]*disabled[^>]*>Tạm dừng<').test(simulate.body);
-  record('Controls enabled', disabled.length === 0, disabled.length ? `Disabled: ${disabled.join(', ')}` : `Actionable controls enabled; pause disabled while idle: ${pauseDisabled}`);
-
-  const graphPlaceholder = has(simulate.body, 'Chưa có dữ liệu mô phỏng');
-  const graphHasStructure = has(simulate.body, 'Đường cong pH–V') && has(simulate.body, 'Bảng dữ liệu đồ thị');
-  record('Graph has real data', graphHasStructure && !graphPlaceholder, graphPlaceholder ? 'Placeholder detected: Chưa có dữ liệu mô phỏng' : 'Graph data present');
-
-  const chemistryPlaceholder = has(simulate.body, 'Chưa tính');
-  const chemistryHasStructure = has(simulate.body, 'Bảng hóa học') && has(simulate.body, 'Chi tiết trạng thái hóa học');
-  record('Chemistry state connected', chemistryHasStructure && !chemistryPlaceholder, chemistryPlaceholder ? 'Placeholder detected: Chưa tính' : 'Chemistry state present');
+  const missing = controls.filter((label) => !has(simulate.body, label));
+  record('Control labels in route', missing.length === 0, missing.length ? `Missing: ${missing.join(', ')}` : controls.join(', '));
 
   const browser = await chromium.launch({ headless: true });
   try {
@@ -75,33 +68,52 @@ try {
     page.on('pageerror', (error) => pageErrors.push(String(error)));
     await page.goto(`${baseUrl}/simulate`, { waitUntil: 'networkidle' });
 
-    const addDrop = page.getByRole('button', { name: 'Thêm giọt' });
-    const run = page.getByRole('button', { name: 'Chạy' });
-    const pause = page.getByRole('button', { name: 'Tạm dừng' });
-    const reset = page.getByRole('button', { name: 'Đặt lại' });
+    const addDrop = page.getByRole('button', { name: /^Thêm giọt/ });
+    const run = page.getByRole('button', { name: /^Chạy/ });
+    const pause = page.getByRole('button', { name: /^Tạm dừng/ });
+    const reset = page.getByRole('button', { name: /^Đặt lại/ });
+    const requiredControls = [addDrop, run, pause, reset];
+    const missingDom = [];
+    for (const [index, control] of requiredControls.entries()) {
+      if (!(await control.isVisible())) missingDom.push(controls[index]);
+    }
+    record('Required controls exist', missingDom.length === 0, missingDom.length ? `Missing: ${missingDom.join(', ')}` : 'All controls visible in DOM');
+    const disabledDom = requiredControls.filter((control) => control.isDisabled());
+    record('Controls enabled', disabledDom.length === 0, disabledDom.length ? `${disabledDom.length} required controls disabled` : 'All required controls enabled');
+
+    await page.getByRole('button', { name: 'Tính trạng thái' }).click();
     await addDrop.click();
-    const addedVolume = await page.locator('[data-field="vessel"]').textContent();
-    const graphRowsAfterDrop = await page.locator('[data-chart-body] tr').count();
+    const addedVolume = await page.locator('[data-result="added-volume"]').textContent();
+    const graphRowsAfterDrop = await page.locator('[data-curve-rows] tr').count();
+    const graphText = await page.locator('[data-curve-rows]').textContent();
+    const pH = await page.locator('[data-result="ph"]').textContent();
+    const reaction = await page.locator('[data-result="reaction"]').textContent();
+    const graphPass = graphRowsAfterDrop > 0 && !graphText.includes('Chưa có dữ liệu mô phỏng');
+    const chemistryPass = pH !== '—' && !reaction.includes('Chưa tính');
+    record('Graph has real data', graphPass, `rows=${graphRowsAfterDrop}; placeholder=${graphText.includes('Chưa có dữ liệu mô phỏng')}`);
+    record('Chemistry state connected', chemistryPass, `pH=${pH}; reaction=${reaction}`);
     await run.click();
-    await page.waitForTimeout(650);
-    const running = await page.locator('[data-field="status"]').textContent();
-    const runningVolume = await page.locator('[data-field="vessel"]').textContent();
+    await page.waitForTimeout(800);
+    const running = await page.locator('[data-simulation-state]').textContent();
+    const runningVolume = await page.locator('[data-result="added-volume"]').textContent();
     const pauseEnabled = !(await pause.isDisabled());
     await pause.click();
-    const pausedVolume = await page.locator('[data-field="vessel"]').textContent();
+    const pausedState = await page.locator('[data-simulation-state]').textContent();
+    const pausedVolume = await page.locator('[data-result="added-volume"]').textContent();
     await page.waitForTimeout(700);
-    const pausedStable = pausedVolume === await page.locator('[data-field="vessel"]').textContent();
+    const pausedStable = pausedVolume === await page.locator('[data-result="added-volume"]').textContent();
     await reset.click();
-    const resetStatus = await page.locator('[data-field="status"]').textContent();
-    const resetVolume = await page.locator('[data-field="vessel"]').textContent();
-    const interactionPass = addedVolume?.includes('0.10 mL')
+    const resetStatus = await page.locator('[data-simulation-state]').textContent();
+    const resetVolume = await page.locator('[data-result="added-volume"]').textContent();
+    const interactionPass = addedVolume?.includes('0.05 mL')
       && graphRowsAfterDrop >= 1
-      && running === 'running'
+      && running === 'Running'
       && runningVolume !== addedVolume
       && pauseEnabled
+      && pausedState === 'Paused'
       && pausedStable
-      && resetStatus === 'ready'
-      && resetVolume?.includes('Chưa có giọt');
+      && resetStatus === 'Ready'
+      && resetVolume?.includes('0.00 mL');
     record('Browser interaction', interactionPass, `add=${addedVolume}; running=${runningVolume}; pausedStable=${pausedStable}; reset=${resetStatus}/${resetVolume}`);
     record('Console/runtime errors', consoleErrors.length === 0 && pageErrors.length === 0,
       consoleErrors.length || pageErrors.length ? `console=${consoleErrors.join(' | ')}; page=${pageErrors.join(' | ')}` : 'No console or page errors observed by Playwright');
@@ -109,6 +121,13 @@ try {
     await browser.close();
   }
 } catch (error) {
+  if (!results.some(({ check }) => check === 'Required controls exist')) {
+    record('Required controls exist', false, 'Browser DOM verification unavailable');
+    record('Controls enabled', false, 'Browser DOM verification unavailable');
+    record('Graph has real data', false, 'Browser interaction unavailable; initial placeholder was not treated as a pass');
+    record('Chemistry state connected', false, 'Browser interaction unavailable; initial placeholder was not treated as a pass');
+    record('Console/runtime errors', false, 'Browser runtime could not be started');
+  }
   record('Peer runner execution', false, error.message);
 } finally {
   if (server && !server.killed) server.kill('SIGTERM');
@@ -117,8 +136,7 @@ try {
 const date = new Date().toISOString();
 const failed = results.filter(({ pass }) => !pass);
 // ROADMAP defines Phase 1 as the pure chemistry engine; UI interaction/graph/state are Phase 2.
-// The automated chemistry suite is run separately as part of the requested command set.
-const phase1 = 'PASS';
+const phase1 = chemistryPass ? 'PASS' : 'FAIL';
 const phase2 = failed.length === 0 ? 'PASS' : 'PARTIAL';
 const report = `# Peer Run Report
 
@@ -144,8 +162,7 @@ ${results.map(({ check, pass, evidence }) => `| ${check} | ${pass ? 'PASS' : 'FA
 - Peer Run: ${failed.length === 0 ? 'PASS' : 'FAIL'}
 - Phase 1: ${phase1}
 - Phase 2: ${phase2}
-- Outstanding issues: ${failed.length ? failed.map(({ check, evidence }) => `${check}: ${evidence}`).join('; ') : 'None'}
-`;
+- Outstanding issues: ${failed.length ? failed.map(({ check, evidence }) => `${check}: ${evidence}`).join('; ') : 'None'}`;
 writeFileSync(reportPath, report);
 console.log(JSON.stringify({ commit: sha, results, report: reportPath.pathname }, null, 2));
 process.exitCode = failed.length === 0 ? 0 : 1;

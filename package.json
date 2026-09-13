@@ -10,6 +10,9 @@
     "format:check": "node scripts/check-format.mjs",
     "test": "node --test",
     "check": "npm run lint && npm run format:check && npm test",
+    "build": "node scripts/build.mjs",
+    "audit": "node audit-all.js",
+    "security:test": "firebase emulators:exec --only firestore \"node --test tests/firestore-rules.emulator.mjs\"",
     "peer-run": "node scripts/peer-run.mjs"
   },
   "engines": {

@@ -91,7 +91,8 @@ Không để UI tự tính pH, Firebase quyết định hóa học, hoặc hoạ
 2. Mở rộng curve/milestones/bảng thành phần; không chỉ dùng Henderson–Hasselbalch ngoài vùng đệm.
 3. `data/guidedPrompts.js`: dự đoán pH, màu, chất dư ở đầu, 1/2 eq, eq, sau eq; phản hồi từ state thật.
 4. Khám phá/Hướng dẫn dùng chung engine; `ui/report.js` tạo báo cáo + ảnh đồ thị cục bộ.
-5. HCl–NH₃ là task sau Phase 3; axit yếu–bazơ yếu vẫn DEFERRED.
+5. HCl–NH₃ được kiểm chứng trong CHEM-04 của Phase 4; axit yếu–bazơ yếu vẫn
+   DEFERRED cho tới khi có model và reference được duyệt.
 
 **PASS:** CHEM-03 PASS với bảng tham chiếu độc lập; không giữ gợi ý cũ sau reset; báo cáo ghi đúng input/modelVersion/mốc.
 

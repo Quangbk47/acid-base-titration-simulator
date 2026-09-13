@@ -20,17 +20,35 @@ service cloud.firestore {
         && safeUserFields();
       allow delete: if false;
 
-match /savedExperiments/{experimentId} {
-      // 1. Chỉ chủ nhân của bài thí nghiệm mới được đọc, sửa, xóa
-      allow read, update, delete: if signedIn() && request.auth.uid == resource.data.uid;
-      
-      // 2. Khi tạo mới, bắt buộc phải gắn đúng thẻ tên (uid) của người tạo
-      allow create: if signedIn() 
-                    && request.auth.uid == request.resource.data.uid
-                    && request.resource.data.keys().hasOnly(['uid', 'input', 'modelVersion', 'createdAt']);
-    }
+      match /savedExperiments/{experimentId} {
+        // Chỉ chủ nhân của bài thí nghiệm mới được đọc hoặc xóa.
+        allow read, delete: if signedIn() && request.auth.uid == resource.data.uid;
 
-    match /{contentCollection}/{contentId} {
+        // Khi sửa, chủ sở hữu không thể đổi uid hoặc thêm trường ngoài schema.
+        allow update: if signedIn()
+                      && request.auth.uid == resource.data.uid
+                      && request.resource.data.uid == resource.data.uid
+                      && request.resource.data.keys().hasOnly(['uid', 'input', 'modelVersion', 'createdAt', 'updatedAt']);
+
+        // Khi tạo mới, bắt buộc phải gắn đúng uid của người tạo.
+        allow create: if signedIn()
+                      && request.auth.uid == request.resource.data.uid
+                      && request.resource.data.keys().hasOnly(['uid', 'input', 'modelVersion', 'createdAt', 'updatedAt']);
+      }
+
+    match /substances/{contentId} {
+      allow read: if publishedContent() || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+    match /indicators/{contentId} {
+      allow read: if publishedContent() || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+    match /scenarios/{contentId} {
+      allow read: if publishedContent() || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+    match /guidedPrompts/{contentId} {
       allow read: if publishedContent() || isAdmin();
       allow create, update, delete: if isAdmin();
     }

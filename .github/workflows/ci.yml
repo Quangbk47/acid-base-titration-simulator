@@ -1,4 +1,4 @@
-name: Baseline checks
+name: Quality and security checks
 
 on:
   push:
@@ -12,5 +12,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - run: npm ci
       - run: npm run check
+      - run: npm run audit
+      - run: npm run build
+      - run: npm run security:test
 

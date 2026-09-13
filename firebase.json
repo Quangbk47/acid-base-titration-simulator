@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": ".",
+    "public": "dist",
     "ignore": ["firebase.json", "firestore.rules", "firestore.indexes.json", "**/.*", "**/node_modules/**"],
     "cleanUrls": true
   },

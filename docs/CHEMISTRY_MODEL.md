@@ -55,7 +55,10 @@ Khi triển khai HCl–NH₃: `CT=nB0/VT`, `CX=nHCl/VT`, `h=[H+]`, `OH=Kw/h`; gi
 
 `f(h)=h+CT×Kb/(Kb+Kw/h)-Kw/h-CX=0`.
 
-Chỉ mở ca công khai sau CHEM-04 PASS. Axit yếu–bazơ yếu bị khóa `DEFERRED`.
+Ca NH₃–HCl được mở sau khi CHEM-04 đạt reference gate; implementation hiện
+giải bằng charge-balance bisection trong `weakBaseStrongAcid.js` và trả
+diagnostics/residual để không nuốt lỗi hội tụ. Axit yếu–bazơ yếu bị khóa
+`DEFERRED`.
 
 ## Chỉ thị và endpoint
 

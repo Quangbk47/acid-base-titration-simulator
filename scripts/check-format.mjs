@@ -11,6 +11,7 @@ const requiredFiles = [
   'src/chemistry/milestones.js',
   'src/chemistry/curve.js',
   'src/chemistry/index.js',
+  'src/chemistry/weakBaseStrongAcid.js',
   'src/data/standardCases.js',
   'src/firebase/index.js',
   'src/simulation/state.js',
@@ -20,10 +21,15 @@ const requiredFiles = [
   'scripts/lint.mjs',
   'scripts/path-security.mjs',
   'scripts/serve.mjs',
+  'scripts/build.mjs',
+  'scripts/peer-run.mjs',
   'tests/smoke.test.js',
   'tests/chemistry.test.js',
   'tests/validation.test.js',
   'tests/fixtures/phase1Reference.js',
+  'tests/phase4.test.js',
+  'tests/firestore-rules.test.js',
+  'tests/firestore-rules.emulator.mjs',
 ];
 let failed = false;
 

@@ -233,3 +233,31 @@
 - Phase 3 status: `MERGED / AWAITING PO ACCEPTANCE`; PO/GVHD acceptance remains
   `PENDING`, so Phase 3 is not `DONE` or `CLOSED`.
 - No chemistry behavior, Firebase, or NH₃–HCl scope was changed.
+
+## 2026-09-13 — Production hardening audit (working tree, not yet merged)
+
+- Base commit under review: `0d33c34d79cdfdcb1f8028d58f0b4b9d994f5d15` on `main`.
+- Phase 4 NH₃–HCl: `COMPLETED / DEV VERIFIED` — added a charge-balance
+  weak-base/strong-acid solver, exported it through the chemistry boundary and
+  enabled all seven NH₃–HCl reference checkpoints. Phase 4 suite: **25/25
+  PASS, 0 SKIP**; full Node suite: **75/75 PASS**.
+- Firestore rules: `IMPLEMENTED / STATIC VERIFIED` — saved experiment update
+  now requires `request.resource.data.uid == resource.data.uid`; content
+  access is limited to `substances`, `indicators`, `scenarios` and
+  `guidedPrompts`. Static policy suite: **7/7 PASS**.
+- Hosting/CI: `IMPLEMENTED / CI PENDING` — Hosting now serves only `dist`, a
+  reproducible build script exists, and CI runs check, audit-all, build and the
+  Firestore emulator gate.
+- Peer Run: `NOT PASS` in this environment — `/` and `/simulate` return 200,
+  chemistry suite passes, but Playwright cannot spawn its bundled Chromium
+  (`EPERM/UNKNOWN`), so DOM interaction and console verification remain
+  unconfirmed. The runner intentionally does not treat initial placeholders as
+  real graph/chemistry data.
+- Firestore emulator gate: `PENDING` in this environment because Firebase
+  Emulator Suite requires Java and `java -version` is unavailable. The
+  integration test is committed as `tests/firestore-rules.emulator.mjs` and is
+  scheduled by `npm run security:test`; it must pass in CI before marking the
+  security gate complete.
+- Production deploy/PO acceptance: `NO` / `PENDING`. This working tree has
+  not been committed or deployed, so no production-ready or final Phase 6
+  completion claim is made.
