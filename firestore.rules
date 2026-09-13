@@ -36,6 +36,8 @@ service cloud.firestore {
                       && request.resource.data.keys().hasOnly(['uid', 'input', 'modelVersion', 'createdAt', 'updatedAt']);
       }
 
+    }
+
     match /substances/{contentId} {
       allow read: if publishedContent() || isAdmin();
       allow create, update, delete: if isAdmin();
