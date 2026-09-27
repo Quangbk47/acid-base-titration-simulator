@@ -11,6 +11,16 @@
   Phase 0–6; `npm run build` PASS.
 - Status: READY TO MERGE. Production deploy: pending merge.
 
+## 2026-09-28 — Merge and release verification
+
+- `feature/live-titration-ui` merged into `main` with merge commit `b523653` and
+  pushed to `origin/main`.
+- Firebase Hosting deploy: `BLOCKED` because the local Firebase CLI has no
+  authenticated credential (`Failed to authenticate; run firebase login`).
+- Existing production URL check: `https://acid-base-titration-simulator.web.app/simulate`
+  returned HTTP 200; this confirms the previous deployment is reachable, not
+  that commit `b523653` is deployed.
+
 ## 2026-09-03 — Requirements baseline
 
 - Trạng thái: `PO PASS` cho phạm vi/yêu cầu; chưa bắt đầu code.
