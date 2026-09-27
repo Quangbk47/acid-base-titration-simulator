@@ -1,5 +1,16 @@
 # PROGRESS
 
+## 2026-09-28 — Live titration UI closeout
+
+- Branch: `feature/live-titration-ui`.
+- Scope: burette NaOH phía trên bình HCl, giọt 0,10 mL, thể tích NaOH còn lại,
+  delay/chuyển màu phenolphthalein, biểu đồ điểm dữ liệu chạy dần và bảng lịch sử
+  từng lần nhỏ giọt.
+- Verification: `npm run check` PASS; 76/76 Node tests PASS; lint PASS (46
+  JavaScript files); format check PASS (27 files); `npm run audit` PASS với
+  Phase 0–6; `npm run build` PASS.
+- Status: READY TO MERGE. Production deploy: pending merge.
+
 ## 2026-09-03 — Requirements baseline
 
 - Trạng thái: `PO PASS` cho phạm vi/yêu cầu; chưa bắt đầu code.
