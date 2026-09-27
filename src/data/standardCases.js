@@ -34,4 +34,3 @@ export const weakAcidCaseToSolverInput = ({ CaM, VaMl, CbM, Ka, VbMl, temperatur
     Ka,
     temperature: celsiusToKelvin(temperatureC),
   });
-

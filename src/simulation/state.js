@@ -35,7 +35,7 @@ export const createSimulationState = (chemistryInput, options = {}) => {
   const initialAddedVolumeMl = lToMl(chemistryInput.Vb);
   return {
     ok: true,
-    state: freezeState({ screen: 'ready', status: 'ready', speed: 'normal', chemistryInput, initialAddedVolumeMl, addedVolumeMl: initialAddedVolumeMl, dropSizeMl, dropCount: 0, result: null }),
+    state: freezeState({ screen: 'ready', status: 'ready', speed: 'normal', chemistryInput, initialAddedVolumeMl, initialBuretVolumeMl: options.initialBuretVolumeMl ?? 50, addedVolumeMl: initialAddedVolumeMl, dropSizeMl, dropCount: 0, result: null }),
   };
 };
 
@@ -75,4 +75,3 @@ export const setSimulationSpeed = (state, speed) => {
   if (!state || !state.chemistryInput || !(speed in SIMULATION_SPEEDS)) return invalid('INVALID_SIMULATION_SPEED', 'Tốc độ mô phỏng không hợp lệ.');
   return { ok: true, state: freezeState({ ...state, speed }) };
 };
-

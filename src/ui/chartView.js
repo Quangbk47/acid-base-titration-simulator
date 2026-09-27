@@ -6,7 +6,7 @@ export const buildChartModel = (input, currentVolumeMl) => {
   return { ...curve, currentVolumeMl };
 };
 
-export const renderChartView = (root, input, currentVolumeMl) => {
+export const renderChartView = (root, input, currentVolumeMl, currentResult = null, dropCount = 0, history = []) => {
   const chart = root?.querySelector('[data-chart]');
   const empty = root?.querySelector('[data-chart-empty]');
   const table = root?.querySelector('[data-curve-rows]');
@@ -21,9 +21,13 @@ export const renderChartView = (root, input, currentVolumeMl) => {
   const markers = [['halfEqMl', 'curve-half'], ['equivalenceMl', 'curve-equivalence'], ['endpointMl', 'curve-endpoint']]
     .filter(([key]) => model.milestones[key] <= maxX)
     .map(([key, cls]) => `<line class="${cls}" x1="${xAt(model.milestones[key])}" x2="${xAt(model.milestones[key])}" y1="${pad.t}" y2="${height - pad.b}" />`).join('');
-  const current = model.points.filter((p) => Math.abs(p.volumeMl - currentVolumeMl) < 1e-9).map((p) => { const [cx, cy] = point(p).split(','); return `<circle class="curve-current" cx="${cx}" cy="${cy}" r="5" />`; }).join('');
-  chart.innerHTML = `${markers}<polyline class="curve-line" points="${model.points.map(point).join(' ')}" />${current}`;
+  const visiblePoints = model.points.filter((p) => p.volumeMl <= currentVolumeMl + 1e-9);
+  const pointsMarkup = visiblePoints.map((p) => { const [cx, cy] = point(p).split(','); return `<circle class="curve-point" cx="${cx}" cy="${cy}" r="3" />`; }).join('');
+  const currentPoint = currentResult ? { volumeMl: currentVolumeMl, pH: currentResult.pH } : model.points.find((p) => Math.abs(p.volumeMl - currentVolumeMl) < 1e-9);
+  const current = currentPoint ? (() => { const [cx, cy] = point(currentPoint).split(','); return `<circle class="curve-current" cx="${cx}" cy="${cy}" r="5" />`; })() : '';
+  chart.innerHTML = `${markers}${pointsMarkup}${current}`;
   if (empty) empty.hidden = true;
-  if (table) table.innerHTML = model.points.filter((_, i) => i % Math.max(1, Math.floor(model.points.length / 12)) === 0).map((p) => `<tr><td>${p.volumeMl.toFixed(2)}</td><td>${p.pH.toFixed(2)}</td><td>${p.stage}</td></tr>`).join('');
+  if (table) table.innerHTML = (history.length ? history : [{ dropCount, volumeMl: currentVolumeMl, pH: currentResult?.pH ?? model.points[0].pH, stage: currentResult?.stage ?? model.points[0].stage }])
+    .map((row) => `<tr><td>${row.volumeMl.toFixed(2)} mL</td><td>${row.pH.toFixed(2)}</td><td>${row.stage}</td></tr>`).join('');
   return model;
 };

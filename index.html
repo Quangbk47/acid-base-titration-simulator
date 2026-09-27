@@ -133,15 +133,15 @@
                   <span id="titrant-concentration-error" class="field-error" data-error-for="titrantConcentrationM" aria-live="polite"></span>
                 </div>
                 <div>
-                  <label for="added-volume">Thể tích NaOH đã thêm (mL)</label>
-                  <input id="added-volume" name="addedVolumeMl" type="text" inputmode="decimal" aria-describedby="added-volume-error" />
-                  <span id="added-volume-error" class="field-error" data-error-for="addedVolumeMl" aria-live="polite"></span>
+                  <label for="buret-volume">Thể tích NaOH ban đầu (mL)</label>
+                  <input id="buret-volume" name="buretVolumeMl" type="text" inputmode="decimal" value="50" />
+                  <input id="added-volume" name="addedVolumeMl" type="hidden" value="0" />
                 </div>
               </div>
 
               <div class="control-group" aria-label="Điều khiển mô phỏng">
                 <button class="button button-primary" type="submit">Tính trạng thái</button>
-                <button class="button button-secondary" type="button" id="add-drop">Thêm giọt 0,05 mL</button>
+                <button class="button button-secondary" type="button" id="add-drop">Thêm giọt 0,10 mL</button>
                 <button class="button button-secondary" type="button" id="run-simulation">Chạy tự động</button>
                 <button class="button button-quiet" type="button" id="pause-simulation">Tạm dừng</button>
                 <button class="button button-quiet" type="button" id="reset-simulation">Đặt lại trạng thái</button>
@@ -150,13 +150,13 @@
               <select id="simulation-speed" aria-label="Tốc độ mô phỏng">
                 <option value="slow">Chậm</option><option value="normal" selected>Chuẩn</option><option value="fast">Nhanh</option>
               </select>
-              <div class="control-meta"><span>Thể tích đã thêm</span><strong data-result="added-volume">0,00 mL</strong></div>
+              <div class="control-meta"><span>NaOH đã chảy vào bình</span><strong data-result="added-volume">0,00 mL</strong></div>
               <p class="form-error" data-form-error role="alert"></p>
             </form>
 
-            <div class="vessel-stage" aria-label="Khu vực bình và buret">
+            <div class="vessel-stage" aria-label="Burette chứa NaOH phía trên bình tam giác chứa HCl">
               <div class="buret" aria-hidden="true">
-                <span class="buret-label">Buret</span>
+                <span class="buret-label">NaOH · <strong data-buret-volume>50,00 mL</strong></span>
                 <div class="buret-tube"><span></span></div>
                 <div class="buret-stopcock"></div>
                 <div class="buret-tip"></div>
@@ -279,4 +279,3 @@
     <script type="module" src="/src/app.js"></script>
   </body>
 </html>
-
