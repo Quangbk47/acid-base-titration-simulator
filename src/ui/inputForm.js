@@ -9,7 +9,14 @@ import { renderIndicatorView } from './indicatorView.js';
 
 const FIELD_IDS = Object.freeze({ systemType: 'system-type', analyteConcentrationM: 'analyte-concentration', analyteVolumeMl: 'analyte-volume', titrantConcentrationM: 'titrant-concentration', addedVolumeMl: 'added-volume' });
 const UI_DROP_SIZE_ML = 0.1;
-const valuesFromForm = (form) => Object.fromEntries(new FormData(form).entries());
+// Temporary data adapter: replace these values with the Excel import adapter.
+// Ka/Kb are chemistry data, not user-entered simulation controls.
+const CHEMISTRY_DATA = Object.freeze({ Ka: 1.8e-5, Kb: 1.8e-5 });
+const valuesFromForm = (form) => ({
+  ...Object.fromEntries(new FormData(form).entries()),
+  Ka: CHEMISTRY_DATA.Ka,
+  Kb: CHEMISTRY_DATA.Kb,
+});
 const setText = (root, selector, value) => { const element = root.querySelector(selector); if (element) element.textContent = value; };
 const clearErrors = (form) => { for (const output of form.querySelectorAll('[data-error-for]')) output.textContent = ''; for (const control of form.elements) control.removeAttribute?.('aria-invalid'); };
 const showErrors = (form, errors) => { clearErrors(form); for (const [field, message] of Object.entries(errors)) { form.querySelector(`#${FIELD_IDS[field] ?? field}`)?.setAttribute('aria-invalid', 'true'); const output = form.querySelector(`[data-error-for="${field}"]`); if (output) output.textContent = message; } };
