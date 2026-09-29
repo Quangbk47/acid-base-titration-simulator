@@ -11,6 +11,17 @@
 - Status: READY TO MERGE; production deployment pending merge and Firebase
   Hosting authentication.
 
+## 2026-09-29 — Merge and production deployment check
+
+- Merged into `main` with merge commit `b21e525e034195916cd83e8fb4aa011cc109d84f`
+  and pushed to `origin/main`.
+- `npm run audit` PASS (8/8 audit groups); `npm run build` PASS.
+- Firebase Hosting deployment was attempted for project
+  `acid-base-titration-simulator`, but was blocked by HTTP 403: the signed-in
+  account lacks `serviceusage.services.use`/project access permission.
+- Existing production URL returned HTTP 200 for `/` and `/simulate`; this does
+  not prove that the new merge commit is deployed.
+
 ## 2026-09-28 — Live titration UI closeout
 
 - Branch: `feature/live-titration-ui`.
