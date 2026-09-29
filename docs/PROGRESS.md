@@ -1,5 +1,16 @@
 # PROGRESS
 
+## 2026-09-29 — Weak-acid/weak-base UI integration
+
+- Branch: `feature/weak-acid-strong-base-weak-base-ui`.
+- Scope: expose weak-acid/strong-base and strong-acid/weak-base systems in the
+  form, collect `Ka`/`Kb`, map units correctly, and select the matching solver
+  during simulation.
+- Verification: `npm run check` PASS; 76/76 Node tests PASS; lint PASS; format
+  check PASS.
+- Status: READY TO MERGE; production deployment pending merge and Firebase
+  Hosting authentication.
+
 ## 2026-09-28 — Live titration UI closeout
 
 - Branch: `feature/live-titration-ui`.
