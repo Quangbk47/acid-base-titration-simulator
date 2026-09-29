@@ -1,4 +1,4 @@
-import { solveStrongStrong } from '../chemistry/index.js';
+import { solveStrongStrong, solveWeakAcidStrongBase, solveWeakBaseStrongAcid } from '../chemistry/index.js';
 import { standardCases } from '../data/standardCases.js';
 import { TITRATION_SYSTEMS, toChemistryInput, validateTitrationForm } from './validation.js';
 import { addDrop, createSimulationState, resetSimulation, setSimulationSpeed, setSimulationStatus, withSimulationResult } from '../simulation/state.js';
@@ -18,7 +18,11 @@ export function evaluateTitration(values, solve = solveStrongStrong) {
   const validation = validateTitrationForm(values);
   if (!validation.ok) return validation;
   const chemistryInput = toChemistryInput(validation.value);
-  const result = solve(chemistryInput);
+  const selectedSolver = solve !== solveStrongStrong ? solve : ({
+    'weak-acid-strong-base': solveWeakAcidStrongBase,
+    'strong-acid-weak-base': solveWeakBaseStrongAcid,
+  }[validation.value.systemType] ?? solveStrongStrong);
+  const result = selectedSolver(chemistryInput);
   if (result.error) return { ok: false, solverError: result.error };
   return { ok: true, chemistryInput, result };
 }
@@ -89,7 +93,10 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
     if (form.elements.buretVolumeMl) form.elements.buretVolumeMl.value = Math.max(0, simulationState.initialBuretVolumeMl - simulationState.dropCount * UI_DROP_SIZE_ML).toFixed(2);
   };
   const evaluateCurrent = () => {
-    const result = solve(simulationState.chemistryInput);
+    const result = ({
+      'weak-acid-strong-base': solveWeakAcidStrongBase,
+      'strong-acid-weak-base': solveWeakBaseStrongAcid,
+    }[form.elements.systemType.value] ?? solve)(simulationState.chemistryInput);
     if (result.error) return result;
     simulationState = withSimulationResult(simulationState, result).state;
     render(result);

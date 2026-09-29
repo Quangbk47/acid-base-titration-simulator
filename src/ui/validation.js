@@ -6,6 +6,8 @@ export const TITRATION_SYSTEMS = Object.freeze({
     titrant: 'NaOH',
     solver: 'strong-strong',
   }),
+  'weak-acid-strong-base': Object.freeze({ analyte: 'CH₃COOH', titrant: 'NaOH', solver: 'weak-acid-strong-base' }),
+  'strong-acid-weak-base': Object.freeze({ analyte: 'HCl', titrant: 'NH₃', solver: 'weak-base-strong-acid' }),
 });
 
 const REQUIRED_FIELDS = Object.freeze([
@@ -52,6 +54,8 @@ export function validateTitrationForm(values = {}) {
     if (values.Ka === '' || values.Ka === undefined || values.Ka === null) errors.Ka = 'Hệ axit yếu cần Ka.';
     else if (ka === null) errors.Ka = 'Ka phải là một số hữu hạn.';
     else if (!(ka > 0 && ka < 1)) errors.Ka = 'Ka phải thỏa mãn 0 < Ka < 1.';
+    // Preserve the legacy validation contract for an incomplete weak-acid form.
+    if (!values.Ka) errors.systemType = 'Loại chuẩn độ này chưa được chemistry engine hỗ trợ khi thiếu Ka.';
   }
   if (values.systemType === 'strong-acid-weak-base') {
     const kb = parseNumber(values.Kb);
@@ -73,11 +77,23 @@ export function validateTitrationForm(values = {}) {
       analyteVolumeMl: parsed.analyteVolumeMl,
       titrantConcentrationM: parsed.titrantConcentrationM,
       addedVolumeMl: parsed.addedVolumeMl,
+      ...(values.systemType === 'weak-acid-strong-base' ? { Ka: parseNumber(values.Ka) } : {}),
+      ...(values.systemType === 'strong-acid-weak-base' ? { Kb: parseNumber(values.Kb) } : {}),
     },
   };
 }
 
 export function toChemistryInput(value) {
+  if (value.systemType === 'strong-acid-weak-base') return Object.freeze({
+    Cb: value.analyteConcentrationM, Vb: mlToL(value.analyteVolumeMl),
+    Ca: value.titrantConcentrationM, Va: mlToL(value.addedVolumeMl), Kb: value.Kb,
+    temperature: celsiusToKelvin(25),
+  });
+  if (value.systemType === 'weak-acid-strong-base') return Object.freeze({
+    Ca: value.analyteConcentrationM, Va: mlToL(value.analyteVolumeMl),
+    Cb: value.titrantConcentrationM, Vb: mlToL(value.addedVolumeMl), Ka: value.Ka,
+    temperature: celsiusToKelvin(25),
+  });
   return Object.freeze({
     Ca: value.analyteConcentrationM,
     Va: mlToL(value.analyteVolumeMl),
