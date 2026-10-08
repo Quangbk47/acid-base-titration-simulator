@@ -161,6 +161,8 @@ try {
   assert.equal(await stage.locator('[data-vessel-ph]').textContent(), '—');
   assert.equal(await page.locator('[data-chart-empty]').isVisible(), true, 'Case change restores the empty chart state');
   await page.getByRole('link', { name: 'Thư viện ca', exact: true }).click();
+  await page.waitForURL(new URL('/', baseUrl).href, { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => document.querySelector('[data-route="home"]').getAttribute('aria-current') === 'page' && document.querySelector('[data-view="simulate"]').hidden);
   const homeWidth = await page.locator('#main-content').evaluate((element) => element.clientWidth);
   assert.equal(homeWidth, 1180, 'Home retains its original container width');
   const fallback = await browser.newPage();
