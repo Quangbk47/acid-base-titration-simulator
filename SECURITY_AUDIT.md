@@ -4,7 +4,7 @@ Ngày: **2026-10-08**. Phạm vi: working tree của `main`, HEAD
 `31036396c40dece032f6081a82b705e97d97d387`, gồm các thay đổi 3D/bố cục/chuẩn độ
 chưa commit từ trước. Không kiểm thử phá hoại hoặc đọc/ghi dữ liệu production.
 
-**Kết luận: chưa đạt gate bảo mật để triển khai với cấu hình hiện tại.**
+**Kết luận tại thời điểm chốt audit: chưa đạt gate triển khai với cấu hình lúc đó.**
 Chức năng mô phỏng vẫn đạt kiểm thử. Đã sửa các lỗi nhỏ được phép, nhưng còn
 Hosting quá rộng, thiếu bảo vệ đường dẫn UID trong Rules, schema/quota chưa
 đủ và dependency advisories. Không khẳng định hệ thống an toàn tuyệt đối.
@@ -15,6 +15,10 @@ trạng thái. Chưa đủ điều kiện bật lưu/mở Firebase hoặc triể
 Phân tích năm FAIL, so sánh CRUD, tương thích schema, phát hiện Hosting mới và
 kế hoạch sao lưu/rollback nằm ở mục 9–14. Chưa áp dụng Rules mới; cấu hình dự án
 và hai bản nháp chờ duyệt được kiểm tra SHA-256 trước/sau và giữ nguyên.
+
+Quyền xuất bản Hosting và thay đổi cấu hình cho bản bàn giao được phê duyệt
+sau audit được ghi riêng ở mục 16. Gate Auth/persistence/backend vẫn chưa đạt;
+bản phát hành guest không đồng nghĩa các phát hiện Firestore đã được khắc phục.
 
 ## 1. Phương pháp và giới hạn
 
@@ -544,3 +548,23 @@ Chuẩn bị chuyển sang hai chế độ, chưa thêm tính năng trong audit:
 Các thay đổi lượt tiếp tục này giới hạn ở test, báo cáo và cấu hình QA trong
 TEMP. Không sửa code app, Rules actual/nháp hoặc Hosting actual/nháp; không
 truy cập dữ liệu production, deploy, push hay tạo tài khoản quản trị.
+
+## 16. Phạm vi bàn giao được phê duyệt sau khi audit kết thúc
+
+Các kết quả và trạng thái “chưa được duyệt” ở mục trước là lịch sử audit.
+Người chốt dự án sau đó đã phê duyệt commit/push và **chỉ deploy Hosting**
+để gửi giảng viên nhận xét. Quyền đó không bao gồm áp dụng Rules nháp.
+
+Bản bàn giao sửa `hosting.public` thành `dist`, chặn file con thư mục ẩn/log/
+source map, dùng regex header tương thích Emulator Windows và giữ CSP cho app
+guest hiện có. Build dùng allowlist tài nguyên web, từ chối symlink/junction,
+giữ bản build cũ và tạo metadata commit/file hash để đối chiếu bản công khai.
+Patch thay đổi Hosting cũ và baseline release được giữ local, không commit log.
+Các kiểm tra trước và sau deploy phải gắn với commit cụ thể của bản bàn giao;
+không suy ra toàn bộ backend đã an toàn từ việc website guest chạy đúng.
+
+Firestore Rules giữ nguyên, không migration/xóa/ghi đè dữ liệu production.
+SEC-03/06/07/11 và các advisory còn lại vẫn được ghi nhận; luồng Auth/lưu/mở cloud
+chưa bật. SEC-02/08 được xử lý cho **gói xuất bản website**, không phải bằng một
+deploy Rules. Xem `docs/RELEASE_HANDOFF.md` và báo cáo bàn giao cuối để kiểm tra
+URL, commit và giới hạn thực tế. Không bổ sung tính năng mới trong release này.
