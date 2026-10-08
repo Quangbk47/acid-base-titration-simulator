@@ -1,3 +1,4 @@
+import { pairForInput } from '../data/titrationPairs.js';
 import * as THREE from '../../assets/vendor/three/three.module.js';
 import { OrbitControls } from '../../assets/vendor/three/OrbitControls.js';
 import { RoomEnvironment } from '../../assets/vendor/three/RoomEnvironment.js';
@@ -164,7 +165,7 @@ export function createVesselScene({ viewport, onError = () => {} }) {
   };
   const graduationLabels = [];
   for (let i = 0; i <= 50; i += 10) graduationLabels.push(textLabel(String(i), 0.68, 5.3 - i * 2.3 / 50, 0.16, 0.23));
-  textLabel('NaOH', 0.35, 5.68, 0, 0.68);
+  const titrantLabel = textLabel('NaOH', 0.35, 5.68, 0, 0.68);
   const buretCapacityLabel = textLabel('50 mL', 0.35, 5.55, 0, 0.42);
 
   // Closed base and open neck: a real hollow Erlenmeyer silhouette.
@@ -195,6 +196,7 @@ export function createVesselScene({ viewport, onError = () => {} }) {
   const clearEffects = () => {
     for (const drop of drops) { drop.active = false; drop.mesh.visible = false; }
     splashAge = 1;
+    renderer.domElement.dataset.activeDrops = '0';
     ripple.visible = false;
     solutionMaterial.color.set('#a7cdd0').lerp(new THREE.Color('#ed74ad'), model.pinkStrength);
   };
@@ -233,6 +235,7 @@ export function createVesselScene({ viewport, onError = () => {} }) {
       ripple.visible = false;
       solutionMaterial.color.set('#a7cdd0').lerp(new THREE.Color('#ed74ad'), model.pinkStrength);
     }
+    renderer.domElement.dataset.activeDrops = String(drops.filter((drop) => drop.active).length);
     renderer.render(scene, camera);
     if (active || cameraMoving) requestFrame();
     else previousTime = null;
@@ -270,16 +273,22 @@ export function createVesselScene({ viewport, onError = () => {} }) {
   resize();
 
   return {
-    update(state, { animate = true } = {}) {
+    update(state, { animate = true, titrantName = 'NaOH' } = {}) {
       const next = buildVesselModel(state);
       const newDrop = next.dropCount > model.dropCount;
-      const reset = next.dropCount < model.dropCount || next.status === 'idle' || next.status === 'paused';
+      const reset = next.dropCount === 0 || next.dropCount < model.dropCount || next.status === 'idle' || next.status === 'paused';
       model = next;
       const buretCapacity = Math.max(50, model.initialMl);
+      const label = state ? pairForInput(state.chemistryInput).titrant : titrantName;
+      titrantLabel(label); renderer.domElement.dataset.titrant = label;
       buretCapacityLabel(`${buretCapacity.toFixed(0)} mL`);
       graduationLabels.forEach((label, index) => label((index * buretCapacity / 5).toFixed(0)));
       flaskCapacityLabel(`${model.capacityMl.toFixed(0)} mL`);
-      if (reset || !animate || motion.matches) clearEffects();
+      if (reset || !animate || motion.matches) {
+        if (frame !== null) cancelAnimationFrame(frame);
+        frame = null; previousTime = null;
+        clearEffects();
+      }
       const buretHeight = Math.max(0.001, 2.3 * model.buretFraction);
       buretLiquid.scale.y = buretHeight;
       buretLiquid.position.y = 2.95 + buretHeight / 2;

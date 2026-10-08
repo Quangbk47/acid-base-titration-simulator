@@ -3,7 +3,7 @@ export const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (ch
 // Accept only the passive SVG primitives produced by our chart. This is not a
 // general SVG sanitizer: unsupported markup is rejected, never repaired.
 const numericAttributes = new Set(['width', 'height', 'cx', 'cy', 'r', 'x', 'y', 'x1', 'x2', 'y1', 'y2', 'rx', 'ry', 'stroke-width', 'opacity', 'fill-opacity', 'stroke-opacity']);
-const tags = new Set(['svg', 'g', 'circle', 'line', 'polyline', 'polygon', 'rect', 'path']);
+const tags = new Set(['svg', 'g', 'circle', 'line', 'polyline', 'polygon', 'rect', 'path', 'text', 'title']);
 const numbers = /^[-+\d.eE,\s]+$/;
 const finiteNumbers = (value) => numbers.test(value) && value.trim().split(/[\s,]+/).every((number) => Number.isFinite(Number(number)));
 export const validatePassiveGraphSvg = (svg) => {
@@ -12,7 +12,10 @@ export const validatePassiveGraphSvg = (svg) => {
   const stack = [];
   let roots = 0;
   for (const token of tokens) {
-    if (!token.startsWith('<')) { if (token.trim()) return false; continue; }
+    if (!token.startsWith('<')) {
+      if (token.trim() && (!['text', 'title'].includes(stack.at(-1)) || /[<>&]/.test(token))) return false;
+      continue;
+    }
     const tag = token.match(/^<(\/?)([a-z]+)([\s\S]*?)>$/);
     if (!tag || !tags.has(tag[2])) return false;
     const [, closing, name, tail] = tag;
@@ -23,7 +26,7 @@ export const validatePassiveGraphSvg = (svg) => {
     let attributes = selfClosing ? tail.replace(/\/\s*$/, '') : tail;
     const seen = new Set();
     while (attributes.trim()) {
-      const attribute = attributes.match(/^\s+([A-Za-z][A-Za-z0-9-]*)\s*=\s*(["'])([^"'<>;&]*)\2/);
+      const attribute = attributes.match(/^\s+([A-Za-z][A-Za-z0-9-]*)\s*=\s*(["'])([^"'<>&]*)\2/);
       if (!attribute) return false;
       const [, key, , value] = attribute;
       if (seen.has(key)) return false;
@@ -36,7 +39,14 @@ export const validatePassiveGraphSvg = (svg) => {
                 : key === 'fill' || key === 'stroke' ? /^(?:none|currentColor|[a-z]+|#[a-fA-F0-9]{3,8}|rgba?\([\d.,%\s]+\))$/.test(value)
                   : key === 'xmlns' && name === 'svg' ? value === 'http://www.w3.org/2000/svg'
                     : key === 'data-chart' && name === 'svg' ? value === ''
-                      : key === 'aria-hidden' ? ['true', 'false'].includes(value) : false;
+                      : key === 'aria-hidden' ? ['true', 'false'].includes(value)
+                        : key === 'text-anchor' ? ['start', 'middle', 'end'].includes(value)
+                          : key === 'pointer-events' ? value === 'none'
+                            : key === 'tabindex' ? value === '0'
+                              : key === 'role' ? value === 'group'
+                                : key === 'aria-label' ? /^[\p{L}\p{N}\s.,:;=()+–°-]+$/u.test(value)
+                                  : key === 'data-chart-point' ? ['Lý thuyết', 'Mô phỏng'].includes(value)
+                                    : ['data-volume', 'data-ph', 'data-equivalence-volume'].includes(key) ? finiteNumbers(value) : false;
       if (!allowed) return false;
       attributes = attributes.slice(attribute[0].length);
     }

@@ -106,6 +106,26 @@ h3 { margin-bottom: 8px; font-size: 1.1rem; }
 .curve-line { fill: none; stroke: var(--teal); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; transition: opacity 180ms ease; }
 .curve-point { fill: var(--teal); opacity: 0.86; transition: opacity 180ms ease, r 180ms ease; }
 .curve-current { fill: var(--gold); stroke: white; stroke-width: 2; }
+.button-reset { color: var(--teal); background: #fff8ed; border: 2px solid var(--gold); }
+.control-help, .chart-readout { color: var(--ink-soft); font-size: 12px; line-height: 1.6; }
+.theory-panel { margin-top: 16px; padding: 18px; border: 1px solid var(--line); border-radius: 12px; background: #f3f8f6; overflow-wrap: anywhere; }
+.theory-panel h3 { margin: 0 0 10px; }
+.theory-panel p { margin: 6px 0; font-size: 13px; }
+.theory-panel[data-status="stale"] { border-color: var(--gold); }
+.theory-metrics { display: flex; flex-wrap: wrap; gap: 12px 28px; margin-top: 12px; }
+.theory-metrics strong { display: block; margin-top: 4px; color: var(--teal); font-size: 20px; }
+.chart-style-label { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 12px; }
+.chart-style-label select { max-width: 100%; min-height: 38px; padding: 6px; border: 1px solid var(--line); border-radius: 8px; background: #f8fbfa; color: var(--ink); }
+.titration-chart { inset: 0; width: 100%; height: 100%; overflow: hidden; }
+.titration-chart text { font-size: 11px; fill: var(--ink-soft); }
+.titration-chart .axis-label-x, .titration-chart .axis-label-y { font-weight: 700; }
+.chart-grid { stroke: #dbe8e5; stroke-width: 1; }
+.curve-theory-line { fill: none; stroke: #8c72b5; stroke-width: 1.5; stroke-dasharray: 4 4; opacity: 0.65; }
+.curve-theory-point { fill: #8c72b5; opacity: 0.65; }
+.legend-dot.theory { background: #8c72b5; }
+.curve-point, .curve-theory-point { cursor: crosshair; }
+.curve-point:focus, .curve-theory-point:focus { outline: none; stroke: var(--gold); stroke-width: 3; }
+.chart-readout { min-height: 38px; margin: 8px 0 0; overflow-wrap: anywhere; }
 .curve-half, .curve-equivalence, .curve-endpoint { stroke-width: 1.5; stroke-dasharray: 4 4; opacity: 0.75; }
 .curve-half { stroke: #8c72b5; }
 .curve-equivalence { stroke: var(--gold); }
@@ -270,3 +290,51 @@ td[colspan] { color: var(--ink-soft); text-align: center; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
 }
+
+/* Fullscreen keeps the same viewport; ResizeObserver resizes WebGL and camera. */
+.vessel-stage:fullscreen, .vessel-stage.vessel-expanded { width: 100%; height: 100dvh; max-height: none; display: flex; flex-direction: column; background: #eaf2ee; border-radius: 0; padding: 1rem; }
+.vessel-stage.vessel-expanded { position: fixed; inset: 0; z-index: 1000; }
+.vessel-stage:fullscreen .vessel-viewport, .vessel-expanded .vessel-viewport { flex: 1; min-height: 160px; height: auto; }
+.vessel-toolbar { flex-wrap: wrap; gap: .5rem; }
+
+/* Scientific learning home, sharing the existing cream/teal/gold palette. */
+.research-hero { align-items: center; padding-block: 2rem; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: .65rem; margin: 1rem 0; }
+.hero-caption { color: var(--muted, #5b6d64); font-size: .9rem; }
+.hero-science svg { width: 100%; height: auto; display: block; }
+.home-section { margin-block: 2.5rem; scroll-margin-top: 1rem; }
+.catalog-tools { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-block: 1rem; }
+.catalog-tools label, #quick-prediction label, .faq-form label { display: grid; gap: .4rem; }
+.chemical-grid, .team-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.chemical-card, .team-card { background: #fffdf8; border: 1px solid #d9e4dc; border-radius: 16px; padding: 1.3rem; min-width: 0; overflow-wrap: anywhere; }
+.chemical-card h3 { font-size: 1.7rem; color: #176b64; margin: .5rem 0; }
+.chemical-constant { font-variant-numeric: tabular-nums; font-size: .9rem; }
+.home-learning-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.3rem; }
+.home-learning-grid .panel { min-width: 0; }
+.home-learning-grid form > .button { margin-top: 1rem; }
+.quiz-option { display: flex; align-items: center; gap: .6rem; margin-block: .7rem; padding: .7rem; border-radius: 8px; background: #edf4ef; }
+.quiz-option input { width: auto; }
+fieldset { border: 0; padding: 0; margin: 1rem 0; min-width: 0; }
+legend { font-weight: 600; }
+.faq-form { display: flex; align-items: end; gap: 1rem; margin-block: 1rem; }
+.faq-form label { flex: 1; }
+.team-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.footer-inner { align-items: start; gap: 1rem; }
+.footer-inner strong { display: block; max-width: 780px; }
+[hidden] { display: none !important; }
+@media (max-width: 850px) { .chemical-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .home-learning-grid { grid-template-columns: 1fr; } }
+@media (max-width: 520px) { .chemical-grid, .team-grid, .catalog-tools { grid-template-columns: 1fr; } .faq-form { flex-direction: column; align-items: stretch; } .hero-copy h1 { font-size: 2rem; } .hero-actions .button { white-space: normal; } .vessel-stage:fullscreen, .vessel-stage.vessel-expanded { padding: .4rem; } }
+
+.catalog-tools input, .catalog-tools select, #quick-prediction input, #quick-prediction select, .faq-form input { width: 100%; min-width: 0; min-height: 44px; padding: .65rem .8rem; border: 1px solid #d3e2d8; border-radius: 9px; background: #f5f9f6; color: #193d39; font: inherit; }
+.catalog-tools input:focus, #quick-prediction input:focus, .faq-form input:focus { outline: 2px solid #176b64; outline-offset: 2px; }
+#quick-prediction .form-grid { margin: 1rem 0; }
+
+/* Chemical reference details remain light and use native accessible disclosures. */
+.chemical-detail { margin: 1rem 0 2rem; scroll-margin-top: 2rem; overflow-wrap: anywhere; }
+.chemical-detail h3 { color: #176b64; font-size: clamp(1.2rem, 3vw, 1.8rem); }
+.chemical-detail details { border-top: 1px solid #d9e4dc; padding: .9rem 0; }
+.chemical-detail summary { cursor: pointer; font-weight: 600; line-height: 1.6; }
+.chemical-equation { font-size: 1.1rem; color: #176b64; }
+.chemical-status { color: #176b64; font-weight: 600; }
+.chemical-simulation-links { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1rem; }
+.chemical-card .button, .chemical-simulation-links .button { white-space: normal; max-width: 100%; }

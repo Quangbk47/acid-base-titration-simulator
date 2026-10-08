@@ -1,3 +1,4 @@
+import { chemicalById } from './chemicals.js';
 import { celsiusToKelvin, mlToL } from '../chemistry/units.js';
 
 // Boundary-facing case data uses the units shown in the UI. Convert it explicitly
@@ -13,7 +14,7 @@ export const standardCases = Object.freeze([
 ]);
 
 export const weakAcidCases = Object.freeze([
-  Object.freeze({ id: 'acetic-acid-naoh', label: 'CH₃COOH 0,100 M · NaOH 0,100 M', acid: 'CH₃COOH', base: 'NaOH', CaM: 0.1, VaMl: 25, CbM: 0.1, Ka: 1.8e-5, VbMl: 0, temperatureC: 25 }),
+  Object.freeze({ id: 'acetic-acid-naoh', label: 'CH₃COOH 0,100 M · NaOH 0,100 M', acid: 'CH₃COOH', base: 'NaOH', CaM: 0.1, VaMl: 25, CbM: 0.1, Ka: chemicalById('acetic').Ka, VbMl: 0, temperatureC: 25 }),
 ]);
 
 export const standardCaseToSolverInput = ({ CaM, VaMl, CbM, VbMl, temperatureC }) =>

@@ -60,7 +60,8 @@ try {
     check(actual.volume === volume && actual.chartVolume === volume, `State/chart volume at ${volume} mL`, actual);
     check(actual.buret === 50 - volume && actual.total === 25 + volume && actual.modelTotal === actual.total, `Volume conservation at ${volume} mL`, actual);
     check(actual.modelPh === actual.ph && actual.chartPh === actual.ph, `3D/chemistry/chart share pH at ${volume} mL`, actual);
-    const expectedY = 16 + ((14 - expectedPh) / 14) * (actual.svgHeight - 46);
+    // Plot padding is 28px above and 56px below to reserve numbered axes.
+    const expectedY = 28 + ((14 - expectedPh) / 14) * (actual.svgHeight - 84);
     check(Math.abs(actual.svgY - expectedY) < 0.4, `Chart current point at ${volume} mL`, actual);
     if (volume === 25) {
       check(actual.stage === 'at-equivalence' && actual.ph === 7, '250 drops reach 25 mL / pH 7', actual);

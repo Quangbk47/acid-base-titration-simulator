@@ -82,7 +82,7 @@ try {
   const pausedPh = await page.locator('[data-result="ph"]').textContent();
   assert.equal((await stage.locator('[data-vessel-ph]').textContent()).replace(',', '.'), pausedPh);
   assert.equal(await page.locator('[data-curve-rows] tr:last-child td:nth-child(2)').textContent(), pausedPh);
-  await page.getByRole('button', { name: 'Đặt lại trạng thái', exact: true }).click();
+  await page.getByRole('button', { name: 'Reset thí nghiệm', exact: true }).click();
   assert.equal(await canvas.getAttribute('data-drop-count'), '0');
   assert.equal(await canvas.getAttribute('data-buret-ml'), '50.00');
   // Drive actual UI steps through and past equivalence; solver/chart remain authoritative.
@@ -160,7 +160,7 @@ try {
   assert.equal(await canvas.getAttribute('data-indicator'), 'idle');
   assert.equal(await stage.locator('[data-vessel-ph]').textContent(), '—');
   assert.equal(await page.locator('[data-chart-empty]').isVisible(), true, 'Case change restores the empty chart state');
-  await page.getByRole('link', { name: 'Thư viện ca', exact: true }).click();
+  await page.getByRole('link', { name: 'Trang chủ', exact: true }).click();
   await page.waitForURL(new URL('/', baseUrl).href, { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => document.querySelector('[data-route="home"]').getAttribute('aria-current') === 'page' && document.querySelector('[data-view="simulate"]').hidden);
   const homeWidth = await page.locator('#main-content').evaluate((element) => element.clientWidth);

@@ -12,7 +12,8 @@ const DOMINANT_REACTION = 'HA + OH⁻ → A⁻ + H₂O';
 const LOG_H_MIN = -14;
 const LOG_H_MAX = 0;
 const MAX_ITERATIONS = 160;
-const LOG_TOLERANCE = 1e-12;
+// Continue bisection until charge balance can reach RESIDUAL_TOLERANCE.
+const LOG_TOLERANCE = 1e-14;
 const RESIDUAL_TOLERANCE = 1e-14;
 
 const invalid = (code, message, fields = {}) => ({ error: createInputError(code, message, fields) });

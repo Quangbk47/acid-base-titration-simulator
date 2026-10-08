@@ -1,3 +1,4 @@
+import { initFullscreen } from './fullscreen.js';
 import { buildVesselModel } from './vesselModel.js';
 
 // Load WebGL only when this viewport is visible; a failed renderer cannot stop UI.
@@ -7,6 +8,8 @@ export function initVesselView({ root = document, loadScene = () => import('./ve
   const viewport = stage.querySelector('[data-vessel-viewport]');
   const notice = stage.querySelector('[data-vessel-notice]');
   const reset = stage.querySelector('[data-camera-reset]');
+  const selectedTitrant = () => root.querySelector('#titrant')?.value || 'NaOH';
+  const fullscreen = initFullscreen(stage);
   let latestState = null;
   let scene = null;
   let loading = false;
@@ -25,7 +28,7 @@ export function initVesselView({ root = document, loadScene = () => import('./ve
       if (disposed) return;
       scene = module.createVesselScene({ viewport, onError: () => fallback('3D không khả dụng. Hình minh họa và các chức năng mô phỏng vẫn hoạt động.') });
       if (scene.failed) return;
-      scene.update(latestState, { animate: false });
+      scene.update(latestState, { animate: false, titrantName: selectedTitrant() });
       scene.setVisible(visible);
       stage.dataset.renderer = 'ready';
       if (notice) notice.textContent = '';
@@ -51,8 +54,8 @@ export function initVesselView({ root = document, loadScene = () => import('./ve
       text('[data-vessel-buret]', `${model.remainingMl.toFixed(2).replace('.', ',')} mL`);
       text('[data-vessel-total]', state ? `${model.totalMl.toFixed(2).replace('.', ',')} mL` : '—');
       text('[data-vessel-ph]', model.pH === null ? '—' : model.pH.toFixed(2).replace('.', ','));
-      scene?.update(state);
+      scene?.update(state, { titrantName: selectedTitrant() });
     },
-    dispose() { disposed = true; observer.disconnect(); reset?.removeEventListener('click', resetCamera); scene?.dispose(); },
+    dispose() { fullscreen.dispose(); disposed = true; observer.disconnect(); reset?.removeEventListener('click', resetCamera); scene?.dispose(); },
   };
 }

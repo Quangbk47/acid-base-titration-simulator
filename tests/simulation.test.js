@@ -30,13 +30,15 @@ test('SIM-01: addDrop increments deterministically and solver receives the new v
   assert.equal(created.state.addedVolumeMl, 0);
 });
 
-test('SIM-02: reset restores the original added volume without mutating prior state', () => {
+test('SIM-02: experiment reset starts at zero even for seeded cases without mutating prior state', () => {
   const created = createSimulationState({ ...input, Vb: 0.0125 });
   const stepped = addDrop(created.state);
   const reset = resetSimulation(stepped.state);
   assert.equal(reset.ok, true);
-  assert.equal(reset.state.addedVolumeMl, 12.5);
-  assert.equal(reset.state.chemistryInput.Vb, 0.0125);
+  assert.equal(reset.state.addedVolumeMl, 0);
+  assert.equal(reset.state.initialAddedVolumeMl, 0);
+  assert.equal(reset.state.chemistryInput.Vb, 0);
+  assert.equal(reset.state.initialBuretVolumeMl, created.state.initialBuretVolumeMl);
   assert.equal(reset.state.dropCount, 0);
   assert.equal(stepped.state.addedVolumeMl, 12.55);
 });

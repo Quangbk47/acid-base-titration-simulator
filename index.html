@@ -23,7 +23,7 @@
           </span>
         </a>
         <nav class="primary-nav" aria-label="Điều hướng chính">
-          <a data-route="home" href="/">Thư viện ca</a>
+          <a data-route="home" href="/">Trang chủ</a>
           <a data-route="simulate" href="/simulate">Mô phỏng</a>
         </nav>
         <div id="app-status" class="status-pill" role="status" aria-live="polite">
@@ -34,54 +34,26 @@
 
     <main id="main-content" class="container page-content">
       <section data-view="home" aria-labelledby="home-title">
-        <div class="hero-grid">
-          <div class="hero-copy">
-            <p class="eyebrow">NCKH · Interactive learning</p>
-            <h1 id="home-title">Khám phá đường cong chuẩn độ, từng giọt một.</h1>
-            <p class="lead">
-              Không gian học tập trực quan cho mô hình chuẩn độ axit–bazơ. Phiên bản
-              Chemistry engine HCl–NaOH của Phase 1 đã được kiểm chứng; giao diện
-              mô phỏng từng giọt, đường cong và trạng thái chỉ thị ở Phase 2.
-            </p>
-            <a class="button button-primary" href="/simulate">Vào không gian mô phỏng</a>
-          </div>
-          <aside class="hero-note" aria-label="Trạng thái phiên bản">
-            <span class="note-icon" aria-hidden="true">✦</span>
-            <p class="eyebrow">Phase 1 · Chemistry foundation</p>
-            <h2>Lõi hóa học đã sẵn sàng</h2>
-            <p>
-              HCl–NaOH có fixture và test độc lập; mô phỏng tương tác, đồ thị và
-              phenolphthalein đang được kiểm chứng trên branch Phase 2.
-            </p>
-          </aside>
+        <div class="hero-grid research-hero">
+          <div class="hero-copy"><p class="eyebrow">Phòng thí nghiệm số · Axit–bazơ</p><h1 id="home-title">Hiểu cân bằng hóa học qua từng giọt chuẩn độ.</h1><p class="lead">Từ số mol đến đường cong pH–V: dự đoán, quan sát mô hình 3D và giải thích kết quả bằng mô hình tính toán ở 25 °C.</p><div class="hero-actions"><a class="button button-primary" href="/simulate">Bắt đầu mô phỏng</a><a class="button button-secondary" href="#chemical-library">Tra cứu hóa học</a><a class="button button-quiet" href="#research-project">Khám phá dự án</a></div><p class="hero-caption">6 cặp và chiều chuẩn độ · Mô hình lý tưởng · Không cần đăng nhập</p></div>
+          <aside class="hero-science" aria-label="Minh họa chuẩn độ và đường cong pH"><svg viewBox="0 0 420 330" role="img" aria-label="Buret nhỏ giọt vào bình, bên cạnh là đường cong chuẩn độ"><rect x="20" y="15" width="380" height="300" rx="24" fill="#e6f0eb"/><path d="M65 280H190M85 280V40H160" fill="none" stroke="#6d7a77" stroke-width="8"/><path d="M138 40V168L150 188L162 168V40Z" fill="#ffffff" fill-opacity=".7" stroke="#176b64" stroke-width="2"/><path d="M143 60H157V151H143Z" fill="#94c3ce"/><path d="M130 163H170" stroke="#b48839" stroke-width="6"/><path d="M150 197Q138 210 150 214Q162 210 150 197" fill="#5b9fb1"/><path d="M136 225V238L108 276Q108 289 150 289Q192 289 192 276L164 238V225" fill="#fff" fill-opacity=".6" stroke="#176b64" stroke-width="2"/><path d="M120 269Q150 259 180 269L185 278Q150 293 115 278Z" fill="#efb2cf"/><path d="M222 248V74M222 248H369" fill="none" stroke="#697e75" stroke-width="2"/><path d="M226 232L250 226L279 215L288 203L292 124L304 101L365 90" fill="none" stroke="#176b64" stroke-width="4"/><path d="M292 74V248" stroke="#b48839" stroke-dasharray="5 5"/><text x="220" y="60" fill="#176b64">pH</text><text x="308" y="270" fill="#176b64">V (mL)</text><text x="250" y="305" fill="#596e65">équilibre · cân bằng</text></svg></aside>
         </div>
-
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Published library</p>
-            <h2>Thư viện ca chuẩn</h2>
-          </div>
-          <span class="muted-label">Chưa có ca được xuất bản</span>
+        <section id="chemical-library" class="home-section" aria-labelledby="catalog-title"><div class="section-heading"><div><p class="eyebrow">Dữ liệu dùng chung với engine</p><h2 id="catalog-title">Tra cứu axit–bazơ</h2></div><span data-catalog-count role="status"></span></div><div class="catalog-tools"><label for="chemical-search">Tên Việt, tên Anh hoặc công thức<input id="chemical-search" type="search" placeholder="Ví dụ: axit oxalic, CH3COOH…" /></label><label for="chemical-filter">Phân loại<select id="chemical-filter"><option value="">Tất cả</option><option value="acid">Axit</option><option value="base">Bazơ</option><option value="strong-acid">Axit mạnh</option><option value="weak-acid">Axit yếu</option><option value="strong-base">Bazơ mạnh</option><option value="weak-base">Bazơ yếu</option><option value="polyacid">Axit nhiều nấc</option><option value="ion">Ion có tính axit/bazơ</option></select></label></div><section id="chemical-detail" class="chemical-detail panel" data-chemical-detail aria-label="Chi tiết hóa chất" hidden></section><div class="chemical-grid" data-chemical-catalog></div></section>
+        <div class="home-learning-grid">
+          <section class="panel" aria-labelledby="quick-title"><p class="eyebrow">Kiểm tra trước khi chạy</p><h2 id="quick-title">Dự đoán nhanh</h2><form id="quick-prediction"><label for="quick-pair">Cặp bình – buret</label><select id="quick-pair" name="pairId"></select><p data-quick-labels>Bình: HCl · Buret: NaOH</p><div class="form-grid"><label>Nồng độ chất trong bình (M)<input name="analyteConcentrationM" type="text" inputmode="decimal" value="0.1" /></label><label>Thể tích ban đầu (mL)<input name="analyteVolumeMl" type="text" inputmode="decimal" value="25" /></label><label>Nồng độ chất trong buret (M)<input name="titrantConcentrationM" type="text" inputmode="decimal" value="0.1" /></label></div><button class="button button-primary" type="submit">Dự đoán</button></form><p class="notice" data-quick-output role="status">Nhập thông số để tính thể tích và pH tương đương bằng chemistry engine.</p><a class="button button-secondary" data-quick-transfer hidden href="/simulate">Chuyển thông số sang mô phỏng</a></section>
+          <section class="panel" aria-labelledby="quiz-title"><p class="eyebrow">Học bằng giải thích</p><h2 id="quiz-title">Thử thách hóa học</h2><p data-quiz-progress></p><form data-quiz-form><fieldset><legend data-quiz-question></legend><div data-quiz-options></div></fieldset><button class="button button-primary" type="submit">Kiểm tra đáp án</button></form><p class="notice" data-quiz-feedback role="status"></p><div class="hero-actions"><button class="button button-quiet" data-quiz-prev type="button">Câu trước</button><button class="button button-quiet" data-quiz-next type="button">Câu tiếp</button><a class="button button-secondary" data-quiz-link href="/simulate">Thử trong mô phỏng</a></div></section>
         </div>
-        <div class="empty-state" role="status">
-          <div class="empty-icon" aria-hidden="true">⊙</div>
-          <h3>Ca mô phỏng HCl–NaOH</h3>
-          <p>
-            Ca HCl–NaOH đã sẵn sàng để mở trong không gian mô phỏng. CH₃COOH–NaOH
-            vẫn thuộc Phase 3.
-          </p>
-          <a class="button button-secondary" href="/simulate">Xem giao diện mô phỏng</a>
-        </div>
+        <section class="panel home-section" aria-labelledby="faq-title"><p class="eyebrow">Hướng dẫn học tập</p><h2 id="faq-title">Trợ lý theo quy tắc</h2><p>Tra cứu câu trả lời từ bộ FAQ đã biên soạn; không phải AI tạo sinh.</p><form class="faq-form" data-faq-form><label for="faq-question">Câu hỏi về chuẩn độ<input id="faq-question" name="question" maxlength="500" placeholder="Vì sao điểm tương đương không luôn có pH 7?" /></label><button class="button button-primary" type="submit">Tra cứu hướng dẫn</button></form><div class="hero-actions" data-faq-topics></div><p class="notice" data-faq-output role="status">Chọn chủ đề hoặc nhập câu hỏi về chuẩn độ.</p><a href="/simulate">Mở phòng thí nghiệm số →</a></section>
+        <section id="research-project" class="home-section" aria-labelledby="project-title"><p class="eyebrow">Dự án nghiên cứu khoa học</p><h2 id="project-title" data-project-title></h2><p data-project-adviser></p><p>Kết hợp Công nghệ thông tin và Hóa học – Môi trường để mô hình hóa cân bằng axit–bazơ, trực quan hóa thí nghiệm và hỗ trợ học tập. Dữ liệu hiển thị là kết quả tính toán, không thay thế đo đạc thực nghiệm.</p><div class="team-grid" data-project-team></div></section>
       </section>
 
       <section data-view="simulate" aria-labelledby="simulate-title" hidden>
         <div class="page-heading">
           <div>
-            <p class="eyebrow">Guest workspace · Phase 2 input</p>
+            <p class="eyebrow">Phòng thí nghiệm số · 25 °C</p>
             <h1 id="simulate-title">Không gian mô phỏng</h1>
             <p class="lead">
-              Nhập dữ liệu HCl–NaOH để tính trạng thái cân bằng bằng chemistry engine
-              đã được kiểm chứng ở Phase 1.
+              Chọn cặp hóa chất, dự đoán điểm tương đương và theo dõi trạng thái cân bằng khi nhỏ giọt.
             </p>
           </div>
           <span class="state-badge" data-simulation-state>Idle</span>
@@ -99,7 +71,7 @@
             <form id="titration-form" class="control-form" novalidate>
               <div class="simulation-fields">
               <div class="setup-selectors">
-              <p class="notice" role="note">HCl–NaOH ở 25 °C · thể tích nhập bằng mL, chemistry engine dùng L/K.</p>
+              <p class="notice" role="note">Mô hình cân bằng ở 25 °C · thể tích nhập bằng mL, chemistry engine dùng L/K.</p>
               <label for="case-selector">Ca chuẩn</label>
               <select id="case-selector" aria-label="Khôi phục ca chuẩn"></select>
 
@@ -107,8 +79,12 @@
             <select id="system-type" name="systemType" aria-describedby="system-type-error">
               <option value="strong-acid-strong-base">Axit mạnh – bazơ mạnh</option>
               <option value="weak-acid-strong-base">Axit yếu – bazơ mạnh</option>
-              <option value="strong-acid-weak-base">Axit mạnh – bazơ yếu</option>
+              <option value="strong-acid-weak-base">Axit mạnh – bazơ yếu (hai chiều)</option>
+              <option value="diprotic-acid-strong-base">Axit hai nấc – bazơ mạnh</option>
               </select>
+              <label for="chemical-pair">Cặp hóa chất (bình – buret)</label>
+              <select id="chemical-pair" name="pairId"></select>
+              <span class="field-error" data-error-for="pairId"></span>
               <span id="system-type-error" class="field-error" data-error-for="systemType" aria-live="polite"></span>
               </div>
 
@@ -132,12 +108,12 @@
                   <span id="analyte-volume-error" class="field-error" data-error-for="analyteVolumeMl" aria-live="polite"></span>
                 </div>
                 <div>
-                  <label for="titrant-concentration">Nồng độ NaOH (M)</label>
+                  <label for="titrant-concentration">Nồng độ <span data-titrant-label>NaOH</span> (M)</label>
                   <input id="titrant-concentration" name="titrantConcentrationM" type="text" inputmode="decimal" aria-describedby="titrant-concentration-error" />
               <span id="titrant-concentration-error" class="field-error" data-error-for="titrantConcentrationM" aria-live="polite"></span>
             </div>
                 <div>
-                  <label for="buret-volume">Thể tích NaOH ban đầu (mL)</label>
+                  <label for="buret-volume">Thể tích <span data-titrant-label>NaOH</span> ban đầu trong buret (mL)</label>
                   <input id="buret-volume" name="buretVolumeMl" type="text" inputmode="decimal" value="50" aria-describedby="buret-volume-error" />
                   <span id="buret-volume-error" class="field-error" data-error-for="buretVolumeMl" aria-live="polite"></span>
                   <input id="added-volume" name="addedVolumeMl" type="hidden" value="0" />
@@ -145,13 +121,26 @@
               </div>
               </div>
 
+              <section class="theory-panel" data-theory aria-labelledby="theory-title">
+                <h3 id="theory-title">Kết quả lý thuyết</h3>
+                <p data-theory-status role="status"></p>
+                <p data-theory-reaction></p>
+                <p data-theory-moles></p>
+                <p data-theory-balance></p>
+                <p data-theory-formula></p><p data-theory-notes class="control-help"></p>
+                <div class="theory-metrics"><span>V tương đương <strong data-theory-volume>—</strong></span><span>pH tương đương <strong data-theory-ph>—</strong></span></div>
+                <p class="control-help">Đây là dự đoán trước khi chạy. pH và thể tích mô phỏng hiện tại được hiển thị ở mô hình, đồ thị và bảng hóa học bên dưới.</p>
+              </section>
+
               <div class="simulation-controls">
               <div class="control-group" aria-label="Điều khiển mô phỏng">
+                <button class="button button-secondary" type="button" id="predict-equivalence">Dự đoán điểm tương đương</button>
+                <button class="button button-secondary" type="button" id="export-excel">Xuất Excel (.xlsx)</button>
                 <button class="button button-primary" type="submit">Tính trạng thái</button>
                 <button class="button button-secondary" type="button" id="add-drop">Thêm giọt 0,10 mL</button>
                 <button class="button button-secondary" type="button" id="run-simulation">Chạy tự động</button>
                 <button class="button button-quiet" type="button" id="pause-simulation">Tạm dừng</button>
-                <button class="button button-quiet" type="button" id="reset-simulation">Đặt lại trạng thái</button>
+                <button class="button button-reset" type="button" id="reset-simulation">Reset thí nghiệm</button>
               </div>
               <div class="speed-control">
               <label for="simulation-speed">Tốc độ mô phỏng</label>
@@ -159,8 +148,11 @@
                 <option value="slow">Chậm</option><option value="normal" selected>Chuẩn</option><option value="fast">Nhanh</option>
               </select>
               </div>
-              <div class="control-meta"><span>NaOH đã chảy vào bình</span><strong data-result="added-volume">0,00 mL</strong></div>
+              <div class="control-meta"><span><span data-titrant-label>NaOH</span> đã chảy vào bình</span><strong data-result="added-volume">0,00 mL</strong></div>
               </div>
+              <p class="control-help">“Dự đoán điểm tương đương” chỉ xem lý thuyết, không tiêu hao dung dịch. “Tính trạng thái” khởi tạo hoặc tính lại trạng thái hiện tại. Điểm kết thúc chỉ thị khác điểm tương đương hóa học. Reset đưa thí nghiệm về 0 mL, giữ thông số đã chọn và nạp lại buret để chạy ngay.</p>
+
+              <p data-export-status role="status"></p>
               <p class="form-error" data-form-error role="alert"></p>
             </form>
           </section>
@@ -177,12 +169,13 @@
             <div class="vessel-stage" data-vessel-3d data-renderer="loading" aria-label="Buret chứa NaOH phía trên bình tam giác, mô hình tương tác 3D">
               <div class="vessel-toolbar">
                 <span class="vessel-title"><i></i> Bàn thí nghiệm <small>3D</small></span>
+                <button class="button button-quiet" type="button" data-vessel-fullscreen aria-pressed="false">Toàn màn hình</button>
                 <button class="button button-quiet camera-reset" type="button" data-camera-reset disabled aria-label="Đặt lại góc nhìn camera">↺ Góc nhìn ban đầu</button>
               </div>
               <div class="vessel-viewport" data-vessel-viewport>
               <div class="vessel-fallback">
               <div class="buret" aria-hidden="true">
-                <span class="buret-label">NaOH · <strong data-buret-volume>50,00 mL</strong></span>
+                <span class="buret-label"><span data-titrant-label>NaOH</span> · <strong data-buret-volume>50,00 mL</strong></span>
                 <div class="buret-tube"><span></span></div>
                 <div class="buret-stopcock"></div>
                 <div class="buret-tip"></div>
@@ -192,7 +185,7 @@
               </div>
               </div>
               <div class="vessel-readouts">
-                <span><small>NaOH trong buret</small><strong data-vessel-buret>50,00 mL</strong></span>
+                <span><small><span data-titrant-label>NaOH</span> trong buret</small><strong data-vessel-buret>50,00 mL</strong></span>
                 <span><small>Dung dịch trong bình</small><strong data-vessel-total>25,00 mL</strong></span>
                 <span><small>pH cân bằng</small><strong data-vessel-ph>—</strong></span>
               </div>
@@ -213,18 +206,19 @@
               </div>
               <span class="panel-index">02</span>
             </div>
-            <div class="chart-placeholder" role="img" aria-label="Đồ thị pH theo thể tích chất chuẩn">
-              <span class="axis-y">pH</span>
-              <span class="axis-x">Thể tích chất chuẩn (mL)</span>
-              <div class="chart-grid-lines" aria-hidden="true"></div>
-              <svg class="titration-chart" data-chart aria-hidden="true"></svg>
+            <label class="chart-style-label" for="chart-style">Kiểu đường cong <select id="chart-style"><option value="points">Các điểm (kiểu hiện có)</option><option value="line">Nét liền nối dữ liệu mô phỏng</option></select></label>
+            <div class="chart-placeholder" role="group" aria-label="Đồ thị pH theo thể tích chất chuẩn">
+              <svg class="titration-chart" data-chart role="group" aria-label="Các điểm trên đồ thị pH–V"></svg>
               <div class="chart-empty-label" data-chart-empty>Nhập dữ liệu để tạo đường cong</div>
             </div>
+            <p class="chart-readout" data-chart-readout aria-live="polite">Rê chuột hoặc chạm vào điểm để xem V và pH.</p>
             <div class="legend" aria-label="Chú giải đồ thị">
-              <span><i class="legend-dot current"></i>Điểm hiện tại</span>
-              <span><i class="legend-dot milestone"></i>Nửa tương đương</span>
+              <span><i class="legend-dot current"></i><span data-simulation-legend>Dữ liệu mô phỏng · điểm</span></span>
+              <span><i class="legend-dot theory"></i><span data-theory-legend>Mẫu lý thuyết · điểm</span></span>
+              <span><i class="legend-dot equivalence"></i>Điểm hiện tại</span>
+              <span><i class="legend-dot milestone"></i>Nửa V tương đương cuối</span>
               <span><i class="legend-dot equivalence"></i>Điểm tương đương</span>
-              <span><i class="legend-dot endpoint"></i>Điểm kết thúc</span>
+              <span><i class="legend-dot endpoint"></i>Ngưỡng chỉ thị pH 8,2</span>
             </div>
             <div class="table-wrapper curve-table" tabindex="0" role="region" aria-label="Lịch sử chuẩn độ, cuộn để xem các giọt">
               <table>
@@ -246,8 +240,8 @@
           </div>
           <div class="chemistry-summary">
             <div class="metric-card"><span>pH hiện tại</span><strong data-result="ph">—</strong><small data-result="ph-label">Chưa tính</small></div>
-            <div class="metric-card"><span>Tổng thể tích</span><strong data-result="volume">—</strong><small>HCl + NaOH</small></div>
-            <div class="metric-card"><span>Chất dư</span><strong data-result="excess">—</strong><small>Ion quyết định pH</small></div>
+            <div class="metric-card"><span>Tổng thể tích</span><strong data-result="volume">—</strong><small><span data-analyte-label>HCl</span> + <span data-titrant-label>NaOH</span></small></div>
+            <div class="metric-card"><span>Chất dư</span><strong data-result="excess">—</strong><small>Đối chiếu cân bằng hóa học</small></div>
             <div class="metric-card"><span>Giai đoạn</span><strong data-result="stage">—</strong><small>So với tương đương</small></div>
           </div>
           <div class="chemistry-table table-wrapper">
@@ -285,7 +279,7 @@
               <div>
                 <label for="guided-excess">Chất dư</label>
                 <select id="guided-excess" name="excess">
-                  <option value="HA">HA</option>
+                  <option value="HA">HA (axit yếu)</option><option value="H⁺">H⁺</option><option value="NH₃">NH₃</option><option value="Đương lượng axit còn chuẩn độ">Đương lượng axit còn chuẩn độ</option>
                   <option value="OH⁻">OH⁻</option>
                   <option value="none">Không có chất dư</option>
                 </select>
@@ -298,18 +292,11 @@
       </section>
     </main>
 <section id="knowledge-view" class="container panel" aria-labelledby="limits-heading">
-      <h2 id="limits-heading">Giới hạn mô hình & Cảnh báo khoa học (Phase 5)</h2>
-      <ul class="limits-list">
-        <li><strong>Phạm vi nồng độ:</strong> Mô hình toán học tối ưu cho nồng độ từ 0.01M đến 1.0M. Các nồng độ quá loãng hoặc quá đặc có thể sinh sai số do bỏ qua hệ số hoạt độ ion.</li>
-        <li><strong>Giả định nhiệt độ:</strong> Các hằng số (Ka, Kb, Kw) hiện được nội suy mặc định ở điều kiện chuẩn 25°C.</li>
-        <li><strong>Hệ phản ứng:</strong> Thuật toán hiện tại xử lý phản ứng đơn axit – đơn bazơ. Phản ứng đa nấc (như H₃PO₄) chưa được hỗ trợ.</li>
-        <li><strong>Tham chiếu:</strong> Các mốc chuẩn độ đã được đối chiếu chéo (Cross-check) với tính toán thủ công tại Phase 4, dung sai an toàn ±0.02 pH.</li>
-      </ul>
+      <h2 id="limits-heading">Giới hạn mô hình &amp; diễn giải khoa học</h2><ul class="limits-list"><li><strong>Điều kiện:</strong> Hằng số cố định tại 25 °C, Kw = 10⁻¹⁴. Đây là mô hình lý tưởng, không nội suy nhiệt độ.</li><li><strong>Phạm vi:</strong> HCl–NaOH, CH₃COOH–NaOH, HCl–NH₃ (và chiều NH₃–HCl), H₂C₂O₄–NaOH hai nấc, HCl–Ca(OH)₂ đã hòa tan. Các hệ khác chưa được hỗ trợ.</li><li><strong>Giới hạn:</strong> Bỏ qua hoạt độ ion, hấp thụ CO₂, động học, sai số dụng cụ và kết tủa. Ca(OH)₂ bị giới hạn bởi độ tan lý tưởng. Nồng độ quá loãng hoặc quá đặc cần diễn giải thận trọng.</li><li><strong>Chỉ thị:</strong> Màu phenolphthalein dựa trên khoảng pH 8,2–10; điểm kết thúc không đồng nghĩa điểm tương đương và không phù hợp cho mọi cặp.</li><li><strong>Dữ liệu:</strong> Đồ thị và Excel là kết quả mô phỏng, không phải số liệu đo thực nghiệm. <a href="https://openstax.org/books/chemistry-2e/pages/h-ionization-constants-of-weak-acids" target="_blank" rel="noopener noreferrer">Tham khảo hằng số OpenStax Chemistry 2e</a>.</li></ul>
     </section>
     <footer class="site-footer">
       <div class="container footer-inner">
-        <span>Acid–Base Titration Simulator · Phase 2 Simulation</span>
-        <span>HTML · CSS · JavaScript modules</span>
+        <div><strong data-project-title></strong><p data-project-adviser></p><small data-project-copyright>© 2026 Acid–Base Titration Simulator · Nhóm thực hiện đề tài</small></div><a data-project-repository href="https://github.com/Quangbk47/acid-base-titration-simulator/tree/main" target="_blank" rel="noopener noreferrer">Mã nguồn dự án</a>
       </div>
     </footer>
 

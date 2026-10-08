@@ -1,3 +1,4 @@
+import { renderProject, initHomeView } from './ui/homeView.js';
 import { chemistryModuleStatus } from './chemistry/index.js';
 import { standardCases } from './data/standardCases.js';
 import { firebaseModuleStatus } from './firebase/index.js';
@@ -13,10 +14,12 @@ const route = initNavigation({
 
 const status = document.querySelector('#app-status');
 if (status) {
-  status.textContent = 'Phase 2 · Mô phỏng';
+  status.textContent = 'Phòng thí nghiệm số';
   status.dataset.state = baselineState.screen;
 }
 
+renderProject();
+if (route === 'home') initHomeView();
 const vesselView = initVesselView();
 const inputForm = initInputForm({ form: document.querySelector('#titration-form'), onStateChange: (state) => vesselView.update(state) });
 window.addEventListener('pagehide', (event) => {

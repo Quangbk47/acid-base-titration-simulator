@@ -1,13 +1,16 @@
+import { pairForValues } from '../data/titrationPairs.js';
+import { chemicalById, calciumSolubilityM } from '../data/chemicals.js';
 import { celsiusToKelvin, mlToL } from '../chemistry/index.js';
 
 export const TITRATION_SYSTEMS = Object.freeze({
+  'diprotic-acid-strong-base': Object.freeze({ analyte: 'H₂C₂O₄', titrant: 'NaOH', solver: 'diprotic-acid-strong-base' }),
   'strong-acid-strong-base': Object.freeze({
     analyte: 'HCl',
     titrant: 'NaOH',
     solver: 'strong-strong',
   }),
   'weak-acid-strong-base': Object.freeze({ analyte: 'CH₃COOH', titrant: 'NaOH', solver: 'weak-acid-strong-base' }),
-  'strong-acid-weak-base': Object.freeze({ analyte: 'HCl', titrant: 'NH₃', solver: 'weak-base-strong-acid' }),
+  'strong-acid-weak-base': Object.freeze({ analyte: 'NH₃', titrant: 'HCl', solver: 'weak-base-strong-acid' }),
 });
 
 const REQUIRED_FIELDS = Object.freeze([
@@ -26,7 +29,9 @@ const parseNumber = (value) => {
 
 export function validateTitrationForm(values = {}) {
   const errors = {};
+  const pair = pairForValues(values);
   const system = Object.hasOwn(TITRATION_SYSTEMS, values.systemType) ? TITRATION_SYSTEMS[values.systemType] : null;
+  if (values.pairId && !pair) errors.pairId = 'Cặp hóa chất không phù hợp loại chuẩn độ.';
   if (!values.systemType) errors.systemType = 'Chọn loại chuẩn độ.';
   else if (!system) errors.systemType = 'Loại chuẩn độ này chưa được chemistry engine hỗ trợ.';
 
@@ -66,14 +71,16 @@ export function validateTitrationForm(values = {}) {
     else if (!(kb > 0 && kb < 1)) errors.Kb = 'Kb phải thỏa mãn 0 < Kb < 1.';
   }
 
+  if (pair?.id === 'hcl-calcium' && parsed.titrantConcentrationM > calciumSolubilityM * (1 + 1e-12)) errors.titrantConcentrationM = `Ca(OH)₂ đã hòa tan phải ≤ ${calciumSolubilityM.toFixed(6)} M ở 25 °C (độ tan lý tưởng).`;
   if (Object.keys(errors).length > 0) return { ok: false, errors };
 
   return {
     ok: true,
     value: {
       systemType: values.systemType,
-      analyte: system.analyte,
-      titrant: system.titrant,
+      analyte: pair?.analyte ?? system.analyte,
+      ...(values.pairId ? { pairId: pair.id } : {}),
+      titrant: pair?.titrant ?? system.titrant,
       solver: system.solver,
       analyteConcentrationM: parsed.analyteConcentrationM,
       analyteVolumeMl: parsed.analyteVolumeMl,
@@ -87,6 +94,12 @@ export function validateTitrationForm(values = {}) {
 }
 
 export function toChemistryInput(value) {
+  if (['hcl-nh3', 'oxalic-naoh', 'hcl-calcium'].includes(value.pairId)) return Object.freeze({
+    Ca: value.analyteConcentrationM, Va: mlToL(value.analyteVolumeMl), Cb: value.titrantConcentrationM, Vb: mlToL(value.addedVolumeMl),
+    temperature: celsiusToKelvin(25), pairId: value.pairId, titrantVolumeKey: 'Vb',
+    ...(value.pairId === 'hcl-nh3' ? { Kb: chemicalById('ammonia').Kb } : {}),
+    ...(value.pairId === 'oxalic-naoh' ? { Ka1: chemicalById('oxalic').Ka1, Ka2: chemicalById('oxalic').Ka2 } : {}),
+  });
   if (value.systemType === 'strong-acid-weak-base') return Object.freeze({
     Cb: value.analyteConcentrationM, Vb: mlToL(value.analyteVolumeMl),
     Ca: value.titrantConcentrationM, Va: mlToL(value.addedVolumeMl), Kb: value.Kb,

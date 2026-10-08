@@ -9,7 +9,7 @@ export function buildVesselModel(state) {
   const initialMl = Number.isFinite(state?.initialBuretVolumeMl) && state.initialBuretVolumeMl >= 0 ? state.initialBuretVolumeMl : 50;
   const dispensedMl = Math.max(0, (state?.addedVolumeMl ?? 0) - (state?.initialAddedVolumeMl ?? 0));
   const remainingMl = Math.max(0, initialMl - dispensedMl);
-  const totalMl = positive(state?.result?.totalVolumeMl, positive(state?.chemistryInput?.Va, 0.025) * 1000 + (state?.addedVolumeMl ?? 0));
+  const totalMl = positive(state?.result?.totalVolumeMl, positive(state?.chemistryInput?.[state?.titrantVolumeKey === 'Va' ? 'Vb' : 'Va'], 0.025) * 1000 + (state?.addedVolumeMl ?? 0));
   const capacityMl = Math.max(250, totalMl / 0.85);
   const indicator = derivePhenolphthaleinState(state?.result);
   const alpha = Number(indicator.color.match(/,\s*([\d.]+)\)$/)?.[1] ?? 0);

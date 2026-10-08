@@ -15,7 +15,7 @@ const invalid = (code, message) => ({ ok: false, error: { code, message } });
 const validateChemistryInput = (input) => {
   if (!input || typeof input !== 'object' || Array.isArray(input)) return invalid('INVALID_CHEMISTRY_INPUT', 'chemistryInput phải là một object.');
   const { Ca, Va, Cb, Vb, temperature } = input;
-  if (![Ca, Va, Cb, Vb, temperature].every(isFiniteNumber) || Ca <= 0 || Va <= 0 || Cb <= 0 || Vb < 0) {
+  if (![Ca, Va, Cb, Vb, temperature].every(isFiniteNumber) || Ca <= 0 || Cb <= 0 || ((input.titrantVolumeKey ?? (input.Kb ? 'Va' : 'Vb')) === 'Va' ? Va < 0 || Vb <= 0 : Va <= 0 || Vb < 0)) {
     return invalid('INVALID_CHEMISTRY_INPUT', 'Nồng độ/thể tích chemistryInput không hợp lệ.');
   }
   return { ok: true };
@@ -34,10 +34,11 @@ export const createSimulationState = (chemistryInput, options = {}) => {
   if (!dropValidation.ok) return dropValidation;
   const initialBuretVolumeMl = options.initialBuretVolumeMl ?? 50;
   if (!isFiniteNumber(initialBuretVolumeMl) || initialBuretVolumeMl < 0) return invalid('INVALID_BURET_VOLUME', 'Thể tích trong buret phải là số hữu hạn không âm.');
-  const initialAddedVolumeMl = lToMl(chemistryInput.Vb);
+  const titrantVolumeKey = chemistryInput.titrantVolumeKey ?? (chemistryInput.Kb ? 'Va' : 'Vb');
+  const initialAddedVolumeMl = lToMl(chemistryInput[titrantVolumeKey]);
   return {
     ok: true,
-    state: freezeState({ screen: 'ready', status: 'ready', speed: 'normal', chemistryInput, initialAddedVolumeMl, initialBuretVolumeMl, addedVolumeMl: initialAddedVolumeMl, dropSizeMl, dropCount: 0, result: null }),
+    state: freezeState({ screen: 'ready', status: 'ready', speed: 'normal', chemistryInput, titrantVolumeKey, initialAddedVolumeMl, initialBuretVolumeMl, addedVolumeMl: initialAddedVolumeMl, dropSizeMl, dropCount: 0, result: null }),
   };
 };
 
@@ -52,7 +53,7 @@ export const addDrop = (state, dropSizeMl = state?.dropSizeMl) => {
   const addedVolumeMl = state.addedVolumeMl + dropSizeMl;
   return {
     ok: true,
-    state: freezeState({ ...state, chemistryInput: { ...state.chemistryInput, Vb: mlToL(addedVolumeMl) }, addedVolumeMl, dropCount: state.dropCount + 1, screen: 'ready', status: 'ready', result: null }),
+    state: freezeState({ ...state, chemistryInput: { ...state.chemistryInput, [state.titrantVolumeKey ?? 'Vb']: mlToL(addedVolumeMl) }, addedVolumeMl, dropCount: state.dropCount + 1, screen: 'ready', status: 'ready', result: null }),
   };
 };
 
@@ -60,7 +61,7 @@ export const resetSimulation = (state) => {
   if (!state || typeof state !== 'object' || !state.chemistryInput) return invalid('INVALID_SIMULATION_STATE', 'Simulation state không hợp lệ.');
   return {
     ok: true,
-    state: freezeState({ ...state, chemistryInput: { ...state.chemistryInput, Vb: mlToL(state.initialAddedVolumeMl) }, addedVolumeMl: state.initialAddedVolumeMl, dropCount: 0, screen: 'ready', status: 'ready', result: null }),
+    state: freezeState({ ...state, chemistryInput: { ...state.chemistryInput, [state.titrantVolumeKey ?? 'Vb']: 0 }, initialAddedVolumeMl: 0, addedVolumeMl: 0, dropCount: 0, screen: 'ready', status: 'ready', result: null }),
   };
 };
 

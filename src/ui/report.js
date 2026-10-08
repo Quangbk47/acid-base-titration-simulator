@@ -1,10 +1,11 @@
 import { escapeHtml, safeGraphSvg } from './htmlSafety.js';
+import { titrantKey } from '../chemistry/pairSolver.js';
 const formatNumber = (value) => (Number.isFinite(value) ? value.toFixed(4) : 'n/a');
 
 export const createSimulationReport = ({ input, result, history, modelVersion, graphSvg = null }) => ({
   modelVersion,
   input: { ...input },
-  current: result ? { pH: result.pH, volumeMl: result.totalVolumeMl - input.Va * 1000, stage: result.stage, excess: result.excess } : null,
+  current: result ? { pH: result.pH, volumeMl: input[titrantKey(input)] * 1000, stage: result.stage, excess: result.excess } : null,
   milestones: result?.milestones ?? null,
   points: history.map(({ volumeMl, pH, stage }) => ({ volumeMl, pH, stage })),
   graphImage: graphSvg ? { filename: 'acid-base-titration-graph.svg', format: 'image/svg+xml', svg: safeGraphSvg(graphSvg) } : null,

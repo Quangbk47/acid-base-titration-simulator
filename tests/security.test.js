@@ -21,8 +21,11 @@ test('SEC: report metadata and history are escaped as text', () => {
 test('SEC: passive SVG accepts actual chart shapes and rejects active content or external URLs', () => {
   assert.equal(validatePassiveGraphSvg('<svg class="titration-chart" data-chart="" aria-hidden="true" viewBox="0 0 640 260"><line class="curve-equivalence" x1="25" x2="25" y1="16" y2="230"></line><circle cx="25" cy="100" r="5"></circle></svg>'), true);
   assert.equal(validatePassiveGraphSvg('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><polyline points="0,0 1,1" /></svg>'), true);
+  assert.equal(validatePassiveGraphSvg('<svg role="group" aria-label="Đồ thị pH–V"><text x="1" y="2" text-anchor="middle">V NaOH đã thêm (mL)</text><circle tabindex="0" data-chart-point="Mô phỏng" data-volume="25" data-ph="7" aria-label="V = 25 mL; pH = 7"><title>pH = 7</title></circle></svg>'), true);
   for (const svg of [
     '<svg onload="alert(1)"></svg>', '<svg><script>alert(1)</script></svg>',
+    '<svg><text onclick="alert(1)">pH</text></svg>', '<svg><title><script>alert(1)</script></title></svg>',
+    '<svg><text href="https://example.com">pH</text></svg>', '<svg><circle data-ph="Infinity" /></svg>',
     '<svg><foreignObject><img src=x onerror="alert(1)"></foreignObject></svg>',
     '<svg><image href="https://example.com/tracker" /></svg>',
     '<svg><a href="javascript:alert(1)"><circle r="1" /></a></svg>',
