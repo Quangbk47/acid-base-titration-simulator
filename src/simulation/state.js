@@ -32,10 +32,12 @@ export const createSimulationState = (chemistryInput, options = {}) => {
   const dropSizeMl = options.dropSizeMl ?? DEFAULT_DROP_SIZE_ML;
   const dropValidation = validateDropSize(dropSizeMl);
   if (!dropValidation.ok) return dropValidation;
+  const initialBuretVolumeMl = options.initialBuretVolumeMl ?? 50;
+  if (!isFiniteNumber(initialBuretVolumeMl) || initialBuretVolumeMl < 0) return invalid('INVALID_BURET_VOLUME', 'Thể tích trong buret phải là số hữu hạn không âm.');
   const initialAddedVolumeMl = lToMl(chemistryInput.Vb);
   return {
     ok: true,
-    state: freezeState({ screen: 'ready', status: 'ready', speed: 'normal', chemistryInput, initialAddedVolumeMl, initialBuretVolumeMl: options.initialBuretVolumeMl ?? 50, addedVolumeMl: initialAddedVolumeMl, dropSizeMl, dropCount: 0, result: null }),
+    state: freezeState({ screen: 'ready', status: 'ready', speed: 'normal', chemistryInput, initialAddedVolumeMl, initialBuretVolumeMl, addedVolumeMl: initialAddedVolumeMl, dropSizeMl, dropCount: 0, result: null }),
   };
 };
 
@@ -44,6 +46,9 @@ export const addDrop = (state, dropSizeMl = state?.dropSizeMl) => {
   const dropValidation = validateDropSize(dropSizeMl);
   if (!dropValidation.ok) return dropValidation;
   if (!isFiniteNumber(state.addedVolumeMl) || state.addedVolumeMl < 0) return invalid('INVALID_SIMULATION_STATE', 'addedVolumeMl không hợp lệ.');
+  const remainingMl = state.initialBuretVolumeMl - (state.addedVolumeMl - state.initialAddedVolumeMl);
+  if (!isFiniteNumber(remainingMl)) return invalid('INVALID_SIMULATION_STATE', 'Thể tích còn lại trong buret không hợp lệ.');
+  if (remainingMl + 1e-9 < dropSizeMl) return invalid('BURET_EMPTY', 'Buret không còn đủ dung dịch để thêm một giọt.');
   const addedVolumeMl = state.addedVolumeMl + dropSizeMl;
   return {
     ok: true,

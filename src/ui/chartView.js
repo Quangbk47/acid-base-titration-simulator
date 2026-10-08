@@ -1,4 +1,5 @@
 import { generateCurve } from '../chemistry/curve.js';
+import { escapeHtml } from './htmlSafety.js';
 
 export const buildChartModel = (input, currentVolumeMl) => {
   const curve = generateCurve(input, { maxVolumeMl: Math.max(currentVolumeMl, 50) });
@@ -13,7 +14,7 @@ export const renderChartView = (root, input, currentVolumeMl, currentResult = nu
   if (!chart || !input) return;
   const model = buildChartModel(input, currentVolumeMl);
   if (model.error) { if (empty) empty.textContent = model.error.message; return model; }
-  const width = 640; const height = 260; const pad = { l: 42, r: 16, t: 16, b: 30 };
+  const width = chart.clientWidth || 640; const height = chart.clientHeight || 260; const pad = { l: 42, r: 16, t: 16, b: 30 };
   const maxX = Math.max(...model.points.map((p) => p.volumeMl), 1);
   const point = (p) => `${pad.l + (p.volumeMl / maxX) * (width - pad.l - pad.r)},${pad.t + ((14 - p.pH) / 14) * (height - pad.t - pad.b)}`;
   chart.setAttribute('viewBox', `0 0 ${width} ${height}`);
@@ -28,6 +29,6 @@ export const renderChartView = (root, input, currentVolumeMl, currentResult = nu
   chart.innerHTML = `${markers}${pointsMarkup}${current}`;
   if (empty) empty.hidden = true;
   if (table) table.innerHTML = (history.length ? history : [{ dropCount, volumeMl: currentVolumeMl, pH: currentResult?.pH ?? model.points[0].pH, stage: currentResult?.stage ?? model.points[0].stage }])
-    .map((row) => `<tr><td>${row.volumeMl.toFixed(2)} mL</td><td>${row.pH.toFixed(2)}</td><td>${row.stage}</td></tr>`).join('');
+    .map((row) => `<tr><td>${row.volumeMl.toFixed(2)} mL</td><td>${row.pH.toFixed(2)}</td><td>${escapeHtml(row.stage)}</td></tr>`).join('');
   return model;
 };

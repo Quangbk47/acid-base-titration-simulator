@@ -26,11 +26,13 @@ const parseNumber = (value) => {
 
 export function validateTitrationForm(values = {}) {
   const errors = {};
-  const system = TITRATION_SYSTEMS[values.systemType];
+  const system = Object.hasOwn(TITRATION_SYSTEMS, values.systemType) ? TITRATION_SYSTEMS[values.systemType] : null;
   if (!values.systemType) errors.systemType = 'Chọn loại chuẩn độ.';
   else if (!system) errors.systemType = 'Loại chuẩn độ này chưa được chemistry engine hỗ trợ.';
 
   const parsed = {};
+  parsed.buretVolumeMl = values.buretVolumeMl === undefined ? 50 : parseNumber(values.buretVolumeMl);
+  if (parsed.buretVolumeMl === null || parsed.buretVolumeMl < 0) errors.buretVolumeMl = 'Thể tích trong buret phải là số hữu hạn không âm.';
   for (const [field, requiredMessage] of REQUIRED_FIELDS) {
     if (values[field] === '' || values[field] === undefined || values[field] === null) {
       errors[field] = requiredMessage;
@@ -77,6 +79,7 @@ export function validateTitrationForm(values = {}) {
       analyteVolumeMl: parsed.analyteVolumeMl,
       titrantConcentrationM: parsed.titrantConcentrationM,
       addedVolumeMl: parsed.addedVolumeMl,
+      buretVolumeMl: parsed.buretVolumeMl,
       ...(values.systemType === 'weak-acid-strong-base' ? { Ka: parseNumber(values.Ka) } : {}),
       ...(values.systemType === 'strong-acid-weak-base' ? { Kb: parseNumber(values.Kb) } : {}),
     },

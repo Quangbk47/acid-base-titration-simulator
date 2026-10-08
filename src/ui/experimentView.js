@@ -1,3 +1,4 @@
+import { escapeHtml } from './htmlSafety.js';
 const text = (root, selector, value) => { const node = root.querySelector(selector); if (node) node.textContent = value; };
 
 export const renderExperimentView = (root, result, state) => {
@@ -10,5 +11,5 @@ export const renderExperimentView = (root, result, state) => {
   text(root, '[data-result="reaction"]', result.dominantReaction);
   text(root, '[data-result="added-volume"]', `${state?.addedVolumeMl?.toFixed(2) ?? '0.00'} mL`);
   const tbody = root.querySelector('[data-chemistry-rows]');
-  if (tbody) tbody.innerHTML = result.species.map((item) => `<tr><th scope="row">Giọt ${state?.dropCount ?? 0} · ${item.id}</th><td>${item.moles.toExponential(3)}</td><td>${item.concentration.toExponential(3)} M</td><td>${result.dominantReaction}</td></tr>`).join('');
+  if (tbody) tbody.innerHTML = result.species.map((item) => `<tr><th scope="row">Giọt ${escapeHtml(state?.dropCount ?? 0)} · ${escapeHtml(item.id)}</th><td>${item.moles.toExponential(3)}</td><td>${item.concentration.toExponential(3)} M</td><td>${escapeHtml(result.dominantReaction)}</td></tr>`).join('');
 };

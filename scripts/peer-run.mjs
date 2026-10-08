@@ -1,13 +1,14 @@
 import { spawn, spawnSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
 import { setTimeout as delay } from 'node:timers/promises';
-import { chromium } from 'playwright';
+import { pathToFileURL } from 'node:url';
+const { chromium } = await import(process.env.PLAYWRIGHT_MODULE ? pathToFileURL(process.env.PLAYWRIGHT_MODULE).href : 'playwright');
 
 const root = new URL('..', import.meta.url);
 const rootPath = decodeURIComponent(root.pathname).replace(/^\/+/, '').replaceAll('/', '\\');
 const port = 4173;
 const baseUrl = `http://127.0.0.1:${port}`;
-const reportPath = new URL('../docs/PEER_RUN_REPORT.md', import.meta.url);
+const reportPath = process.env.PEER_RUN_REPORT_PATH ?? new URL('../docs/PEER_RUN_REPORT.md', import.meta.url);
 const results = [];
 
 const record = (check, pass, evidence) => {
@@ -59,7 +60,7 @@ try {
   const missing = controls.filter((label) => !has(simulate.body, label));
   record('Control labels in route', missing.length === 0, missing.length ? `Missing: ${missing.join(', ')}` : controls.join(', '));
 
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({ headless: true, channel: process.env.PLAYWRIGHT_CHANNEL || undefined });
   try {
     const page = await browser.newPage();
     const consoleErrors = [];
@@ -71,23 +72,26 @@ try {
     const addDrop = page.getByRole('button', { name: /^Thêm giọt/ });
     const run = page.getByRole('button', { name: /^Chạy/ });
     const pause = page.getByRole('button', { name: /^Tạm dừng/ });
-    const reset = page.getByRole('button', { name: /^Đặt lại/ });
+    const reset = page.locator('#reset-simulation');
     const requiredControls = [addDrop, run, pause, reset];
     const missingDom = [];
     for (const [index, control] of requiredControls.entries()) {
       if (!(await control.isVisible())) missingDom.push(controls[index]);
     }
     record('Required controls exist', missingDom.length === 0, missingDom.length ? `Missing: ${missingDom.join(', ')}` : 'All controls visible in DOM');
-    const disabledDom = requiredControls.filter((control) => control.isDisabled());
-    record('Controls enabled', disabledDom.length === 0, disabledDom.length ? `${disabledDom.length} required controls disabled` : 'All required controls enabled');
+    const idleDisabled = await Promise.all(requiredControls.map((control) => control.isDisabled()));
+    record('Idle controls', idleDisabled.every(Boolean), `disabled=${idleDisabled.join(',')}; all disabled before calculation`);
 
     await page.getByRole('button', { name: 'Tính trạng thái' }).click();
+    const readyDisabled = await Promise.all(requiredControls.map((control) => control.isDisabled()));
+    const readyPass = JSON.stringify(readyDisabled) === JSON.stringify([false, false, true, false]);
+    record('Controls enabled', readyPass, `disabled=${readyDisabled.join(',')}; pause disabled until running`);
     await addDrop.click();
     const addedVolume = await page.locator('[data-result="added-volume"]').textContent();
     const graphRowsAfterDrop = await page.locator('[data-curve-rows] tr').count();
     const graphText = await page.locator('[data-curve-rows]').textContent();
     const pH = await page.locator('[data-result="ph"]').textContent();
-    const reaction = await page.locator('[data-result="reaction"]').textContent();
+    const reaction = await page.locator('[data-chemistry-rows] tr td:last-child').first().textContent();
     const graphPass = graphRowsAfterDrop > 0 && !graphText.includes('Chưa có dữ liệu mô phỏng');
     const chemistryPass = pH !== '—' && !reaction.includes('Chưa tính');
     record('Graph has real data', graphPass, `rows=${graphRowsAfterDrop}; placeholder=${graphText.includes('Chưa có dữ liệu mô phỏng')}`);
@@ -105,7 +109,7 @@ try {
     await reset.click();
     const resetStatus = await page.locator('[data-simulation-state]').textContent();
     const resetVolume = await page.locator('[data-result="added-volume"]').textContent();
-    const interactionPass = addedVolume?.includes('0.05 mL')
+    const interactionPass = addedVolume?.includes('0.10 mL')
       && graphRowsAfterDrop >= 1
       && running === 'Running'
       && runningVolume !== addedVolume
@@ -164,5 +168,5 @@ ${results.map(({ check, pass, evidence }) => `| ${check} | ${pass ? 'PASS' : 'FA
 - Phase 2: ${phase2}
 - Outstanding issues: ${failed.length ? failed.map(({ check, evidence }) => `${check}: ${evidence}`).join('; ') : 'None'}`;
 writeFileSync(reportPath, report);
-console.log(JSON.stringify({ commit: sha, results, report: reportPath.pathname }, null, 2));
+console.log(JSON.stringify({ commit: sha, results, report: typeof reportPath === 'string' ? reportPath : reportPath.pathname }, null, 2));
 process.exitCode = failed.length === 0 ? 0 : 1;

@@ -7,7 +7,7 @@ import { renderExperimentView } from './experimentView.js';
 import { renderChartView } from './chartView.js';
 import { renderIndicatorView } from './indicatorView.js';
 
-const FIELD_IDS = Object.freeze({ systemType: 'system-type', analyteConcentrationM: 'analyte-concentration', analyteVolumeMl: 'analyte-volume', titrantConcentrationM: 'titrant-concentration', addedVolumeMl: 'added-volume' });
+const FIELD_IDS = Object.freeze({ systemType: 'system-type', analyteConcentrationM: 'analyte-concentration', analyteVolumeMl: 'analyte-volume', titrantConcentrationM: 'titrant-concentration', addedVolumeMl: 'added-volume', buretVolumeMl: 'buret-volume' });
 const UI_DROP_SIZE_ML = 0.1;
 // Temporary data adapter: replace these values with the Excel import adapter.
 // Ka/Kb are chemistry data, not user-entered simulation controls.
@@ -31,10 +31,10 @@ export function evaluateTitration(values, solve = solveStrongStrong) {
   }[validation.value.systemType] ?? solveStrongStrong);
   const result = selectedSolver(chemistryInput);
   if (result.error) return { ok: false, solverError: result.error };
-  return { ok: true, chemistryInput, result };
+  return { ok: true, chemistryInput, result, buretVolumeMl: validation.value.buretVolumeMl };
 }
 
-export function initInputForm({ form, root = document, solve = solveStrongStrong } = {}) {
+export function initInputForm({ form, root = document, solve = solveStrongStrong, onStateChange = () => {} } = {}) {
   if (!form) return null;
   const caseSelector = form.querySelector('#case-selector');
   const systemSelector = form.querySelector('#system-type');
@@ -49,8 +49,9 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
   const syncControlAvailability = () => {
     const hasSimulation = simulationState !== null;
     const isRunning = simulationState?.status === 'running';
-    if (addDropButton) addDropButton.disabled = !hasSimulation || isRunning;
-    if (runButton) runButton.disabled = !hasSimulation || isRunning;
+    const hasDrop = hasSimulation && addDrop(simulationState, UI_DROP_SIZE_ML).ok;
+    if (addDropButton) addDropButton.disabled = !hasDrop || isRunning;
+    if (runButton) runButton.disabled = !hasDrop || isRunning;
     if (pauseButton) pauseButton.disabled = !hasSimulation || !isRunning;
     if (resetButton) resetButton.disabled = !hasSimulation;
   };
@@ -61,6 +62,8 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
     const vesselStatus = root.querySelector('[data-vessel-status]');
     if (vesselStatus) vesselStatus.textContent = value === 'Running' ? 'Đang nhỏ giọt tự động' : value === 'Paused' ? 'Đã tạm dừng' : value === 'Ready' ? 'Sẵn sàng mô phỏng' : 'Chưa có mô phỏng';
     syncControlAvailability();
+    if (value === 'Paused') renderIndicatorView(root, simulationState?.result);
+    onStateChange(simulationState);
   };
   const clearRenderedResult = () => {
     setText(root, '[data-result="ph"]', '—');
@@ -81,7 +84,7 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
     }
     const chartEmpty = root.querySelector('[data-chart-empty]');
     if (chartEmpty) chartEmpty.hidden = false;
-    setText(root, '[data-indicator-state]', 'Chưa có dữ liệu');
+    renderIndicatorView(root, null);
   };
   const render = (result = simulationState?.result) => {
     if (!simulationState || !result) return;
@@ -98,6 +101,7 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
     renderChartView(root, simulationState.chemistryInput, simulationState.addedVolumeMl, result, simulationState.dropCount, chartHistory);
     if (form.elements.addedVolumeMl) form.elements.addedVolumeMl.value = simulationState.addedVolumeMl.toFixed(2);
     if (form.elements.buretVolumeMl) form.elements.buretVolumeMl.value = Math.max(0, simulationState.initialBuretVolumeMl - simulationState.dropCount * UI_DROP_SIZE_ML).toFixed(2);
+    onStateChange(simulationState);
   };
   const evaluateCurrent = () => {
     const result = ({
@@ -114,11 +118,11 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
     if (!next.ok) return false;
     simulationState = next.state;
     const result = evaluateCurrent();
-    if (result.error || simulationState.addedVolumeMl > 2 * result.Veq) return false;
+    if (result.error) return false;
     return true;
   };
   const runner = createSimulationRunner({
-    onStep: step,
+    onStep: () => step() && addDrop(simulationState, UI_DROP_SIZE_ML).ok && simulationState.addedVolumeMl < 2 * simulationState.result.Veq,
     onStateChange: (status) => {
       if (!simulationState) {
         setStateLabel('Idle');
@@ -141,7 +145,7 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
     form.elements.analyteVolumeMl.value = selected.VaMl;
     form.elements.titrantConcentrationM.value = selected.CbM;
     form.elements.buretVolumeMl.value = '50';
-    form.elements.addedVolumeMl.value = '0';
+    form.elements.addedVolumeMl.value = String(selected.VbMl);
     clearErrors(form);
     clearRenderedResult();
     setStateLabel('Idle');
@@ -150,19 +154,26 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
   loadCase();
   caseSelector.addEventListener('change', loadCase); systemSelector.addEventListener('change', syncSystem);
   form.addEventListener('submit', (event) => {
-    event.preventDefault(); setStateLabel('Validating'); setText(form, '[data-form-error]', '');
+    event.preventDefault(); runner.pause(); setStateLabel('Validating'); setText(form, '[data-form-error]', '');
     const evaluation = evaluateTitration(valuesFromForm(form), solve);
     if (!evaluation.ok) { if (evaluation.errors) showErrors(form, evaluation.errors); else setText(form, '[data-form-error]', evaluation.solverError.message); setStateLabel(evaluation.errors ? 'Input error' : 'Solver error'); return; }
-    clearErrors(form); const created = createSimulationState(evaluation.chemistryInput);
+    clearErrors(form); const created = createSimulationState(evaluation.chemistryInput, { initialBuretVolumeMl: evaluation.buretVolumeMl, dropSizeMl: UI_DROP_SIZE_ML });
     if (!created.ok) { setText(form, '[data-form-error]', created.error.message); setStateLabel('Solver error'); return; }
     chartHistory = [];
-    simulationState = withSimulationResult({ ...created.state, initialBuretVolumeMl: Number(valuesFromForm(form).buretVolumeMl) || 50 }, evaluation.result).state; render(evaluation.result); setStateLabel('Ready');
+    simulationState = withSimulationResult(created.state, evaluation.result).state; render(evaluation.result); setStateLabel('Ready');
   });
   addDropButton?.addEventListener('click', () => { if (!simulationState) { setText(form, '[data-form-error]', 'Hãy tính trạng thái ban đầu trước khi thêm giọt.'); setStateLabel('Input error'); return; } if (step()) setStateLabel('Ready'); });
   runButton?.addEventListener('click', () => { if (simulationState && simulationState.status !== 'running') runner.start(); });
   pauseButton?.addEventListener('click', () => { if (simulationState?.status === 'running') runner.pause(); });
   speedSelector?.addEventListener('change', () => { runner.setSpeed(speedSelector.value); if (simulationState) { const next = setSimulationSpeed(simulationState, speedSelector.value); if (next.ok) simulationState = next.state; } });
   resetButton?.addEventListener('click', () => { if (!simulationState) return; runner.reset(); const reset = resetSimulation(simulationState); if (reset.ok) { chartHistory = []; simulationState = reset.state; evaluateCurrent(); setStateLabel('Ready'); } });
+  const chart = root.querySelector('[data-chart]');
+  const chartResizeObserver = chart && typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => {
+    if (chart.clientWidth && chart.clientHeight && simulationState?.result) {
+      renderChartView(root, simulationState.chemistryInput, simulationState.addedVolumeMl, simulationState.result, simulationState.dropCount, chartHistory);
+    }
+  }) : null;
+  chartResizeObserver?.observe(chart);
   syncControlAvailability();
-  return { loadCase, getState: () => simulationState, dispose: () => runner.dispose() };
+  return { loadCase, getState: () => simulationState, dispose: () => { runner.dispose(); chartResizeObserver?.disconnect(); } };
 }

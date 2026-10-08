@@ -87,17 +87,18 @@
           <span class="state-badge" data-simulation-state>Idle</span>
         </div>
 
-        <div class="simulation-layout">
-          <article class="panel experiment-panel" aria-labelledby="experiment-title">
+          <section class="panel simulation-setup" aria-labelledby="setup-title">
             <div class="panel-heading">
               <div>
                 <p class="eyebrow">Experiment</p>
-                <h2 id="experiment-title">Thiết lập thí nghiệm</h2>
+                <h2 id="setup-title">Thiết lập thí nghiệm</h2>
               </div>
-              <span class="panel-index">01</span>
+              <span class="panel-index">Thông số &amp; điều khiển</span>
             </div>
 
             <form id="titration-form" class="control-form" novalidate>
+              <div class="simulation-fields">
+              <div class="setup-selectors">
               <p class="notice" role="note">HCl–NaOH ở 25 °C · thể tích nhập bằng mL, chemistry engine dùng L/K.</p>
               <label for="case-selector">Ca chuẩn</label>
               <select id="case-selector" aria-label="Khôi phục ca chuẩn"></select>
@@ -109,6 +110,7 @@
               <option value="strong-acid-weak-base">Axit mạnh – bazơ yếu</option>
               </select>
               <span id="system-type-error" class="field-error" data-error-for="systemType" aria-live="polite"></span>
+              </div>
 
               <div class="form-grid">
                 <div>
@@ -136,11 +138,14 @@
             </div>
                 <div>
                   <label for="buret-volume">Thể tích NaOH ban đầu (mL)</label>
-                  <input id="buret-volume" name="buretVolumeMl" type="text" inputmode="decimal" value="50" />
+                  <input id="buret-volume" name="buretVolumeMl" type="text" inputmode="decimal" value="50" aria-describedby="buret-volume-error" />
+                  <span id="buret-volume-error" class="field-error" data-error-for="buretVolumeMl" aria-live="polite"></span>
                   <input id="added-volume" name="addedVolumeMl" type="hidden" value="0" />
                 </div>
               </div>
+              </div>
 
+              <div class="simulation-controls">
               <div class="control-group" aria-label="Điều khiển mô phỏng">
                 <button class="button button-primary" type="submit">Tính trạng thái</button>
                 <button class="button button-secondary" type="button" id="add-drop">Thêm giọt 0,10 mL</button>
@@ -148,15 +153,34 @@
                 <button class="button button-quiet" type="button" id="pause-simulation">Tạm dừng</button>
                 <button class="button button-quiet" type="button" id="reset-simulation">Đặt lại trạng thái</button>
               </div>
+              <div class="speed-control">
               <label for="simulation-speed">Tốc độ mô phỏng</label>
               <select id="simulation-speed" aria-label="Tốc độ mô phỏng">
                 <option value="slow">Chậm</option><option value="normal" selected>Chuẩn</option><option value="fast">Nhanh</option>
               </select>
+              </div>
               <div class="control-meta"><span>NaOH đã chảy vào bình</span><strong data-result="added-volume">0,00 mL</strong></div>
+              </div>
               <p class="form-error" data-form-error role="alert"></p>
             </form>
+          </section>
 
-            <div class="vessel-stage" aria-label="Burette chứa NaOH phía trên bình tam giác chứa HCl">
+        <div class="simulation-layout">
+          <article class="panel experiment-panel" aria-labelledby="experiment-title">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Experiment</p>
+                <h2 id="experiment-title">Mô hình thí nghiệm</h2>
+              </div>
+              <span class="panel-index">01</span>
+            </div>
+            <div class="vessel-stage" data-vessel-3d data-renderer="loading" aria-label="Buret chứa NaOH phía trên bình tam giác, mô hình tương tác 3D">
+              <div class="vessel-toolbar">
+                <span class="vessel-title"><i></i> Bàn thí nghiệm <small>3D</small></span>
+                <button class="button button-quiet camera-reset" type="button" data-camera-reset disabled aria-label="Đặt lại góc nhìn camera">↺ Góc nhìn ban đầu</button>
+              </div>
+              <div class="vessel-viewport" data-vessel-viewport>
+              <div class="vessel-fallback">
               <div class="buret" aria-hidden="true">
                 <span class="buret-label">NaOH · <strong data-buret-volume>50,00 mL</strong></span>
                 <div class="buret-tube"><span></span></div>
@@ -165,7 +189,18 @@
                 <span class="buret-drop" aria-hidden="true"></span>
               </div>
               <div class="flask" aria-hidden="true"><span data-indicator-solution></span></div>
-              <p data-vessel-status>Chưa có mô phỏng đang chạy</p>
+              </div>
+              </div>
+              <div class="vessel-readouts">
+                <span><small>NaOH trong buret</small><strong data-vessel-buret>50,00 mL</strong></span>
+                <span><small>Dung dịch trong bình</small><strong data-vessel-total>25,00 mL</strong></span>
+                <span><small>pH cân bằng</small><strong data-vessel-ph>—</strong></span>
+              </div>
+              <div class="vessel-footer">
+                <p data-vessel-status>Chưa có mô phỏng đang chạy</p>
+                <p class="vessel-help">Kéo: xoay 360° · Cuộn: zoom · Chuột phải: di chuyển<br>Điện thoại: 1 ngón xoay · 2 ngón zoom / di chuyển</p>
+              </div>
+              <p class="vessel-notice" data-vessel-notice role="status">Đang chuẩn bị mô hình 3D…</p>
             </div>
             <p class="indicator-status" role="status">Phenolphthalein: <strong data-indicator-state>Chưa có dữ liệu</strong></p>
           </article>
@@ -191,7 +226,7 @@
               <span><i class="legend-dot equivalence"></i>Điểm tương đương</span>
               <span><i class="legend-dot endpoint"></i>Điểm kết thúc</span>
             </div>
-            <div class="table-wrapper">
+            <div class="table-wrapper curve-table" tabindex="0" role="region" aria-label="Lịch sử chuẩn độ, cuộn để xem các giọt">
               <table>
                 <caption>Bảng dữ liệu đồ thị</caption>
                 <thead><tr><th scope="col">V (mL)</th><th scope="col">pH</th><th scope="col">Giai đoạn</th></tr></thead>

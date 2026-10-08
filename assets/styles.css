@@ -168,6 +168,95 @@ td[colspan] { color: var(--ink-soft); text-align: center; }
 
 :focus-visible { outline: 3px solid rgba(217, 150, 75, 0.7); outline-offset: 3px; }
 
+/* The 3D viewport stays inside the original experiment panel. */
+.vessel-stage[data-vessel-3d] { display: block; min-height: 0; border: 1px solid #d3e4df; background: #edf4f2; }
+.vessel-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 14px; border-bottom: 1px solid #d8e6e1; background: #f7fbf9; }
+.vessel-title { display: flex; align-items: center; gap: 7px; color: #385b59; font-size: 11px; font-weight: 750; }
+.vessel-title i { width: 6px; height: 6px; border-radius: 50%; background: #0d7a79; }
+.vessel-title small { padding: 3px 5px; border-radius: 4px; color: #0d7a79; background: #e1eee9; font-size: 9px; letter-spacing: 0.04em; }
+.camera-reset { min-height: 36px; padding-inline: 9px; font-size: 10px; background: white; }
+.vessel-viewport { position: relative; width: 100%; height: 420px; overflow: hidden; }
+.vessel-viewport canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+.vessel-viewport canvas:active { cursor: grabbing; }
+.vessel-fallback { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; pointer-events: none; }
+.vessel-fallback .buret-label { top: -12px; }
+.vessel-stage[data-renderer="ready"] .vessel-fallback { display: none; }
+.vessel-stage[data-renderer="fallback"] canvas { display: none; }
+.vessel-stage[data-renderer="loading"] .vessel-fallback { opacity: 0.55; }
+.vessel-readouts { display: grid; grid-template-columns: 1fr 1fr 0.7fr; gap: 10px; margin: 0 14px 12px; padding: 11px 12px; border: 1px solid #d8e6e1; border-radius: 10px; background: rgba(255, 255, 255, 0.83); }
+.vessel-readouts small { display: block; margin-bottom: 5px; color: var(--ink-soft); font-size: 9px; }
+.vessel-readouts strong { color: #1a5555; font-size: 13px; font-variant-numeric: tabular-nums; }
+.vessel-footer { padding: 0 14px 12px; }
+.vessel-footer [data-vessel-status] { margin: 0 0 5px; color: #355b59; font-size: 11px; font-weight: 650; }
+.vessel-help { margin: 0; color: #637c77; font-size: 10px; line-height: 1.65; }
+.vessel-stage > .vessel-notice { position: static; margin: 0; padding: 0 14px 12px; color: #80613a; font-size: 11px; line-height: 1.5; }
+.vessel-notice:empty { display: none; }
+@media (max-width: 767px) {
+  .vessel-viewport { height: 370px; }
+  .vessel-toolbar { padding-inline: 10px; }
+  .vessel-readouts { margin-inline: 10px; gap: 6px; padding: 10px 8px; }
+  .vessel-title { font-size: 10px; gap: 5px; }
+}
+@media (max-width: 360px) {
+  .vessel-title small { display: none; }
+  .camera-reset { font-size: 9px; padding-inline: 6px; }
+  .vessel-readouts strong { font-size: 12px; }
+}
+
+/* Scope the wider workspace and balanced columns to the simulation view. */
+.page-content:has(> [data-view="simulate"]:not([hidden])) { width: min(1560px, calc(100% - 48px)); padding-block: 32px 64px; }
+[data-view="simulate"] { --simulation-viewport-height: clamp(360px, 43vh, 480px); }
+[data-view="simulate"] .page-heading { margin-bottom: 24px; }
+[data-view="simulate"] .page-heading h1 { font-size: clamp(2rem, 3.5vw, 3rem); }
+.simulation-setup { margin-bottom: 20px; }
+.simulation-setup .panel-heading { margin-bottom: 18px; }
+.simulation-fields { display: grid; grid-template-columns: minmax(210px, 0.9fr) minmax(0, 3fr); gap: 24px; }
+.simulation-setup .form-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 16px; align-content: start; }
+.setup-selectors .notice { margin-bottom: 12px; }
+.setup-selectors select { margin-bottom: 10px; }
+.simulation-controls { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 8px; padding-top: 16px; border-top: 1px solid var(--line); }
+.simulation-controls .control-group { flex: 1 1 530px; margin: 0; }
+.simulation-controls .control-group .button { flex: 1 1 auto; }
+.speed-control { flex: 0 1 140px; }
+.speed-control label { margin-bottom: 5px; }
+.speed-control select { margin: 0; }
+.simulation-controls .control-meta { flex: 0 0 auto; display: grid; gap: 5px; margin: 0; }
+.simulation-controls .control-meta strong { font-size: 16px; font-variant-numeric: tabular-nums; }
+.simulation-setup .form-error:empty { min-height: 0; margin: 0; }
+[data-view="simulate"] .simulation-layout { align-items: stretch; }
+.simulation-layout > .panel { display: flex; flex-direction: column; }
+.simulation-layout .panel-heading { flex: 0 0 auto; }
+.simulation-layout .vessel-stage { margin-top: 0; }
+.simulation-layout .vessel-viewport { height: var(--simulation-viewport-height); }
+.simulation-layout .indicator-status { margin-bottom: 0; }
+.simulation-layout .chart-placeholder { flex: 0 0 auto; height: calc(var(--simulation-viewport-height) + 61px); min-height: 0; }
+.simulation-layout [data-chart-empty][hidden] { display: none; }
+.simulation-layout .legend { flex: 0 0 auto; }
+.simulation-layout .curve-table { flex: 1 1 0; min-height: 100px; max-height: 160px; overflow: auto; border: 1px solid var(--line); border-radius: 10px; }
+.curve-table th { position: sticky; top: 0; background: #f3f8f6; z-index: 1; }
+@media (max-width: 1023px) {
+  .simulation-fields { grid-template-columns: minmax(180px, 0.8fr) minmax(0, 2fr); gap: 18px; }
+  .simulation-setup .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .simulation-layout .curve-table { flex-basis: 140px; }
+}
+@media (max-width: 767px) {
+  .page-content:has(> [data-view="simulate"]:not([hidden])) { width: min(100% - 32px, 680px); padding-block: 28px 48px; }
+  [data-view="simulate"] { --simulation-viewport-height: 370px; }
+  .simulation-fields { grid-template-columns: 1fr; gap: 6px; }
+  .simulation-setup .panel-heading { gap: 12px; }
+  .simulation-setup .panel-index { max-width: 84px; text-align: right; line-height: 1.5; }
+  .simulation-controls { gap: 14px; }
+  .simulation-controls .control-group { flex-basis: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .simulation-controls .control-group .button:first-child { grid-column: 1 / -1; }
+  .speed-control { flex: 1 1 120px; }
+  .simulation-controls .control-meta { flex: 1 1 120px; }
+  .simulation-layout .chart-placeholder { height: 340px; }
+}
+@media (max-width: 430px) {
+  .page-content:has(> [data-view="simulate"]:not([hidden])) { width: calc(100% - 24px); }
+  .simulation-setup .form-grid { grid-template-columns: 1fr; }
+}
+
 /* Neutral visual hooks for the future simulation runner. Chemistry state owns
    when these visuals become active; the current Phase 2 slice leaves them static. */
 .vessel-stage[data-state="running"] .buret-drop { animation: neutral-drop 1.8s ease-in infinite; }

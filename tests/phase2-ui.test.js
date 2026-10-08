@@ -23,7 +23,7 @@ test('CHEM-06: indicator transition is transient before equivalence and persiste
   assert.equal(scheduled.delay, 500);
   scheduled.callback();
   assert.equal(solution.classList.values.has('indicator-transient'), false);
-  renderIndicatorView(root, { stage: 'at-equivalence', pH: 8.2, excess: { species: null } }, timers);
+  renderIndicatorView(root, { stage: 'at-equivalence', pH: 7, excess: { species: null } }, timers);
   assert.equal(solution.dataset.indicator, 'equivalence');
   assert.equal(solution.classList.values.has('indicator-transient'), false);
   renderIndicatorView(root, { stage: 'after-equivalence', pH: 12, excess: { species: 'OH⁻' } }, timers);

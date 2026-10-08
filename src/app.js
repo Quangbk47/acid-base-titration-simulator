@@ -4,6 +4,7 @@ import { firebaseModuleStatus } from './firebase/index.js';
 import { baselineState } from './simulation/state.js';
 import { initNavigation } from './ui/navigation.js';
 import { initInputForm } from './ui/inputForm.js';
+import { initVesselView } from './ui/vesselView.js';
 
 const route = initNavigation({
   links: document.querySelectorAll('[data-route]'),
@@ -16,7 +17,11 @@ if (status) {
   status.dataset.state = baselineState.screen;
 }
 
-initInputForm({ form: document.querySelector('#titration-form') });
+const vesselView = initVesselView();
+const inputForm = initInputForm({ form: document.querySelector('#titration-form'), onStateChange: (state) => vesselView.update(state) });
+window.addEventListener('pagehide', (event) => {
+  if (!event.persisted) { inputForm?.dispose(); vesselView.dispose(); }
+});
 
 document.documentElement.dataset.appReady = 'true';
 window.__acidBaseBaseline = Object.freeze({

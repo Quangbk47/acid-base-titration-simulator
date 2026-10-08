@@ -13,7 +13,7 @@ test('P4A auth skeleton stays guest-safe until injected', async () => {
   await assert.rejects(auth.signIn(), /AUTH_NOT_CONFIGURED/);
 });
 
-test('P4A repository validates saved experiment contract and quota', async () => {
+test('P4A repository validates snapshot contract and exposes quota configuration, not enforcement', async () => {
   const snapshot = {
     input: { system: 'weak-acid-strong-base', Ca: 0.1, Va: 0.025, Cb: 0.1, Ka: 1.8e-5, temperature: 298.15 },
     modelVersion: 'weak-acid-strong-base-v1',

@@ -1,3 +1,4 @@
+import { escapeHtml, safeGraphSvg } from './htmlSafety.js';
 const formatNumber = (value) => (Number.isFinite(value) ? value.toFixed(4) : 'n/a');
 
 export const createSimulationReport = ({ input, result, history, modelVersion, graphSvg = null }) => ({
@@ -6,7 +7,7 @@ export const createSimulationReport = ({ input, result, history, modelVersion, g
   current: result ? { pH: result.pH, volumeMl: result.totalVolumeMl - input.Va * 1000, stage: result.stage, excess: result.excess } : null,
   milestones: result?.milestones ?? null,
   points: history.map(({ volumeMl, pH, stage }) => ({ volumeMl, pH, stage })),
-  graphImage: graphSvg ? { filename: 'acid-base-titration-graph.svg', format: 'image/svg+xml', svg: graphSvg } : null,
+  graphImage: graphSvg ? { filename: 'acid-base-titration-graph.svg', format: 'image/svg+xml', svg: safeGraphSvg(graphSvg) } : null,
 });
 
 export const reportToText = (report) => [
@@ -20,12 +21,14 @@ export const reportToText = (report) => [
 ].join('\n');
 
 export const reportToHtml = (report) => {
-  const graph = report.graphImage?.svg ?? '<p>Chưa có đồ thị.</p>';
-  const rows = report.points.map(({ volumeMl, pH, stage }) => `<tr><td>${volumeMl.toFixed(2)}</td><td>${pH.toFixed(2)}</td><td>${stage}</td></tr>`).join('');
-  return `<!doctype html><html lang="vi"><meta charset="utf-8"><title>Acid-Base Simulation Report</title><style>body{font:16px sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:.4rem}svg{max-width:100%;height:auto}</style><h1>Acid-Base Titration Simulation Report</h1><p>Model: ${report.modelVersion}</p><p>pH hiện tại: ${formatNumber(report.current?.pH)}</p>${graph}<h2>Dữ liệu đồ thị</h2><table><thead><tr><th>V (mL)</th><th>pH</th><th>Giai đoạn</th></tr></thead><tbody>${rows}</tbody></table></html>`;
+  const graph = report.graphImage?.svg ? safeGraphSvg(report.graphImage.svg) : '<p>Chưa có đồ thị.</p>';
+  const rows = report.points.map(({ volumeMl, pH, stage }) => `<tr><td>${volumeMl.toFixed(2)}</td><td>${pH.toFixed(2)}</td><td>${escapeHtml(stage)}</td></tr>`).join('');
+  return `<!doctype html><html lang="vi"><meta charset="utf-8"><title>Acid-Base Simulation Report</title><style>body{font:16px sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:.4rem}svg{max-width:100%;height:auto}</style><h1>Acid-Base Titration Simulation Report</h1><p>Model: ${escapeHtml(report.modelVersion)}</p><p>pH hiện tại: ${formatNumber(report.current?.pH)}</p>${graph}<h2>Dữ liệu đồ thị</h2><table><thead><tr><th>V (mL)</th><th>pH</th><th>Giai đoạn</th></tr></thead><tbody>${rows}</tbody></table></html>`;
 };
 
 export const downloadSimulationReport = (report) => {
+  // Validate all content before initiating any of the downloads.
+  const html = reportToHtml(report);
   const download = (content, type, filename) => {
     const blob = new Blob([content], { type });
     const url = URL.createObjectURL(blob);
@@ -36,6 +39,6 @@ export const downloadSimulationReport = (report) => {
     URL.revokeObjectURL(url);
   };
   download(JSON.stringify(report, null, 2), 'application/json', 'acid-base-simulation-report.json');
-  download(reportToHtml(report), 'text/html', 'acid-base-simulation-report.html');
-  if (report.graphImage?.svg) download(report.graphImage.svg, 'image/svg+xml', report.graphImage.filename);
+  download(html, 'text/html', 'acid-base-simulation-report.html');
+  if (report.graphImage?.svg) download(safeGraphSvg(report.graphImage.svg), 'image/svg+xml', 'acid-base-titration-graph.svg');
 };

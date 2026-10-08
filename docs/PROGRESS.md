@@ -1,5 +1,82 @@
 # PROGRESS
 
+## 2026-10-08 — Security audit (protected changes await confirmation)
+
+- Report: SECURITY_AUDIT.md. Fixed HTML/SVG sinks, own-key validation, preview
+  file/Host/URL/junction handling and one Critical lockfile patch (proxy-addr
+  2.0.8). QA tmp ignored by Git; artifacts preserved. Chemistry/design unchanged.
+- Check PASS 92/92, phase audit PASS 8/8, peer-run PASS 11/11, security and both
+  simulation browser suites PASS. Existing Firestore emulator tests PASS 2/2.
+- New emulator gate: 66/71, FAIL on path ownership, malformed profile/snapshot,
+  nonfinite chemistry data and quota 51. Rules unchanged pending user approval.
+- Review-only Rules draft: 70/71 (quota open). Review-only dist/Hosting/CSP
+  draft passes full browser regressions; actual firebase.json unchanged.
+- npm audit: 25 -> 24 package entries, Critical 1 -> 0; 14 High/10 Moderate
+  remain. Vendored Three.js advisory audit reports zero; deployed Storage/Auth
+  settings and physical-device/Safari performance not verified.
+- Preview: http://localhost:4173/simulate. main / 31036396c40dece032f6081a82b705e97d97d387.
+  Local changes only; no push, deployment, admin accounts or production data changes.
+
+## 2026-10-08 — HCl–NaOH functional audit
+
+- Done: reproduced and fixed seven failing checks: pink at pH 7, drops from
+  an empty buret, delayed indicator after pause, active runner after calculate,
+  wrong seeded reference volume, negative buret acceptance and zero-as-50 fallback.
+  Chemistry formulas and layout unchanged; existing staged Firebase change preserved.
+- Added six unit regressions and tests/titration-audit.browser.mjs; repaired
+  stale peer-run assertions/selectors. Detailed evidence: docs/HCL_NAOH_AUDIT.md.
+- Tests: check PASS (86/86, no skip); phase audit PASS (8/8); both browser suites
+  PASS; peer-run PASS (11/11); unchanged Firestore emulator tests PASS (2/2)
+  using isolated TEMP dependencies and a demo project. git diff --check PASS.
+- Seven chemical checkpoints agree across 3D/chart/state: 25 mL NaOH gives
+  pH 7, colorless solution, 25 mL buret remaining and 50 mL flask total.
+  Camera and eight desktop/mobile widths PASS; physical phone/Safari/FPS untested.
+- Preview: http://localhost:4173/simulate. Evidence: tmp/titration-audit/.
+- Branch-SHA: main / 31036396c40dece032f6081a82b705e97d97d387; local,
+  uncommitted changes only. No push, deployment or production acceptance claim.
+
+## 2026-10-08 — Balanced two-column simulator layout
+
+- Done: shared setup/control panel above equal desktop columns: 3D left,
+  pH–V chart right. Simulation workspace expands to 1560 px, stacks below
+  1024 px, bounds history in a scroll region and resizes SVG from the actual
+  viewport. Existing chemistry/state/runner and colors preserved. Home width
+  unchanged; fixed the hidden empty-chart overlay in the simulator only.
+- Files: index.html, assets/styles.css, src/ui/chartView.js,
+  src/ui/inputForm.js, tests/vessel3d.browser.mjs, docs/VESSEL_3D.md.
+- Tests: npm run check PASS (80/80), git diff --check PASS; Edge browser
+  regression PASS including eight widths, balanced columns, stacking, SVG
+  resize, synchronized 3D/chart pH, controls/touch, scrollable history,
+  empty-state visibility, home width and WebGL fallback.
+- Preview-URL: http://localhost:4173/simulate. Screenshots inspected:
+  tmp/vessel3d-qa/two-columns.png, workspace-desktop.png, workspace-mobile.png.
+- Risk/Next: mobile tested with viewport/touch emulation; physical-device
+  performance remains unbenchmarked. User can review locally in Simple Browser.
+- Branch-SHA: main / 31036396c40dece032f6081a82b705e97d97d387; uncommitted
+  local changes only; no push or Firebase deployment.
+
+## 2026-10-08 — Local Three.js experiment viewport
+
+- Done: replace only the droplet illustration with a local Three.js 0.186.1
+  scene: glass buret/stopcock/stand/Erlenmeyer, liquid volumes, drop/ripple,
+  orbit/zoom/pan/reset camera and desktop/mobile controls. State callbacks
+  preserve the existing solver, runner, indicator mapping and pH–V chart.
+- Files: index.html, assets/styles.css, assets/vendor/three/, src/app.js,
+  src/ui/inputForm.js, src/ui/vesselModel.js, src/ui/vesselView.js,
+  src/ui/vesselScene.js, tests/vessel3d.test.js, tests/vessel3d.browser.mjs,
+  docs/VESSEL_3D.md. Existing staged firebase.json change preserved.
+- Tests: npm run check PASS (80/80); Edge headless browser smoke PASS for
+  state/drop/run/pause/reset, color/chart, rotate/zoom/pan/reset, one/two-finger
+  touch, case change, five responsive widths and no-WebGL fallback. Desktop,
+  pink and mobile screenshots inspected in tmp/vessel3d-qa/.
+- Preview-URL: http://localhost:4173/simulate (local only).
+- Risk: geometry illustrates volumes; physical-phone GPU/FPS not benchmarked.
+  Reduced motion, rendering on demand, mobile quality limits and CSS fallback
+  are implemented. No phase completion or production acceptance claim.
+- Next: user visual review in VS Code Simple Browser or desktop browser.
+- Branch-SHA: main / 31036396c40dece032f6081a82b705e97d97d387; uncommitted
+  working-tree changes, no push, no Firebase deploy.
+
 ## 2026-09-29 — Weak-acid/weak-base UI integration
 
 - Branch: `feature/weak-acid-strong-base-weak-base-ui`.
@@ -327,3 +404,28 @@
   deploy limitations where applicable.
 - Final assessment: do not label Phases 0–6 as `100% DONE` yet. The live URL
   is recorded for traceability; remaining gates are explicitly preserved.
+
+## 2026-10-08 — Security audit follow-up, local only
+
+- New Rules and production Hosting changes remain unapproved and unapplied.
+  Current configuration and both review-only proposals retain their SHA-256.
+- Classified all five unexpected allows from the 66/71 current Rules gate;
+  draft remains 70/71. Quota is an unimplemented authoritative save-flow
+  requirement, not proof that the existing Rules can count a collection.
+- Added 98 Emulator compatibility observations across current/draft policies,
+  three solver snapshots, legacy data, UID paths, queries and roles. Both
+  policies reject the full repository snapshot; cloud persistence is not ready.
+- Offline CLI upload-file filtering confirms current root Hosting can include
+  `.git` descendants and internal QA/config artifacts. No production request,
+  upload or data change was performed. A fresh dist copy contains 37 web files,
+  no hidden/internal files outside the web asset allowlist.
+- Hosting Emulator Windows header glob matching was ineffective. A separate
+  TEMP-only QA configuration verifies real CSP headers and blocks hidden-folder
+  descendants from upload; root configuration and proposals are unchanged.
+  Titration and 3D/layout browser suites pass under the effective QA CSP.
+- Full unit/lint/format check: 92/92 PASS, 0 skip. Security acceptance is still
+  FAIL for current/draft policy findings; tests were not relaxed to turn green.
+- Free Lab/Guided Lab may continue locally with trusted fixtures/Emulator.
+  Public/Firebase release remains blocked pending schema, quota, UID/Hosting,
+  dependency and environment review. See `SECURITY_AUDIT.md` sections 9–14 for
+  findings, access compatibility, backup/rollback and release gates.
