@@ -1,4 +1,5 @@
 import { escapeHtml } from './htmlSafety.js';
+import { describeRegion } from '../chemistry/regions.js';
 const text = (root, selector, value) => { const node = root.querySelector(selector); if (node) node.textContent = value; };
 
 export const renderExperimentView = (root, result, state) => {
@@ -8,6 +9,7 @@ export const renderExperimentView = (root, result, state) => {
   text(root, '[data-result="volume"]', `${result.totalVolumeMl.toFixed(2)} mL`);
   text(root, '[data-result="excess"]', result.excess.species ?? 'Không');
   text(root, '[data-result="stage"]', result.stage);
+  text(root, '[data-region-description]', describeRegion(result, state));
   text(root, '[data-result="reaction"]', result.dominantReaction);
   text(root, '[data-result="added-volume"]', `${state?.addedVolumeMl?.toFixed(2) ?? '0.00'} mL`);
   const tbody = root.querySelector('[data-chemistry-rows]');

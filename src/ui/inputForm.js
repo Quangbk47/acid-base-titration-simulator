@@ -72,6 +72,7 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
     setText(root, '[data-result="volume"]', '—');
     setText(root, '[data-result="excess"]', '—');
     setText(root, '[data-result="stage"]', '—');
+    setText(root, '[data-region-description]', 'So với tương đương');
     setText(root, '[data-result="reaction"]', 'Chưa tính');
     setText(root, '[data-result="added-volume"]', '0.00 mL');
     const chemistryRows = root.querySelector('[data-chemistry-rows]');
@@ -219,5 +220,21 @@ export function initInputForm({ form, root = document, solve = solveStrongStrong
     } else setText(form, '[data-form-error]', 'Cặp hóa chất trong liên kết chưa được hỗ trợ. Không nhận các thông số chuyển sang.');
   }
   syncControlAvailability();
-  return { loadCase, getState: () => simulationState, dispose: () => { guidedForm?.removeEventListener('submit', checkGuided); runner.dispose(); chartResizeObserver?.disconnect(); renderIndicatorView(root, null); } };
+  const getSnapshot = () => ({ values: valuesFromForm(form), theory: calculateTheory(valuesFromForm(form)), state: simulationState ? JSON.parse(JSON.stringify(simulationState)) : null, history: chartHistory.slice() });
+  const restoreSnapshot = (snapshot) => {
+    const pair = titrationPairs.find((item) => item.id === snapshot?.values?.pairId);
+    if (!pair || !calculateTheory({ ...snapshot.values, systemType: pair.systemType }).ok) throw new Error('Thông số lịch sử không tương thích mô hình.');
+    runner.dispose(); systemSelector.value = pair.systemType; pairSelector.replaceChildren(); syncSystem(); pairSelector.value = pair.id; syncSystem();
+    for (const [key, id] of Object.entries(FIELD_IDS)) if (key in snapshot.values && !['systemType', 'pairId'].includes(key)) form.querySelector('#' + id).value = snapshot.values[key];
+    simulationState = null; chartHistory = []; clearRenderedResult(); showTheory(calculateTheory(valuesFromForm(form))); setStateLabel('Idle');
+    if (snapshot.state) {
+      const saved = snapshot.state; const evaluation = evaluateTitration({ ...valuesFromForm(form), addedVolumeMl: saved.addedVolumeMl }, solve);
+      if (!evaluation.ok || !Number.isFinite(saved.initialAddedVolumeMl) || saved.initialAddedVolumeMl < 0 || Math.abs(saved.addedVolumeMl - saved.initialAddedVolumeMl - saved.dropCount * UI_DROP_SIZE_ML) > 1e-6 || saved.dropCount * UI_DROP_SIZE_ML > saved.initialBuretVolumeMl + 1e-6 || !Number.isInteger(saved.dropCount) || saved.dropCount < 0 || !Number.isFinite(saved.initialBuretVolumeMl) || saved.initialBuretVolumeMl < 0 || !Array.isArray(snapshot.history) || snapshot.history.length > 2000 || !snapshot.history.every((p) => Number.isFinite(p.volumeMl) && Number.isFinite(p.pH))) throw new Error('Trạng thái lịch sử không hợp lệ.');
+      const created = createSimulationState(evaluation.chemistryInput, { initialBuretVolumeMl: saved.initialBuretVolumeMl, dropSizeMl: UI_DROP_SIZE_ML });
+      if (!created.ok) throw new Error('Không khôi phục được trạng thái.');
+      simulationState = withSimulationResult({ ...created.state, initialAddedVolumeMl: saved.initialAddedVolumeMl, dropCount: saved.dropCount, status: 'paused' }, evaluation.result).state;
+      chartHistory = snapshot.history.slice(); render(evaluation.result); setStateLabel('Paused');
+    }
+  };
+  return { loadCase, getState: () => simulationState, getSnapshot, restoreSnapshot, dispose: () => { guidedForm?.removeEventListener('submit', checkGuided); runner.dispose(); chartResizeObserver?.disconnect(); renderIndicatorView(root, null); } };
 }

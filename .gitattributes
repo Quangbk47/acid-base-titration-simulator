@@ -1,0 +1,2 @@
+# Bundled third-party SDK contains intentional whitespace in string literals.
+assets/vendor/firebase-lab.js -whitespace

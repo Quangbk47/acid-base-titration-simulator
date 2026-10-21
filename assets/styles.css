@@ -338,3 +338,17 @@ legend { font-weight: 600; }
 .chemical-status { color: #176b64; font-weight: 600; }
 .chemical-simulation-links { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1rem; }
 .chemical-card .button, .chemical-simulation-links .button { white-space: normal; max-width: 100%; }
+
+/* Assessment and account tools: scoped additions, existing simulation/team layout unchanged. */
+.lab-workspace { margin-block: 1.5rem; min-width: 0; }
+.lab-workspace .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 1rem; }
+.lab-workspace textarea, .lab-workspace input, .lab-workspace select { max-width: 100%; box-sizing: border-box; }
+.lab-workspace textarea { width: 100%; }
+.lab-workspace details { margin-block: 1rem; }
+.lab-workspace summary { cursor: pointer; font-weight: 600; }
+.lab-table-wrap { max-width: 100%; overflow: auto; margin-block: 1rem; max-height: 26rem; }
+.lab-table-wrap table { min-width: 460px; width: 100%; }
+.lab-table-wrap input { width: 100%; min-width: 100px; }
+.lab-workspace svg { width: 100%; height: auto; display: block; font-size: 12px; }
+.lab-history-row { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; padding-block: .5rem; }
+.primary-nav { flex-wrap: wrap; }

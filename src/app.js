@@ -22,8 +22,9 @@ renderProject();
 if (route === 'home') initHomeView();
 const vesselView = initVesselView();
 const inputForm = initInputForm({ form: document.querySelector('#titration-form'), onStateChange: (state) => vesselView.update(state) });
+const labFeatures = route === 'simulate' ? await (await import('./ui/labFeatures.js')).initLabFeatures(inputForm) : null;
 window.addEventListener('pagehide', (event) => {
-  if (!event.persisted) { inputForm?.dispose(); vesselView.dispose(); }
+  if (!event.persisted) { labFeatures?.dispose(); inputForm?.dispose(); vesselView.dispose(); }
 });
 
 document.documentElement.dataset.appReady = 'true';

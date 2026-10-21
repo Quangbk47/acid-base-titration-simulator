@@ -69,7 +69,7 @@ test('Research: Excel sheets use numeric exact history and distinguish pre-run t
   const pair = titrationPairs[0]; const setup = values(pair); const theory = calculateTheory(setup);
   const history = [{ volumeMl: 0, pH: 1, stage: 'before-equivalence' }, { volumeMl: 25, pH: 7, stage: 'at-equivalence' }];
   const sheets = experimentSheets({ values: setup, theory, state: { initialBuretVolumeMl: 50, addedVolumeMl: 25 }, history });
-  assert.deepEqual(sheets.map((s) => s.name), ['Thông số', 'Lý thuyết', 'Dữ liệu pH-V']);
+  assert.deepEqual(sheets.map((s) => s.name), ['Thông số', 'Lý thuyết', 'Dữ liệu pH-V', 'Đồ thị']);
   assert.deepEqual(sheets[2].rows.filter((r) => r[2] === 'Mô phỏng').map((r) => r.slice(0, 2)), [[0, 1], [25, 7]]);
   const before = experimentSheets({ values: setup, theory }); assert.ok(!before[2].rows.some((r) => r[2] === 'Mô phỏng'));
   const bytes = createWorkbook([{ name: 'Kiểm tra', rows: [['=1+1', '<script> &'], [25, 7]] }]);

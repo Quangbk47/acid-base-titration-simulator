@@ -1,4 +1,5 @@
 import { chemicals } from '../data/chemicals.js';
+import { nativeChartFiles } from './excelChart.js';
 import { buildChartModel, orderedChartData } from './chartView.js';
 
 const encoder = new TextEncoder();
@@ -23,7 +24,7 @@ export function zipFiles(files) {
   return concat([...locals, directory, end]);
 }
 
-export function experimentSheets({ values, theory, state, history = [] }) {
+export function experimentSheets({ values, theory, state, history = [], assessment = null }) {
   const settings = [['Thông số', 'Giá trị', 'Đơn vị / nguồn'], ['Cặp chuẩn độ', theory.pair.analyte + ' – ' + theory.pair.titrant, ''], ['Loại chuẩn độ', theory.pair.systemType, 'Phân loại theo cặp bình – buret'], ['Chất trong bình', theory.analyte, ''], ['Chất trong buret', theory.titrant, ''], ['Nồng độ chất phân tích', Number(values.analyteConcentrationM), 'mol/L'], ['Thể tích ban đầu', Number(values.analyteVolumeMl), 'mL'], ['Nồng độ chất chuẩn', Number(values.titrantConcentrationM), 'mol/L'], ['Buret ban đầu', state?.initialBuretVolumeMl ?? Number(values.buretVolumeMl), 'mL'], ['Nhiệt độ', 25, '°C'], ['Kw', 1e-14, '25 °C'], ['Giả định', 'Dung dịch lý tưởng; không mô phỏng hoạt độ, CO₂, sai số thiết bị hay huyền phù.', ''], ['Nguồn dữ liệu', 'Mô phỏng tính toán, không phải phép đo thực nghiệm.', '']];
   for (const chemical of chemicals.filter((c) => [theory.pair.analyteId, theory.pair.titrantId].includes(c.id))) {
     for (const key of ['Ka', 'Kb', 'Ka1', 'Ka2', 'Ksp']) if (chemical[key]) settings.push([chemical.formula + ' ' + key, chemical[key], chemical.source]);
@@ -34,14 +35,24 @@ export function experimentSheets({ values, theory, state, history = [] }) {
   const rows = [['V chất chuẩn đã thêm (mL)', 'pH', 'Nguồn', 'Giai đoạn / mốc']];
   if (!state) rows.push(['', '', 'Chưa chạy mô phỏng', 'Chỉ có dữ liệu lý thuyết bên dưới']);
   for (const row of orderedChartData(history)) rows.push([row.volumeMl, row.pH, 'Mô phỏng', row.stage]);
-  const curve = buildChartModel(theory.input, state?.addedVolumeMl ?? 0);
+  const curve = buildChartModel(theory.input, Math.max(state?.addedVolumeMl ?? 0, ...(assessment?.ok ? assessment.details.map((p) => p.volumeMl) : [0])));
   if (curve.error) throw new Error(curve.error.message);
   for (const row of curve.points) {
     const equivalentIndex = theory.equivalents.findIndex((point) => Math.abs(point.volumeMl - row.volumeMl) < 1e-9);
     const mark = equivalentIndex >= 0 ? 'Điểm tương đương ' + (equivalentIndex + 1) : row.volumeMl === 0 ? 'Ban đầu' : Math.abs(row.volumeMl - curve.milestones.halfEqMl) < 1e-9 ? 'Nửa V tương đương cuối' : Number.isFinite(curve.milestones.endpointMl) && Math.abs(row.volumeMl - curve.milestones.endpointMl) < 1e-9 ? 'Ngưỡng chỉ thị pH 8,2 (không phải tương đương)' : row.stage;
     rows.push([row.volumeMl, row.pH, 'Lý thuyết', mark]);
   }
-  return [{ name: 'Thông số', rows: settings }, { name: 'Lý thuyết', rows: theoretical }, { name: 'Dữ liệu pH-V', rows }];
+  const chart = { series: [{ name: 'Lý thuyết (mô hình 25 °C)', points: curve.points, color: '176B64' }], equivalents: theory.equivalents };
+  if (history.length) chart.series.push({ name: 'Mô phỏng (không phải phép đo)', points: orderedChartData(history), markers: true, color: '4389AD' });
+  const sheets = [{ name: 'Thông số', rows: settings }, { name: 'Lý thuyết', rows: theoretical }, { name: 'Dữ liệu pH-V', rows }, { name: 'Đồ thị', rows: [['Đường cong pH–V', 'Đường nối thẳng; không làm mượt; điểm tương đương là lý thuyết.']], chart }];
+  if (assessment?.ok) {
+    chart.series.push({ name: assessment.source === 'measured' ? 'Dữ liệu đo người dùng nhập' : 'Dữ liệu mô phỏng nhập để so sánh', points: assessment.details, markers: true, color: 'BD536E' });
+    const data = [['Đánh giá số liệu', 'Giá trị', 'Diễn giải'], ['Nguồn', assessment.source === 'measured' ? 'Người dùng khai báo dữ liệu đo' : 'Dữ liệu mô phỏng', assessment.note], ['Số điểm', assessment.count], ['MAE (pH)', assessment.metrics.mae], ['RMSE (pH)', assessment.metrics.rmse], ['Sai lệch lớn nhất (pH)', assessment.metrics.maxDeviation], ['Ngưỡng RMSE tốt', assessment.criteria.goodRmse, 'Tiêu chí tham khảo phần mềm'], ['Ngưỡng RMSE đáng chú ý', assessment.criteria.notableRmse], ['Nhận xét', assessment.conclusion], ...assessment.warnings.map((warning) => ['Giới hạn', warning])];
+    if (assessment.endpoint) data.push(['V tương đương ước lượng (mL)', assessment.endpoint.volumeMl, assessment.endpoint.method], ['Sai lệch V tương đương (mL)', assessment.endpoint.errorMl]);
+    data.push(['V đã thêm (mL)', 'pH nhập', 'pH lý thuyết', 'ΔpH = nhập − lý thuyết'], ...assessment.details.map((p) => [p.volumeMl, p.pH, p.theoreticalPH, p.deltaPH]));
+    sheets.push({ name: 'Đánh giá số liệu', rows: data });
+  }
+  return sheets;
 }
 
 export function createWorkbook(sheets) {
@@ -54,8 +65,13 @@ export function createWorkbook(sheets) {
     'xl/styles.xml': `<styleSheet xmlns="${ns}"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF176B64"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"><alignment vertical="top" wrapText="1"/></xf><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFill="1" applyFont="1"><alignment wrapText="1"/></xf></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`,
   };
   sheets.forEach((sheet, index) => {
+    if (sheet.chart) {
+      const n = index + 1; Object.assign(files, nativeChartFiles(sheet.chart, n));
+      files['[Content_Types].xml'] = files['[Content_Types].xml'].replace('</Types>', '<Override PartName="/xl/drawings/drawing' + n + '.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/><Override PartName="/xl/charts/chart' + n + '.xml" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/></Types>');
+      files['xl/worksheets/_rels/sheet' + n + '.xml.rels'] = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="drawing" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing" Target="../drawings/drawing' + n + '.xml"/></Relationships>';
+    }
     const rows = sheet.rows.map((row, r) => `<row r="${r + 1}">${row.map((value, c) => { const ref = column(c) + (r + 1); if (typeof value === 'number') { if (!Number.isFinite(value)) throw new Error('Giá trị Excel không hữu hạn'); return `<c r="${ref}" s="${r === 0 ? 1 : 0}"><v>${value}</v></c>`; } return `<c r="${ref}" s="${r === 0 ? 1 : 0}" t="inlineStr"><is><t xml:space="preserve">${xml(value)}</t></is></c>`; }).join('')}</row>`).join('');
-    files[`xl/worksheets/sheet${index + 1}.xml`] = `<worksheet xmlns="${ns}"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols><col min="1" max="1" width="38" customWidth="1"/><col min="2" max="2" width="50" customWidth="1"/><col min="3" max="4" width="55" customWidth="1"/></cols><sheetData>${rows}</sheetData><autoFilter ref="A1:${column(Math.max(...sheet.rows.map((r) => r.length)) - 1)}${sheet.rows.length}"/></worksheet>`;
+    files[`xl/worksheets/sheet${index + 1}.xml`] = `<worksheet xmlns="${ns}" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols><col min="1" max="1" width="38" customWidth="1"/><col min="2" max="2" width="50" customWidth="1"/><col min="3" max="4" width="55" customWidth="1"/></cols><sheetData>${rows}</sheetData><autoFilter ref="A1:${column(Math.max(...sheet.rows.map((r) => r.length)) - 1)}${sheet.rows.length}"/>${sheet.chart ? '<drawing r:id="drawing"/>' : ''}</worksheet>`;
   });
   return zipFiles(files);
 }
