@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { buildVesselModel, flaskFillHeight, flaskRadiusAt, FLASK_BODY_HEIGHT } from '../src/ui/vesselModel.js';
+import { buildVesselModel, flaskFillHeight, flaskRadiusAt, flaskLiquidProfile, flaskInnerRadiusAt, FLASK_INNER_PROFILE, FLASK_GLASS_PROFILE, FLASK_BOTTOM, FLASK_BODY_HEIGHT, LIQUID_CLEARANCE, VESSEL_LAYOUT } from '../src/ui/vesselModel.js';
 import { addDrop, createSimulationState, resetSimulation, withSimulationResult } from '../src/simulation/state.js';
 import { solveStrongStrong } from '../src/chemistry/index.js';
 import { initVesselView } from '../src/ui/vesselView.js';
@@ -35,7 +35,7 @@ test('3D: initial titrant is not subtracted twice, empty buret and oversized fla
   assert.ok(large.pinkStrength > 0.6);
 });
 
-test('3D: geometric liquid height conserves conical volume and increases continuously', () => {
+test('3D: geometric liquid height conserves the rounded flask volume and increases continuously', () => {
   assert.ok(flaskFillHeight(0) < 1e-8);
   assert.ok(Math.abs(flaskFillHeight(1) - FLASK_BODY_HEIGHT) < 1e-8);
   let last = 0;
@@ -43,10 +43,34 @@ test('3D: geometric liquid height conserves conical volume and increases continu
     const height = flaskFillHeight(fraction);
     assert.ok(height > last);
     assert.ok(flaskRadiusAt(height) > 0);
-    const frustumVolume = (h) => h / 3 * (0.68 ** 2 + 0.68 * flaskRadiusAt(h) + flaskRadiusAt(h) ** 2);
-    assert.ok(Math.abs(frustumVolume(height) / frustumVolume(FLASK_BODY_HEIGHT) - fraction) < 1e-8);
+    // Independent midpoint integration; the implementation uses exact frustum segments.
+    const numericalVolume = (h) => { let sum = 0; const n = 4096; for (let i = 0; i < n; i++) { const worldY = FLASK_BOTTOM + h * (i + 0.5) / n; const j = FLASK_INNER_PROFILE.findIndex(([, y]) => y >= worldY); const [r0, y0] = FLASK_INNER_PROFILE[Math.max(0, j - 1)]; const [r1, y1] = FLASK_INNER_PROFILE[Math.max(1, j)]; const r = r0 + (r1 - r0) * (worldY - y0) / (y1 - y0) - LIQUID_CLEARANCE; sum += r * r * h / n; } return sum; };
+    assert.ok(Math.abs(numericalVolume(height) / numericalVolume(FLASK_BODY_HEIGHT) - fraction) < 2e-6);
     last = height;
   }
+});
+
+test('3D: shared glass/liquid profile contains every fill and its meniscus, with a closed floor and open neck', () => {
+  assert.equal(FLASK_GLASS_PROFILE[0][0], 0); assert.equal(FLASK_GLASS_PROFILE.at(-1)[0], 0);
+  assert.equal(FLASK_INNER_PROFILE.at(-1)[1], VESSEL_LAYOUT.rimY);
+  assert.ok(FLASK_BOTTOM - FLASK_INNER_PROFILE[0][1] > 0 && FLASK_BOTTOM - FLASK_INNER_PROFILE[0][1] < 0.003);
+  for (const fraction of [0.0001, 0.01, 0.1, 0.25, 0.5, 0.85]) {
+    const height = flaskFillHeight(fraction);
+    const profile = flaskLiquidProfile(height);
+    for (const [radius, y] of profile) { assert.ok(radius <= flaskInnerRadiusAt(y) - LIQUID_CLEARANCE + 1e-10); assert.ok(y >= FLASK_BOTTOM && y < VESSEL_LAYOUT.rimY); }
+    // The concave meniscus edge rises by .007 but stays inside the wall.
+    assert.ok(flaskRadiusAt(height) * 1.006 < flaskInnerRadiusAt(FLASK_BOTTOM + height + 0.007));
+  }
+});
+
+test('3D: stand clears flask, outlet aligns with its opening and buret scale covers its liquid column', () => {
+  const l = VESSEL_LAYOUT; const flaskLeft = l.axisX - Math.max(...FLASK_GLASS_PROFILE.map(([r]) => r));
+  assert.ok(flaskLeft - (l.rodX + l.baseWidth / 2) > 0.15);
+  assert.ok(l.tipY - l.rimY > 0.15 && l.tipY - l.rimY < 0.4);
+  assert.ok(l.buretLiquidRadius < l.buretInnerRadius);
+  const fullY = l.buretBottom + (l.buretTop - l.buretBottom) * buildVesselModel(null).buretFraction;
+  assert.equal(fullY, l.buretTop);
+  const empty = buildVesselModel({ initialBuretVolumeMl: 50, initialAddedVolumeMl: 0, addedVolumeMl: 50 }); assert.equal(empty.buretFraction, 0);
 });
 
 test('3D: lazy loader replays the latest state and disposes observers/renderer', async () => {

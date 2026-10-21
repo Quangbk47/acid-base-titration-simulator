@@ -2,7 +2,7 @@ import { pairForInput } from '../data/titrationPairs.js';
 import * as THREE from '../../assets/vendor/three/three.module.js';
 import { OrbitControls } from '../../assets/vendor/three/OrbitControls.js';
 import { RoomEnvironment } from '../../assets/vendor/three/RoomEnvironment.js';
-import { buildVesselModel, flaskFillHeight, flaskRadiusAt, FLASK_BOTTOM } from './vesselModel.js';
+import { buildVesselModel, flaskFillHeight, flaskRadiusAt, flaskLiquidProfile, FLASK_GLASS_PROFILE, VESSEL_LAYOUT, FLASK_BOTTOM } from './vesselModel.js';
 
 export function createVesselScene({ viewport, onError = () => {} }) {
   const compact = matchMedia('(max-width: 767px)').matches;
@@ -71,39 +71,50 @@ export function createVesselScene({ viewport, onError = () => {} }) {
   const metal = new THREE.MeshStandardMaterial({ color: '#a9bfbd', metalness: 0.86, roughness: 0.24 });
   const dark = new THREE.MeshStandardMaterial({ color: '#254a4b', metalness: 0.45, roughness: 0.3 });
   const ceramic = new THREE.MeshStandardMaterial({ color: '#f7faf8', roughness: 0.32, metalness: 0.08 });
-  const glass = new THREE.MeshPhysicalMaterial({ color: '#bce0dc', transmission: 0.9, thickness: 0.05, roughness: 0.08, ior: 1.46, transparent: true, opacity: 0.55, depthWrite: false, side: THREE.DoubleSide, envMapIntensity: 1.3 });
-  const glassRim = new THREE.MeshPhysicalMaterial({ color: '#79a7a8', transmission: 0.55, thickness: 0.06, roughness: 0.1, ior: 1.46, transparent: true, opacity: 0.85 });
-  const buretLiquidMaterial = new THREE.MeshPhysicalMaterial({ color: '#a7cdd0', roughness: 0.12, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.08 });
-  const solutionMaterial = new THREE.MeshPhysicalMaterial({ color: '#a7cdd0', roughness: 0.12, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.07 });
+  const glass = new THREE.MeshPhysicalMaterial({ color: '#edfafa', transmission: 0.94, thickness: 0.035, roughness: 0.065, ior: 1.46, transparent: true, opacity: 0.38, depthWrite: false, side: THREE.DoubleSide, envMapIntensity: 0.75 });
+  const glassRim = new THREE.MeshPhysicalMaterial({ color: '#a4c8c8', transmission: 0.7, thickness: 0.04, roughness: 0.1, ior: 1.46, transparent: true, opacity: 0.62 });
+  // Neutral optical shading makes colorless liquid visible; pink alone is pH-driven.
+  const liquidBase = '#9e9e9e';
+  // Opaque-pass rendering lets the refractive glass sample this narrow liquid column.
+  const buretLiquidMaterial = new THREE.MeshPhysicalMaterial({ color: liquidBase, roughness: 0.18, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.08 });
+  const solutionMaterial = buretLiquidMaterial.clone();
+  solutionMaterial.transparent = true; solutionMaterial.opacity = 0.93; solutionMaterial.depthWrite = false;
+  const surfaceMaterial = new THREE.MeshPhysicalMaterial({ color: '#d4edf0', roughness: 0.08, clearcoat: 1, transparent: true, opacity: 0.9, depthWrite: false, side: THREE.DoubleSide });
   const mesh = (geometry, material, x, y, z = 0) => {
     const object = new THREE.Mesh(geometry, material);
     object.position.set(x, y, z);
-    object.castShadow = material !== glass && material !== glassRim;
+    object.castShadow = material !== glass && material !== glassRim && !material.transparent;
     object.receiveShadow = material !== glass;
     scene.add(object);
     return object;
   };
   const cylinder = (radius, height, material, x, y, z = 0) => mesh(new THREE.CylinderGeometry(radius, radius, height, segments), material, x, y, z);
-  const ring = (radius, thickness, x, y, z = 0, material = glassRim) => {
-    const object = mesh(new THREE.TorusGeometry(radius, thickness, 8, segments), material, x, y, z);
+  const ring = (radius, thickness, x, y, z = 0, material = glassRim, radialSegments = 8) => {
+    const object = mesh(new THREE.TorusGeometry(radius, thickness, radialSegments, segments), material, x, y, z);
     object.rotation.x = Math.PI / 2;
     return object;
   };
   const lathe = (profile, material, x = 0.35) => mesh(new THREE.LatheGeometry(profile.map(([r, y]) => new THREE.Vector2(r, y)), segments), material, x, 0);
+  const between = (from, to, radius, material) => {
+    const start = new THREE.Vector3(...from); const end = new THREE.Vector3(...to); const direction = end.clone().sub(start);
+    const object = cylinder(radius, direction.length(), material, 0, 0);
+    object.position.copy(start.add(end).multiplyScalar(0.5)); object.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize()); return object;
+  };
 
   // Bench, weighted stand, steel rod and two clamps.
-  const bench = mesh(new THREE.CylinderGeometry(2.2, 2.25, 0.12, 64), ceramic, 0, 0.02);
+  const bench = mesh(new THREE.CylinderGeometry(2.2, 2.25, 0.12, 64), ceramic, 0, 0.11);
   bench.receiveShadow = true;
-  mesh(new THREE.BoxGeometry(1.28, 0.13, 0.85), dark, -0.92, 0.14, -0.36);
-  cylinder(0.048, 5.3, metal, -0.94, 2.83, -0.4);
-  cylinder(0.072, 0.12, dark, -0.94, 5.49, -0.4);
+  bench.castShadow = false;
+  const { rodX, rodZ, baseWidth, baseDepth, tipY, buretBottom, buretTop } = VESSEL_LAYOUT;
+  mesh(new THREE.BoxGeometry(baseWidth, 0.13, baseDepth), dark, rodX, 0.235, rodZ);
+  cylinder(0.048, 5.3, metal, rodX, 2.92, rodZ);
+  cylinder(0.072, 0.12, dark, rodX, 5.58, rodZ);
   for (const y of [3.25, 4.85]) {
-    const arm = cylinder(0.035, 1.35, metal, -0.3, y, -0.36);
-    arm.rotation.z = Math.PI / 2;
-    mesh(new THREE.BoxGeometry(0.14, 0.18, 0.15), dark, -0.94, y, -0.4);
-    const clamp = ring(0.19, 0.024, 0.35, y, 0, dark);
-    clamp.rotation.x = 0;
-    cylinder(0.065, 0.15, dark, -0.94, y, -0.52).rotation.x = Math.PI / 2;
+    between([rodX, y, rodZ], [0.35, y, -0.19], 0.028, metal);
+    mesh(new THREE.BoxGeometry(0.14, 0.18, 0.15), dark, rodX, y, rodZ);
+    const clamp = mesh(new THREE.TorusGeometry(0.177, 0.02, 8, 32, Math.PI * 1.6).rotateZ(Math.PI * 0.7), dark, 0.35, y);
+    clamp.rotation.x = Math.PI / 2;
+    cylinder(0.06, 0.16, dark, rodX, y, rodZ - 0.12).rotation.x = Math.PI / 2;
   }
 
   // Buret has an open hollow lip, glass shoulder, stopcock and fine outlet.
@@ -123,13 +134,18 @@ export function createVesselScene({ viewport, onError = () => {} }) {
   knob.position.z = 0.1;
   stopcock.add(knob);
   scene.add(stopcock);
-  const buretLiquid = cylinder(0.115, 1, buretLiquidMaterial, 0.35, 4);
-  const meniscus = cylinder(0.116, 0.012, buretLiquidMaterial, 0.35, 5.3);
+  const buretLiquid = mesh(new THREE.CylinderGeometry(VESSEL_LAYOUT.buretLiquidRadius, VESSEL_LAYOUT.buretLiquidRadius, 1, segments, 1, true), buretLiquidMaterial, 0.35, 4);
+  buretLiquid.castShadow = false;
+  const meniscus = lathe([[0, 0], [0.09, 0], [0.11, 0.004], [0.114, 0.009]], surfaceMaterial);
+  const edgeMaterial = new THREE.MeshBasicMaterial({ color: '#68888b', transparent: true, opacity: 0.48, depthWrite: false });
+  const buretEdge = ring(0.113, 0.0025, 0.35, 5.3, 0, edgeMaterial, 4);
+  const outletLiquid = lathe([[0, 2.07], [0.014, 2.07], [0.016, 2.13], [0.039, 2.54], [0.049, 2.56], [0.049, 2.78], [0.113, 2.91], [0.113, 3.0]], buretLiquidMaterial);
+  outletLiquid.castShadow = false;
 
   // Fine graduations wrap the front of the tube and remain visible in glass.
   const ticks = [];
   for (let i = 0; i <= 50; i += 1) {
-    const y = 5.3 - i * 2.3 / 50;
+    const y = buretTop - i * (buretTop - buretBottom) / 50;
     const length = i % 10 === 0 ? 0.17 : i % 5 === 0 ? 0.12 : 0.07;
     ticks.push(0.35 - length / 2, y, 0.155, 0.35 + length / 2, y, 0.155);
   }
@@ -169,17 +185,19 @@ export function createVesselScene({ viewport, onError = () => {} }) {
   const buretCapacityLabel = textLabel('50 mL', 0.35, 5.55, 0, 0.42);
 
   // Closed base and open neck: a real hollow Erlenmeyer silhouette.
-  lathe([[0, 0.13], [0.53, 0.13], [0.66, 0.16], [0.72, 0.23], [0.7, 0.35], [0.26, 1.28], [0.23, 1.38], [0.23, 1.73], [0.26, 1.75], [0.19, 1.75], [0.19, 1.39], [0.22, 1.3], [0.65, 0.34], [0.66, 0.24], [0.55, 0.19], [0, 0.19]], glass);
+  lathe(FLASK_GLASS_PROFILE, glass);
   ring(0.225, 0.026, 0.35, 1.75);
   ring(0.64, 0.018, 0.35, 0.2);
   const flaskCapacityLabel = textLabel('250 mL', 0.35, 0.87, 0.53, 0.5);
-  const flaskLiquid = mesh(new THREE.CylinderGeometry(1, 1, 1, segments), solutionMaterial, 0.35, 0.3);
-  const liquidSurface = cylinder(0.5, 0.012, solutionMaterial, 0.35, 0.4);
+  const flaskLiquid = lathe(flaskLiquidProfile(0.1), solutionMaterial);
+  const liquidSurface = lathe([[0, 0], [0.5, 0], [0.54, 0.004], [0.55, 0.007]], surfaceMaterial.clone());
+  const flaskEdge = ring(1, 0.006, 0.35, 0.4, 0, edgeMaterial, 4);
   const rippleMaterial = new THREE.MeshBasicMaterial({ color: '#fa92bf', transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide });
   const ripple = ring(0.2, 0.008, 0.35, 0.4, 0, rippleMaterial);
-  const dropMaterial = new THREE.MeshPhysicalMaterial({ color: '#b5e8ed', roughness: 0.08, clearcoat: 1 });
+  const dropMaterial = new THREE.MeshPhysicalMaterial({ color: '#a7d4dd', roughness: 0.08, clearcoat: 1, transparent: true, opacity: 0.94 });
+  const dropGeometry = new THREE.SphereGeometry(0.04, 12, 8);
   const drops = Array.from({ length: 6 }, () => {
-    const drop = mesh(new THREE.SphereGeometry(0.04, 12, 8), dropMaterial, 0.35, 2.05);
+    const drop = mesh(dropGeometry, dropMaterial, 0.35, 2.05);
     drop.scale.y = 1.6;
     drop.visible = false;
     return { mesh: drop, age: 0, active: false };
@@ -193,12 +211,13 @@ export function createVesselScene({ viewport, onError = () => {} }) {
   let previousTime = null;
   let splashAge = 1;
   let liquidHeight = 0;
+  let renderedFrames = 0;
   const clearEffects = () => {
     for (const drop of drops) { drop.active = false; drop.mesh.visible = false; }
     splashAge = 1;
     renderer.domElement.dataset.activeDrops = '0';
     ripple.visible = false;
-    solutionMaterial.color.set('#a7cdd0').lerp(new THREE.Color('#ed74ad'), model.pinkStrength);
+    solutionMaterial.color.set(liquidBase).lerp(new THREE.Color('#ed74ad'), model.pinkStrength);
   };
   const requestFrame = () => {
     if (frame === null && visible && !document.hidden && !disposed && !failed) frame = requestAnimationFrame(draw);
@@ -214,7 +233,8 @@ export function createVesselScene({ viewport, onError = () => {} }) {
       active = true;
       drop.age += delta;
       const progress = Math.min(1, drop.age / 0.48);
-      drop.mesh.position.y = THREE.MathUtils.lerp(2.05, FLASK_BOTTOM + liquidHeight, progress * progress);
+      drop.mesh.position.y = THREE.MathUtils.lerp(tipY - 0.035, FLASK_BOTTOM + liquidHeight, progress * progress);
+      drop.mesh.scale.y = 1.15 + 0.45 * progress;
       if (progress >= 1) {
         drop.active = false;
         drop.mesh.visible = false;
@@ -226,17 +246,21 @@ export function createVesselScene({ viewport, onError = () => {} }) {
       splashAge += delta;
       const progress = Math.min(1, splashAge / 0.5);
       ripple.visible = true;
-      ripple.position.y = FLASK_BOTTOM + liquidHeight + 0.024;
-      ripple.scale.setScalar(0.2 + progress * 1.3);
+      ripple.position.y = FLASK_BOTTOM + liquidHeight + 0.014;
+      ripple.scale.setScalar(Math.min(0.2 + progress * 1.3, flaskRadiusAt(liquidHeight) * 0.9 / 0.208));
       rippleMaterial.opacity = (1 - progress) * 0.6;
-      const localPink = model.indicator === 'acidic' ? (1 - progress) * 0.18 : 0;
-      solutionMaterial.color.set('#a7cdd0').lerp(new THREE.Color('#ed74ad'), Math.max(model.pinkStrength, localPink));
+      rippleMaterial.color.set(model.indicator === 'acidic' ? '#f3a2c4' : '#b1dee4');
     } else {
       ripple.visible = false;
-      solutionMaterial.color.set('#a7cdd0').lerp(new THREE.Color('#ed74ad'), model.pinkStrength);
     }
+    solutionMaterial.color.set(liquidBase).lerp(new THREE.Color('#ed74ad'), model.pinkStrength);
+    handle.rotation.z = model.status === 'running' || drops.some((drop) => drop.active) ? Math.PI / 2 : 0;
     renderer.domElement.dataset.activeDrops = String(drops.filter((drop) => drop.active).length);
     renderer.render(scene, camera);
+    renderer.domElement.dataset.renderFrames = String(++renderedFrames);
+    renderer.domElement.dataset.renderCalls = String(renderer.info.render.calls);
+    renderer.domElement.dataset.geometryCount = String(renderer.info.memory.geometries);
+    renderer.domElement.dataset.effectsActive = String(active);
     if (active || cameraMoving) requestFrame();
     else previousTime = null;
   };
@@ -289,37 +313,45 @@ export function createVesselScene({ viewport, onError = () => {} }) {
         frame = null; previousTime = null;
         clearEffects();
       }
-      const buretHeight = Math.max(0.001, 2.3 * model.buretFraction);
-      buretLiquid.scale.y = buretHeight;
-      buretLiquid.position.y = 2.95 + buretHeight / 2;
+      const buretHeight = (buretTop - buretBottom) * model.buretFraction;
+      buretLiquid.scale.y = Math.max(0.000001, buretHeight);
+      buretLiquid.position.y = buretBottom + buretHeight / 2;
       buretLiquid.visible = model.remainingMl > 0;
-      meniscus.position.y = 2.95 + buretHeight;
+      meniscus.position.y = buretBottom + buretHeight;
       meniscus.visible = buretLiquid.visible;
+      buretEdge.position.y = meniscus.position.y + 0.008;
+      buretEdge.visible = buretLiquid.visible;
+      outletLiquid.visible = buretLiquid.visible;
       liquidHeight = flaskFillHeight(model.flaskFraction);
       const radius = flaskRadiusAt(liquidHeight);
       const oldGeometry = flaskLiquid.geometry;
       // Rebuild only the liquid's inexpensive geometry when its fill actually changes.
       if (flaskLiquid.userData.fill !== model.flaskFraction) {
-        flaskLiquid.geometry = new THREE.CylinderGeometry(radius, flaskRadiusAt(0), Math.max(0.001, liquidHeight), segments);
+        flaskLiquid.geometry = new THREE.LatheGeometry(flaskLiquidProfile(liquidHeight).map(([r, y]) => new THREE.Vector2(r, y)), segments);
         oldGeometry.dispose();
         flaskLiquid.userData.fill = model.flaskFraction;
       }
-      flaskLiquid.position.y = FLASK_BOTTOM + liquidHeight / 2;
-      liquidSurface.scale.set(radius / 0.5, 1, radius / 0.5);
+      flaskLiquid.position.y = 0;
+      liquidSurface.scale.set(radius / 0.55, 1, radius / 0.55);
       liquidSurface.position.y = FLASK_BOTTOM + liquidHeight;
-      solutionMaterial.color.set('#a7cdd0').lerp(new THREE.Color('#ed74ad'), model.pinkStrength);
-      stopcock.rotation.y = model.status === 'running' ? Math.PI / 2 : 0;
+      flaskEdge.scale.setScalar(radius);
+      flaskEdge.position.y = FLASK_BOTTOM + liquidHeight + 0.007;
+      solutionMaterial.color.set(liquidBase).lerp(new THREE.Color('#ed74ad'), model.pinkStrength);
+      liquidSurface.material.color.copy(solutionMaterial.color).lerp(new THREE.Color('#f1f5f5'), 0.2);
       if (newDrop && animate && !reset && !motion.matches && visible && !document.hidden) {
         const drop = drops.find((item) => !item.active) ?? drops[0];
         drop.age = 0;
         drop.active = true;
         drop.mesh.visible = true;
-        drop.mesh.position.y = 2.05;
+        drop.mesh.position.y = tipY - 0.035;
       }
       renderer.domElement.dataset.dropCount = String(model.dropCount);
       renderer.domElement.dataset.indicator = model.indicator;
       renderer.domElement.dataset.buretMl = model.remainingMl.toFixed(2);
       renderer.domElement.dataset.totalMl = model.totalMl.toFixed(2);
+      renderer.domElement.dataset.buretSurfaceY = (buretBottom + buretHeight).toFixed(5);
+      renderer.domElement.dataset.flaskSurfaceY = (FLASK_BOTTOM + liquidHeight).toFixed(5);
+      renderer.domElement.dataset.liquidColor = solutionMaterial.color.getHexString();
       requestFrame();
     },
     setVisible(next) {

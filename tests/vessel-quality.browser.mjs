@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { pathToFileURL } from 'node:url';
+const { chromium } = await import(pathToFileURL(process.env.PLAYWRIGHT_MODULE).href);
+const output = 'tmp/vessel-quality-qa'; await mkdir(output, { recursive: true });
+const browser = await chromium.launch({ channel: 'msedge', headless: true });
+const observations = []; const errors = [];
+try {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } }); page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('http://localhost:4173/simulate'); await page.getByRole('button', { name: 'Tính trạng thái', exact: true }).click();
+  const stage = page.locator('[data-vessel-3d]'); await stage.scrollIntoViewIfNeeded(); await page.waitForFunction(() => document.querySelector('[data-vessel-3d]').dataset.renderer === 'ready');
+  const canvas = stage.locator('canvas');
+  const capture = async (name) => { await stage.scrollIntoViewIfNeeded(); await page.waitForTimeout(650); const data = await canvas.evaluate((c) => ({ ...c.dataset })); observations.push({ name, ...data }); await stage.screenshot({ path: `${output}/${name}.png` }); return data; };
+  const full = await capture('full'); assert.equal(full.buretMl, '50.00'); assert.equal(Number(full.buretSurfaceY), 5.3);
+  await page.locator('#add-drop').click(); await page.waitForFunction(() => Number(document.querySelector('[data-vessel-viewport] canvas').dataset.activeDrops) > 0);
+  await stage.screenshot({ path: output + '/falling-drop.png' });
+  await page.waitForFunction(() => document.querySelector('[data-vessel-viewport] canvas').dataset.activeDrops === '0');
+  assert.equal(await canvas.getAttribute('data-liquid-color'), full.liquidColor, 'Acidic transient does not tint the whole flask');
+  await page.evaluate(() => { for (let i = 0; i < 249; i++) document.querySelector('#add-drop').click(); });
+  const eq = await capture('equivalence'); assert.equal(eq.totalMl, '50.00'); assert.equal(eq.indicator, 'equivalence'); assert.equal(eq.liquidColor, full.liquidColor); assert.ok(Number(eq.flaskSurfaceY) > Number(full.flaskSurfaceY));
+  await page.locator('#add-drop').click(); const pink = await capture('pink'); assert.equal(pink.indicator, 'base-excess'); assert.notEqual(pink.liquidColor, full.liquidColor);
+  assert.ok(parseInt(pink.liquidColor.slice(0, 2), 16) > parseInt(pink.liquidColor.slice(2, 4), 16));
+  await page.evaluate(() => { for (let i = 0; i < 248; i++) document.querySelector('#add-drop').click(); });
+  const nearlyEmpty = await capture('nearly-empty'); assert.equal(nearlyEmpty.buretMl, '0.10'); assert.ok(Number(nearlyEmpty.buretSurfaceY) > 3 && Number(nearlyEmpty.buretSurfaceY) < 3.01);
+  await page.locator('#add-drop').click(); const empty = await capture('empty'); assert.equal(empty.buretMl, '0.00'); assert.equal(Number(empty.buretSurfaceY), 3); assert.equal(empty.totalMl, '75.00'); assert.ok(Number(empty.geometryCount) <= Number(full.geometryCount) + 2, 'Repeated fills dispose old liquid geometry');
+  assert.ok(Number(empty.renderCalls) < 100, 'Bounded desktop draw calls, no particle effects');
+  await page.waitForFunction(() => document.querySelector('[data-vessel-viewport] canvas').dataset.effectsActive === 'false');
+  const frames = await canvas.getAttribute('data-render-frames'); await page.waitForTimeout(350); assert.equal(await canvas.getAttribute('data-render-frames'), frames, 'Idle scene stops requesting frames');
+  await page.locator('#reset-simulation').click(); const reset = await capture('reset'); assert.equal(reset.buretMl, '50.00'); assert.equal(reset.flaskSurfaceY, full.flaskSurfaceY); assert.equal(reset.liquidColor, full.liquidColor); assert.equal(reset.activeDrops, '0');
+  await page.locator('[data-vessel-fullscreen]').click(); await page.waitForFunction(() => !!document.fullscreenElement || !!document.querySelector('.vessel-expanded')); await stage.screenshot({ path: output + '/fullscreen.png' }); await page.locator('[data-vessel-fullscreen]').click();
+  const mobile = await browser.newPage({ viewport: { width: 375, height: 900 }, hasTouch: true, isMobile: true }); mobile.on('pageerror', (e) => errors.push(e.message));
+  await mobile.goto('http://localhost:4173/simulate'); await mobile.getByRole('button', { name: 'Tính trạng thái', exact: true }).click(); const mobileStage = mobile.locator('[data-vessel-3d]'); await mobileStage.scrollIntoViewIfNeeded(); await mobile.waitForFunction(() => document.querySelector('[data-vessel-3d]').dataset.renderer === 'ready');
+  await mobileStage.screenshot({ path: output + '/mobile.png' }); assert.equal(await mobile.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
+  assert.deepEqual(errors, []); await writeFile(output + '/results.json', JSON.stringify({ pass: true, observations, errors }, null, 2));
+  console.log('3D quality PASS: full/near-empty/empty, drop/impact, neutral/pink, reset, contained liquid heights, native fullscreen, mobile, bounded geometry/draw calls and idle rendering.');
+} finally { await browser.close(); }
