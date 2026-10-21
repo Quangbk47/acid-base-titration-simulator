@@ -23,7 +23,7 @@ test('AUDIT: 250 consecutive drops reach 25 mL / pH 7, with colorless 3D and con
   const next = addDrop(state).state;
   const after = solveStrongStrong(next.chemistryInput);
   assert.ok(Math.abs(after.pH - 10.300162274) < 1e-6);
-  assert.ok(buildVesselModel(withSimulationResult(next, after).state).pinkStrength > 0.6);
+  assert.ok(buildVesselModel(withSimulationResult(next, after).state, { indicatorName: 'phenolphthalein' }).pinkStrength > 0.6);
 });
 
 test('AUDIT: buret depletion rejects an extra drop without changing the final state', () => {

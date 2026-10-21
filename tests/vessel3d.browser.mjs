@@ -14,6 +14,7 @@ try {
   const page = await browser.newPage({ viewport: { width: 1366, height: 1000 } });
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto(`${baseUrl}/simulate`);
+  await page.locator('#vessel-indicator').selectOption('phenolphthalein');
   const stage = page.locator('[data-vessel-3d]');
   await stage.scrollIntoViewIfNeeded();
   await page.waitForFunction(() => document.querySelector('[data-vessel-3d]').dataset.renderer === 'ready');

@@ -7,12 +7,17 @@ const browser = await chromium.launch({ channel: 'msedge', headless: true });
 const observations = []; const errors = [];
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } }); page.on('pageerror', (e) => errors.push(e.message));
-  await page.goto('http://localhost:4173/simulate'); await page.getByRole('button', { name: 'Tính trạng thái', exact: true }).click();
+  await page.goto('http://localhost:4173/simulate');
+ await page.getByRole('button', { name: 'Tính trạng thái', exact: true }).click();
   const stage = page.locator('[data-vessel-3d]'); await stage.scrollIntoViewIfNeeded(); await page.waitForFunction(() => document.querySelector('[data-vessel-3d]').dataset.renderer === 'ready');
   const canvas = stage.locator('canvas');
   const capture = async (name) => { await stage.scrollIntoViewIfNeeded(); await page.waitForTimeout(650); const data = await canvas.evaluate((c) => ({ ...c.dataset })); observations.push({ name, ...data }); await stage.screenshot({ path: `${output}/${name}.png` }); return data; };
+  const colorless = await capture('initial-no-indicator'); assert.equal(colorless.selectedIndicator, 'none'); assert.equal(colorless.activeDrops, '0'); assert.equal(colorless.totalMl, '25.00');
+  await page.locator('#analyte-volume').fill('40'); await stage.scrollIntoViewIfNeeded(); const preview = await capture('sample-preview'); assert.equal(preview.totalMl, '40.00'); assert.equal(preview.activeDrops, '0');
+  await page.locator('#analyte-volume').fill('25'); await page.getByRole('button', { name: 'Tính trạng thái', exact: true }).click();
+  await page.locator('#vessel-indicator').selectOption('phenolphthalein');
   const full = await capture('full'); assert.equal(full.buretMl, '50.00'); assert.equal(Number(full.buretSurfaceY), 5.3);
-  await page.locator('#add-drop').click(); await page.waitForFunction(() => Number(document.querySelector('[data-vessel-viewport] canvas').dataset.activeDrops) > 0);
+  await page.evaluate(() => document.querySelector('#add-drop').click()); await page.waitForFunction(() => Number(document.querySelector('[data-vessel-viewport] canvas').dataset.activeDrops) > 0);
   await stage.screenshot({ path: output + '/falling-drop.png' });
   await page.waitForFunction(() => document.querySelector('[data-vessel-viewport] canvas').dataset.activeDrops === '0');
   assert.equal(await canvas.getAttribute('data-liquid-color'), full.liquidColor, 'Acidic transient does not tint the whole flask');
@@ -20,6 +25,8 @@ try {
   const eq = await capture('equivalence'); assert.equal(eq.totalMl, '50.00'); assert.equal(eq.indicator, 'equivalence'); assert.equal(eq.liquidColor, full.liquidColor); assert.ok(Number(eq.flaskSurfaceY) > Number(full.flaskSurfaceY));
   await page.locator('#add-drop').click(); const pink = await capture('pink'); assert.equal(pink.indicator, 'base-excess'); assert.notEqual(pink.liquidColor, full.liquidColor);
   assert.ok(parseInt(pink.liquidColor.slice(0, 2), 16) > parseInt(pink.liquidColor.slice(2, 4), 16));
+  await page.locator('#vessel-indicator').selectOption('none'); const noIndicator = await capture('alkaline-no-indicator'); assert.equal(noIndicator.liquidColor, full.liquidColor); assert.equal(noIndicator.dropCount, pink.dropCount); assert.equal(noIndicator.activeDrops, '0');
+  await page.locator('#vessel-indicator').selectOption('phenolphthalein');
   await page.evaluate(() => { for (let i = 0; i < 248; i++) document.querySelector('#add-drop').click(); });
   const nearlyEmpty = await capture('nearly-empty'); assert.equal(nearlyEmpty.buretMl, '0.10'); assert.ok(Number(nearlyEmpty.buretSurfaceY) > 3 && Number(nearlyEmpty.buretSurfaceY) < 3.01);
   await page.locator('#add-drop').click(); const empty = await capture('empty'); assert.equal(empty.buretMl, '0.00'); assert.equal(Number(empty.buretSurfaceY), 3); assert.equal(empty.totalMl, '75.00'); assert.ok(Number(empty.geometryCount) <= Number(full.geometryCount) + 2, 'Repeated fills dispose old liquid geometry');

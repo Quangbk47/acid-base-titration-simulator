@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { buildVesselModel, flaskFillHeight, flaskRadiusAt, flaskLiquidProfile, flaskInnerRadiusAt, FLASK_INNER_PROFILE, FLASK_GLASS_PROFILE, FLASK_BOTTOM, FLASK_BODY_HEIGHT, LIQUID_CLEARANCE, VESSEL_LAYOUT } from '../src/ui/vesselModel.js';
+import { hasDispensedDrop, buildVesselModel, flaskFillHeight, flaskRadiusAt, flaskLiquidProfile, flaskInnerRadiusAt, FLASK_INNER_PROFILE, FLASK_GLASS_PROFILE, FLASK_BOTTOM, FLASK_BODY_HEIGHT, LIQUID_CLEARANCE, VESSEL_LAYOUT } from '../src/ui/vesselModel.js';
 import { addDrop, createSimulationState, resetSimulation, withSimulationResult } from '../src/simulation/state.js';
 import { solveStrongStrong } from '../src/chemistry/index.js';
 import { initVesselView } from '../src/ui/vesselView.js';
@@ -30,7 +30,7 @@ test('3D: initial titrant is not subtracted twice, empty buret and oversized fla
   const model = buildVesselModel(evaluated(addDrop(state).state));
   assert.ok(Math.abs(model.remainingMl - 19.9) < 1e-9);
   assert.equal(buildVesselModel({ ...state, addedVolumeMl: 100 }).remainingMl, 0);
-  const large = buildVesselModel({ ...state, result: { totalVolumeMl: 1000, pH: 12, excess: { species: 'OH⁻' } } });
+  const large = buildVesselModel({ ...state, result: { totalVolumeMl: 1000, pH: 12, excess: { species: 'OH⁻' } } }, { indicatorName: 'phenolphthalein' });
   assert.equal(large.flaskFraction, 0.85);
   assert.ok(large.pinkStrength > 0.6);
 });
@@ -89,7 +89,7 @@ test('3D: lazy loader replays the latest state and disposes observers/renderer',
   let cleaned = false;
   let loads = 0;
   try {
-    const view = initVesselView({ root: { querySelector: () => stage }, loadScene: () => { loads += 1; return new Promise((resolve) => { resolveModule = resolve; }); } });
+    const view = initVesselView({ root: { querySelector: (selector) => selector === '[data-vessel-3d]' ? stage : null }, loadScene: () => { loads += 1; return new Promise((resolve) => { resolveModule = resolve; }); } });
     assert.equal(loads, 0);
     intersection([{ isIntersecting: true }]);
     const latest = evaluated(addDrop(createSimulationState(input, { dropSizeMl: 0.1 }).state).state);
@@ -103,4 +103,20 @@ test('3D: lazy loader replays the latest state and disposes observers/renderer',
     assert.equal(disconnected, true);
     assert.equal(cleaned, true);
   } finally { globalThis.IntersectionObserver = originalObserver; }
+});
+
+test('3D: initial sample preview follows inputs, without indicator all pH values stay colorless', () => {
+  for (const sampleMl of [10, 25, 75]) {
+    const m = buildVesselModel(null, { sampleMl, buretMl: 35 });
+    assert.equal(m.totalMl, sampleMl); assert.equal(m.remainingMl, 35); assert.equal(m.addedMl, 0); assert.equal(m.pinkStrength, 0);
+  }
+  for (const pH of [1, 7, 9, 13]) assert.equal(buildVesselModel({ result: { pH, totalVolumeMl: 25 } }).pinkStrength, 0);
+  assert.ok(buildVesselModel({ result: { pH: 13, totalVolumeMl: 25 } }, { indicatorName: 'phenolphthalein' }).pinkStrength > .6);
+});
+
+test('3D: only an actual single dispensed volume step emits a drop', () => {
+  const previous = buildVesselModel(evaluated(createSimulationState(input, { dropSizeMl: .1 }).state));
+  const next = { ...previous, dropCount: 1, addedMl: .1, remainingMl: 49.9 };
+  assert.equal(hasDispensedDrop(previous, next), true);
+  for (const fake of [previous, { ...next, addedMl: 0 }, { ...next, remainingMl: 50 }, { ...next, dropCount: 20 }, { ...previous, pH: 13 }]) assert.equal(hasDispensedDrop(previous, fake), false);
 });

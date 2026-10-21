@@ -5,16 +5,16 @@ const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
 // Presentation only: volumes and color come from the existing simulation/indicator.
 // A fixed 250 mL flask is enlarged for unusually large input volumes.
-export function buildVesselModel(state) {
-  const initialMl = Number.isFinite(state?.initialBuretVolumeMl) && state.initialBuretVolumeMl >= 0 ? state.initialBuretVolumeMl : 50;
+export function buildVesselModel(state, { sampleMl = 25, buretMl = 50, indicatorName = 'none' } = {}) {
+  const initialMl = Number.isFinite(state?.initialBuretVolumeMl) && state.initialBuretVolumeMl >= 0 ? state.initialBuretVolumeMl : Number.isFinite(buretMl) && buretMl >= 0 ? buretMl : 50;
   const dispensedMl = Math.max(0, (state?.addedVolumeMl ?? 0) - (state?.initialAddedVolumeMl ?? 0));
   const remainingMl = Math.max(0, initialMl - dispensedMl);
-  const totalMl = positive(state?.result?.totalVolumeMl, positive(state?.chemistryInput?.[state?.titrantVolumeKey === 'Va' ? 'Vb' : 'Va'], 0.025) * 1000 + (state?.addedVolumeMl ?? 0));
+  const totalMl = positive(state?.result?.totalVolumeMl, positive(state?.chemistryInput?.[state?.titrantVolumeKey === 'Va' ? 'Vb' : 'Va'], positive(sampleMl, 25) / 1000) * 1000 + (state?.addedVolumeMl ?? 0));
   const capacityMl = Math.max(250, totalMl / 0.85);
-  const indicator = derivePhenolphthaleinState(state?.result);
+  const indicator = indicatorName === 'phenolphthalein' ? derivePhenolphthaleinState(state?.result) : { state: 'none', color: 'transparent' };
   const alpha = Number(indicator.color.match(/,\s*([\d.]+)\)$/)?.[1] ?? 0);
   return {
-    initialMl, remainingMl, totalMl, capacityMl,
+    initialMl, remainingMl, totalMl, capacityMl, sampleVolumeMl: totalMl - (state?.addedVolumeMl ?? 0), addedMl: state?.addedVolumeMl ?? 0, indicatorName,
     buretFraction: clamp(remainingMl / Math.max(50, initialMl), 0, 1),
     flaskFraction: clamp(totalMl / capacityMl, 0, 0.85),
     indicator: indicator.state,
@@ -63,3 +63,6 @@ export function flaskFillHeight(fraction) {
   }
   return (low + high) / 2;
 }
+
+// Loading/restoring a snapshot or changing pH alone must never manufacture a drop.
+export const hasDispensedDrop = (previous, next) => next.dropCount === previous.dropCount + 1 && next.addedMl > previous.addedMl && next.remainingMl < previous.remainingMl;

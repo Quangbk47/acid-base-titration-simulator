@@ -1,4 +1,5 @@
 import { initFullscreen } from './fullscreen.js';
+import { renderIndicatorView } from './indicatorView.js';
 import { buildVesselModel } from './vesselModel.js';
 
 // Load WebGL only when this viewport is visible; a failed renderer cannot stop UI.
@@ -9,6 +10,8 @@ export function initVesselView({ root = document, loadScene = () => import('./ve
   const notice = stage.querySelector('[data-vessel-notice]');
   const reset = stage.querySelector('[data-camera-reset]');
   const selectedTitrant = () => root.querySelector('#titrant')?.value || 'NaOH';
+  const indicatorSelect = root.querySelector('#vessel-indicator');
+  const options = () => ({ titrantName: selectedTitrant(), indicatorName: indicatorSelect?.value || 'none', sampleMl: Number(root.querySelector('#analyte-volume')?.value?.replace(',', '.')), buretMl: Number(root.querySelector('#buret-volume')?.value?.replace(',', '.')) });
   const fullscreen = initFullscreen(stage);
   let latestState = null;
   let scene = null;
@@ -28,7 +31,7 @@ export function initVesselView({ root = document, loadScene = () => import('./ve
       if (disposed) return;
       scene = module.createVesselScene({ viewport, onError: () => fallback('3D không khả dụng. Hình minh họa và các chức năng mô phỏng vẫn hoạt động.') });
       if (scene.failed) return;
-      scene.update(latestState, { animate: false, titrantName: selectedTitrant() });
+      scene.update(latestState, { ...options(), animate: false });
       scene.setVisible(visible);
       stage.dataset.renderer = 'ready';
       if (notice) notice.textContent = '';
@@ -46,16 +49,22 @@ export function initVesselView({ root = document, loadScene = () => import('./ve
   observer.observe(viewport);
   const resetCamera = () => scene?.resetCamera();
   reset?.addEventListener('click', resetCamera);
-  return {
+  const view = {
     update(state) {
       latestState = state;
-      const model = buildVesselModel(state);
+      const settings = options();
+      const model = buildVesselModel(state, settings);
+      renderIndicatorView(root, state?.result, { indicatorName: settings.indicatorName });
       const text = (selector, value) => { const output = stage.querySelector(selector); if (output) output.textContent = value; };
       text('[data-vessel-buret]', `${model.remainingMl.toFixed(2).replace('.', ',')} mL`);
-      text('[data-vessel-total]', state ? `${model.totalMl.toFixed(2).replace('.', ',')} mL` : '—');
+      text('[data-vessel-total]', `${model.totalMl.toFixed(2).replace('.', ',')} mL`);
+      text('[data-vessel-volumes]', `Mẫu ban đầu: ${model.sampleVolumeMl.toFixed(2).replace('.', ',')} mL · Chất chuẩn đã thêm: ${model.addedMl.toFixed(2).replace('.', ',')} mL`);
       text('[data-vessel-ph]', model.pH === null ? '—' : model.pH.toFixed(2).replace('.', ','));
-      scene?.update(state, { titrantName: selectedTitrant() });
+      scene?.update(state, settings);
     },
-    dispose() { fullscreen.dispose(); disposed = true; observer.disconnect(); reset?.removeEventListener('click', resetCamera); scene?.dispose(); },
+    dispose() { indicatorSelect?.removeEventListener?.('change', changeIndicator); fullscreen.dispose(); disposed = true; observer.disconnect(); reset?.removeEventListener('click', resetCamera); scene?.dispose(); },
   };
+  const changeIndicator = () => view.update(latestState);
+  indicatorSelect?.addEventListener?.('change', changeIndicator);
+  return view;
 }

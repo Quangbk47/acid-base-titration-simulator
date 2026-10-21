@@ -2,7 +2,7 @@ import { pairForInput } from '../data/titrationPairs.js';
 import * as THREE from '../../assets/vendor/three/three.module.js';
 import { OrbitControls } from '../../assets/vendor/three/OrbitControls.js';
 import { RoomEnvironment } from '../../assets/vendor/three/RoomEnvironment.js';
-import { buildVesselModel, flaskFillHeight, flaskRadiusAt, flaskLiquidProfile, FLASK_GLASS_PROFILE, VESSEL_LAYOUT, FLASK_BOTTOM } from './vesselModel.js';
+import { hasDispensedDrop, buildVesselModel, flaskFillHeight, flaskRadiusAt, flaskLiquidProfile, FLASK_GLASS_PROFILE, VESSEL_LAYOUT, FLASK_BOTTOM } from './vesselModel.js';
 
 export function createVesselScene({ viewport, onError = () => {} }) {
   const compact = matchMedia('(max-width: 767px)').matches;
@@ -11,7 +11,7 @@ export function createVesselScene({ viewport, onError = () => {} }) {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#edf4f2');
   const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 60);
-  const home = new THREE.Vector3(6.3, 4.3, 8.5);
+  const home = new THREE.Vector3(6.0, 4.2, 8.1);
   const target = new THREE.Vector3(0, 2.7, 0);
   camera.position.copy(home);
   let renderer;
@@ -74,12 +74,13 @@ export function createVesselScene({ viewport, onError = () => {} }) {
   const glass = new THREE.MeshPhysicalMaterial({ color: '#edfafa', transmission: 0.94, thickness: 0.035, roughness: 0.065, ior: 1.46, transparent: true, opacity: 0.38, depthWrite: false, side: THREE.DoubleSide, envMapIntensity: 0.75 });
   const glassRim = new THREE.MeshPhysicalMaterial({ color: '#a4c8c8', transmission: 0.7, thickness: 0.04, roughness: 0.1, ior: 1.46, transparent: true, opacity: 0.62 });
   // Neutral optical shading makes colorless liquid visible; pink alone is pH-driven.
-  const liquidBase = '#9e9e9e';
-  // Opaque-pass rendering lets the refractive glass sample this narrow liquid column.
-  const buretLiquidMaterial = new THREE.MeshPhysicalMaterial({ color: liquidBase, roughness: 0.18, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.08 });
+  const liquidBase = '#d6eceb';
+  // Alpha-blended water stays visible behind transmissive glass without an opaque disk.
+  // Nested transmission would resample the same background and hide the initial sample.
+  const buretLiquidMaterial = new THREE.MeshPhysicalMaterial({ color: liquidBase, roughness: 0.08, metalness: 0, transmission: 0, thickness: 0.18, ior: 1.333, transparent: true, opacity: 0.58, depthWrite: false, clearcoat: 0.35 });
   const solutionMaterial = buretLiquidMaterial.clone();
-  solutionMaterial.transparent = true; solutionMaterial.opacity = 0.93; solutionMaterial.depthWrite = false;
-  const surfaceMaterial = new THREE.MeshPhysicalMaterial({ color: '#d4edf0', roughness: 0.08, clearcoat: 1, transparent: true, opacity: 0.9, depthWrite: false, side: THREE.DoubleSide });
+  solutionMaterial.transparent = true; solutionMaterial.opacity = 0.40; solutionMaterial.depthWrite = false;
+  const surfaceMaterial = new THREE.MeshPhysicalMaterial({ color: '#f2faf9', roughness: 0.05, clearcoat: 0.35, transparent: true, opacity: 0.22, depthWrite: false, side: THREE.DoubleSide });
   const mesh = (geometry, material, x, y, z = 0) => {
     const object = new THREE.Mesh(geometry, material);
     object.position.set(x, y, z);
@@ -137,7 +138,7 @@ export function createVesselScene({ viewport, onError = () => {} }) {
   const buretLiquid = mesh(new THREE.CylinderGeometry(VESSEL_LAYOUT.buretLiquidRadius, VESSEL_LAYOUT.buretLiquidRadius, 1, segments, 1, true), buretLiquidMaterial, 0.35, 4);
   buretLiquid.castShadow = false;
   const meniscus = lathe([[0, 0], [0.09, 0], [0.11, 0.004], [0.114, 0.009]], surfaceMaterial);
-  const edgeMaterial = new THREE.MeshBasicMaterial({ color: '#68888b', transparent: true, opacity: 0.48, depthWrite: false });
+  const edgeMaterial = new THREE.MeshBasicMaterial({ color: '#86aaa9', transparent: true, opacity: 0.27, depthWrite: false });
   const buretEdge = ring(0.113, 0.0025, 0.35, 5.3, 0, edgeMaterial, 4);
   const outletLiquid = lathe([[0, 2.07], [0.014, 2.07], [0.016, 2.13], [0.039, 2.54], [0.049, 2.56], [0.049, 2.78], [0.113, 2.91], [0.113, 3.0]], buretLiquidMaterial);
   outletLiquid.castShadow = false;
@@ -232,7 +233,7 @@ export function createVesselScene({ viewport, onError = () => {} }) {
       if (!drop.active) continue;
       active = true;
       drop.age += delta;
-      const progress = Math.min(1, drop.age / 0.48);
+      const progress = Math.min(1, drop.age / drop.duration);
       drop.mesh.position.y = THREE.MathUtils.lerp(tipY - 0.035, FLASK_BOTTOM + liquidHeight, progress * progress);
       drop.mesh.scale.y = 1.15 + 0.45 * progress;
       if (progress >= 1) {
@@ -249,7 +250,7 @@ export function createVesselScene({ viewport, onError = () => {} }) {
       ripple.position.y = FLASK_BOTTOM + liquidHeight + 0.014;
       ripple.scale.setScalar(Math.min(0.2 + progress * 1.3, flaskRadiusAt(liquidHeight) * 0.9 / 0.208));
       rippleMaterial.opacity = (1 - progress) * 0.6;
-      rippleMaterial.color.set(model.indicator === 'acidic' ? '#f3a2c4' : '#b1dee4');
+      rippleMaterial.color.copy(solutionMaterial.color);
     } else {
       ripple.visible = false;
     }
@@ -297,9 +298,9 @@ export function createVesselScene({ viewport, onError = () => {} }) {
   resize();
 
   return {
-    update(state, { animate = true, titrantName = 'NaOH' } = {}) {
-      const next = buildVesselModel(state);
-      const newDrop = next.dropCount > model.dropCount;
+    update(state, { animate = true, titrantName = 'NaOH', ...settings } = {}) {
+      const next = buildVesselModel(state, settings);
+      const newDrop = hasDispensedDrop(model, next);
       const reset = next.dropCount === 0 || next.dropCount < model.dropCount || next.status === 'idle' || next.status === 'paused';
       model = next;
       const buretCapacity = Math.max(50, model.initialMl);
@@ -337,15 +338,20 @@ export function createVesselScene({ viewport, onError = () => {} }) {
       flaskEdge.scale.setScalar(radius);
       flaskEdge.position.y = FLASK_BOTTOM + liquidHeight + 0.007;
       solutionMaterial.color.set(liquidBase).lerp(new THREE.Color('#ed74ad'), model.pinkStrength);
-      liquidSurface.material.color.copy(solutionMaterial.color).lerp(new THREE.Color('#f1f5f5'), 0.2);
+      liquidSurface.material.color.copy(solutionMaterial.color);
+      solutionMaterial.opacity = 0.40 + 0.20 * model.pinkStrength;
+      liquidSurface.material.opacity = 0.22 + 0.12 * model.pinkStrength;
       if (newDrop && animate && !reset && !motion.matches && visible && !document.hidden) {
         const drop = drops.find((item) => !item.active) ?? drops[0];
         drop.age = 0;
+        drop.duration = state?.speed === 'fast' ? 0.25 : 0.48;
         drop.active = true;
         drop.mesh.visible = true;
         drop.mesh.position.y = tipY - 0.035;
       }
       renderer.domElement.dataset.dropCount = String(model.dropCount);
+      renderer.domElement.dataset.addedMl = String(model.addedMl);
+      renderer.domElement.dataset.selectedIndicator = model.indicatorName;
       renderer.domElement.dataset.indicator = model.indicator;
       renderer.domElement.dataset.buretMl = model.remainingMl.toFixed(2);
       renderer.domElement.dataset.totalMl = model.totalMl.toFixed(2);

@@ -190,12 +190,14 @@
                 <span><small>pH cân bằng</small><strong data-vessel-ph>—</strong></span>
               </div>
               <div class="vessel-footer">
+                <p data-vessel-volumes>Mẫu ban đầu: 25,00 mL · Chất chuẩn đã thêm: 0,00 mL</p>
                 <p data-vessel-status>Chưa có mô phỏng đang chạy</p>
                 <p class="vessel-help">Kéo: xoay 360° · Cuộn: zoom · Chuột phải: di chuyển<br>Điện thoại: 1 ngón xoay · 2 ngón zoom / di chuyển</p>
               </div>
               <p class="vessel-notice" data-vessel-notice role="status">Đang chuẩn bị mô hình 3D…</p>
             </div>
-            <p class="indicator-status" role="status">Phenolphthalein: <strong data-indicator-state>Chưa có dữ liệu</strong></p>
+            <label class="chart-style-label" for="vessel-indicator">Chất chỉ thị <select id="vessel-indicator"><option value="none">Không dùng chỉ thị</option><option value="phenolphthalein">Phenolphthalein</option></select></label>
+            <p class="indicator-status" role="status">Màu dung dịch: <strong data-indicator-state>Chưa có dữ liệu</strong></p>
           </article>
 
           <article class="panel graph-panel" aria-labelledby="graph-title">
@@ -218,7 +220,7 @@
               <span><i class="legend-dot equivalence"></i>Điểm hiện tại</span>
               <span><i class="legend-dot milestone"></i>Nửa V tương đương cuối</span>
               <span><i class="legend-dot equivalence"></i>Điểm tương đương</span>
-              <span><i class="legend-dot endpoint"></i>Ngưỡng chỉ thị pH 8,2</span>
+              <span><i class="legend-dot endpoint"></i>Tham khảo phenolphthalein: pH 8,2</span>
             </div>
             <div class="table-wrapper curve-table" tabindex="0" role="region" aria-label="Lịch sử chuẩn độ, cuộn để xem các giọt">
               <table>
