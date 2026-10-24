@@ -12,7 +12,6 @@ export function renderProject(root = document) {
   const team = root.querySelector('[data-project-team]');
   if (team) team.innerHTML = project.members.map((member) => `<article class="team-card"><h3>${escapeHtml(member.name)}</h3><p>${escapeHtml(member.className)} · ${escapeHtml(member.major)}</p>${member.role ? `<small>${escapeHtml(member.role)}</small>` : ''}</article>`).join('');
   for (const target of root.querySelectorAll('[data-project-copyright]')) target.textContent = project.copyright;
-  const link = root.querySelector('[data-project-repository]'); if (link) link.href = project.repository;
 }
 
 export function initHomeView(root = document) {
